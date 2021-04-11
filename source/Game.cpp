@@ -18,14 +18,18 @@ Game::Game()
 , mIsMovingRight(false)
 , mIsMovingLeft(false)
 {
-	if (!mTexture.loadFromFile("sprites/yuzuriha/Yuz_000.png"))
+	if (!mTexture.loadFromFile("media/sprite/yuzuriha/000.png"))
 	{
 		std::cout << "Texture not loaded!\n";
 	}
 	mPlayer.setTexture(mTexture);
-	mPlayer.setPosition(500.f, 500.f);
+	sf::FloatRect bounds = mPlayer.getLocalBounds(); // get rect for sprite bounding box
+	mPlayer.setOrigin(bounds.width / 2.f, bounds.height); // set sprite origin for transforms to be horizontal midpoint, vertical bottom
+	mPlayer.setPosition(mWindow.getSize().x / 2, mWindow.getSize().y); // set initial sprite position to be centered at the bottom of the screen
 
-	mFont.loadFromFile("fonts/CC-Astro-City.ttf");
+	std::cout << mPlayer.getPosition().x << ", " << mPlayer.getPosition().y << "\n";
+
+	mFont.loadFromFile("media/font/CC-Astro-City.ttf");
 	mStatsText.setFont(mFont);
 	mStatsText.setPosition(5.f, 5.f);
 	mStatsText.setCharacterSize(20);
@@ -134,22 +138,3 @@ void Game::render()
 	mWindow.draw(mStatsText);
 	mWindow.display();
 }
-
-
-//class Game
-//{
-//
-//public:
-//	Game();
-//	void run();
-//
-//private:
-//	void processEvents(); // process player input
-//	void update();
-//	void render();
-//
-//private:
-//	sf::RenderWindow mWindow;
-//	sf::CircleShape mPlayer;
-//
-//};
