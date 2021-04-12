@@ -1,5 +1,7 @@
 #pragma once
 
+#include <World.hpp>
+
 #include <SFML/Graphics.hpp>
 //#include <Animation.hpp>
 
@@ -21,6 +23,7 @@ private:
 	static const bool						bPauseOnLostFocus;
 
 	sf::RenderWindow						mWindow;
+	World									mWorld;
 	sf::Texture								mTexture;
 	sf::Sprite								mPlayer;
 	sf::Font								mFont;

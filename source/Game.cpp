@@ -14,25 +14,12 @@ const bool Game::bPauseOnLostFocus = true; // if true, game does not update when
 
 Game::Game()
 : mWindow(sf::VideoMode(1280, 720), "Window", sf::Style::Titlebar | sf::Style::Close)
-, mTexture()
-, mPlayer()
 , mFont()
 , mStatsText()
 , mStatsUpdateTime()
 , mStatsNumFrames(0)
+, mWorld(mWindow)
 {
-	if (!mTexture.loadFromFile("Media/Sprite/Yuzuriha/000.png"))
-	{
-		std::cout << "Texture not loaded!\n";
-	}
-	mPlayer.setTexture(mTexture);
-
-	sf::FloatRect bounds = mPlayer.getLocalBounds(); // get rect for sprite bounding box
-	mPlayer.setOrigin(bounds.width / 2.f, bounds.height); // set sprite origin for transforms to be horizontal midpoint, vertical bottom
-	mPlayer.setPosition(mWindow.getSize().x / 2, mWindow.getSize().y); // set initial sprite position to be centered at the bottom of the screen
-
-	std::cout << mPlayer.getPosition().x << ", " << mPlayer.getPosition().y << "\n";
-
 	mFont.loadFromFile("media/font/CC-Astro-City.ttf");
 	mStatsText.setFont(mFont);
 	mStatsText.setPosition(5.f, 5.f);
@@ -110,6 +97,8 @@ void Game::update(sf::Time dt)
 		movement.x += PlayerSpeed;
 
 	mPlayer.move(movement * dt.asSeconds());
+
+	mWorld.update(dt);
 }
 
 void Game::updateStatistics(sf::Time dt)
@@ -131,7 +120,9 @@ void Game::updateStatistics(sf::Time dt)
 void Game::render()
 {
 	mWindow.clear();
-	mWindow.draw(mPlayer);
+	mWorld.draw();
+
+	mWindow.setView(mWindow.getDefaultView());
 	mWindow.draw(mStatsText);
 	mWindow.display();
 }

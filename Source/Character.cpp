@@ -1,17 +1,26 @@
 #include <Character.hpp>
+#include <ResourceHolder.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
-//Textures::ID toTextureID(Character::Type type)
+Textures::ID toTextureID(Character::Type type)
+{
+	switch (type)
+	{
+	case Character::Yuzuriha:
+		return Textures::Yuzuriha;
+	case Character::Enkidu:
+		return Textures::Enkidu;
+	}
+}
+
+//Character::Character(Type type, const TextureHolder& textures)
+//	: mType(type)
+//	, mSprite(textures.get(toTextureID(type)))
 //{
-//	switch (type)
-//	{
-//	case Character::Yuzuriha:
-//		return Textures::Yuzuriha;
-//	case Character::Enkidu:
-//		return Textures::Enkidu;
-//	}
+//	sf::FloatRect bounds = mSprite.getLocalBounds();
+//	mSprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 //}
 
 Character::Character(Type type, const TextureHolder& textures): mType(type), mSprite(textures.get(toTextureID(type)))
