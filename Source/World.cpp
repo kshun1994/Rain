@@ -38,5 +38,11 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer)); // attach the newest node to scene graph's root node
 	}
 
+	sf::Texture& texture = mTextures.get(Textures::StageMomiji);
+	sf::IntRect textureRect(mWorldBounds);
+
+	std::unique_ptr<SpriteNode> backgroundSprite(new SpriteNode(texture, textureRect));
+	backgroundSprite->setPosition(mWorldBounds.left, mWorldBounds.top);
+	mSceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
 }
