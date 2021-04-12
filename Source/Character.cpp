@@ -33,3 +33,8 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 {
 	target.draw(mSprite, states);
 }
+
+unsigned int Character::getCategory() const
+{
+	return Category::Character;
+}

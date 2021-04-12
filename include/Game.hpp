@@ -1,6 +1,7 @@
 #pragma once
 
 #include <World.hpp>
+#include <Player.hpp>
 
 #include <SFML/Graphics.hpp> 
 //#include <Animation.hpp>
@@ -12,7 +13,7 @@ public:
 	void									run();
 
 private:
-	void									processEvents();
+	void									processInput();
 	void									update(sf::Time dt);
 	void									render();
 	void									updateStatistics(sf::Time elapsedTime);
@@ -25,7 +26,7 @@ private:
 	sf::RenderWindow						mWindow;
 	World									mWorld;
 	sf::Texture								mTexture;
-	sf::Sprite								mPlayer;
+	Player									mPlayer;
 	sf::Font								mFont;
 	sf::Text								mStatsText;
 	sf::Time								mStatsUpdateTime;

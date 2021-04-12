@@ -53,7 +53,6 @@ void World::buildScene()
 	std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, mTextures));
 	mPlayerCharacter = enkidu.get();
 	mPlayerCharacter->setPosition(mSpawnPosition);
-	mPlayerCharacter->setVelocity(200.f, 0.f);
 	mSceneLayers[Characters]->attachChild(std::move(enkidu));
 }
 
@@ -65,18 +64,46 @@ void World::draw()
 
 void World::update(sf::Time dt)
 {
-	// Move the player sidewards (plane scouts follow the main aircraft)
+	//// Move the player sidewards (plane scouts follow the main aircraft)
 	sf::Vector2f position = mPlayerCharacter->getPosition();
-	sf::Vector2f velocity = mPlayerCharacter->getVelocity();
+	//sf::Vector2f velocity = mPlayerCharacter->getVelocity();
 
-	// If player touches borders, flip its X velocity
-	if (position.x <= mWorldBounds.left + 635.f
-		|| position.x >= mWorldBounds.left + mWorldBounds.width - 635.f)
+	//// If player touches borders, flip its X velocity
+	//if (position.x <= mWorldBounds.left + 635.f
+	//	|| position.x >= mWorldBounds.left + mWorldBounds.width - 635.f)
+	//{
+	//	velocity.x = -velocity.x;
+	//	mPlayerCharacter->setVelocity(velocity);
+	//}
+
+	mPlayerCharacter->setVelocity(0.f, 0.f);
+
+
+	// Forward commands to scene graph
+	while (!mCommandQueue.isEmpty())
 	{
-		velocity.x = -velocity.x;
-		mPlayerCharacter->setVelocity(velocity);
+		mSceneGraph.onCommand(mCommandQueue.pop(), dt);
 	}
 
-	mWorldView.setCenter(position.x, position.y - ViewYOffset);
+
 	mSceneGraph.update(dt);
+	adaptPlayerPosition();
+	mWorldView.setCenter(mPlayerCharacter->getPosition().x, mPlayerCharacter->getPosition().y - ViewYOffset);
+}
+
+CommandQueue& World::getCommandQueue()
+{
+	return mCommandQueue;
+}
+
+void World::adaptPlayerPosition()
+{
+	// Keep player's position inside the screen bounds, at least borderDistance units from the border
+	sf::FloatRect viewBounds(mWorldView.getCenter() - mWorldView.getSize() / 2.f, mWorldView.getSize());
+	const float borderDistance = 40.f;
+
+	sf::Vector2f position = mPlayerCharacter->getPosition();
+	position.x = std::max(position.x, mWorldBounds.left + borderDistance);
+	position.x = std::min(position.x, mWorldBounds.left + mWorldBounds.width - borderDistance);
+	mPlayerCharacter->setPosition(position);
 }

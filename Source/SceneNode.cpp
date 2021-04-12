@@ -48,23 +48,23 @@ sf::Vector2f SceneNode::getWorldPosition() const
 	return getWorldTransform() * sf::Vector2f();
 }
 
-//unsigned int SceneNode::getCategory() const // return unsigned int instead of Category::Type allows for multiple categories via | operator
-//{
-//	return Category::Scene;
-//}
-//
-//void SceneNode::onCommand(const Command& command, sf::Time dt)
-//{
-//	if (command.category & getCategory()) // if category of command matches node category
-//	{
-//		command.action(*this, dt); // run command on node
-//	}
-//
-//	for (const Ptr& child : mChildren)
-//	{
-//		child->onCommand(command, dt); // propagate command down node children chain
-//	}
-//}
+unsigned int SceneNode::getCategory() const // return unsigned int instead of Category::Type allows for multiple categories via | operator
+{
+	return Category::Scene;
+}
+
+void SceneNode::onCommand(const Command& command, sf::Time dt)
+{
+	if (command.category & getCategory()) // if category of command matches node category
+	{
+		command.action(*this, dt); // run command on node
+	}
+
+	for (const Ptr& child : mChildren)
+	{
+		child->onCommand(command, dt); // propagate command down node children chain
+	}
+}
 
 void SceneNode::updateCurrent(sf::Time)
 {

@@ -8,8 +8,8 @@
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
 
-//#include <Category.hpp>
-//#include <Command.hpp>
+#include <Category.hpp>
+#include <Command.hpp>
 
 class SceneNode :	public		sf::Transformable, 
 					public		sf::Drawable, 
@@ -29,8 +29,8 @@ public:
 	sf::Vector2f					getWorldPosition() const;
 	sf::Transform					getWorldTransform() const;
 
-	//virtual unsigned int			getCategory() const;
-	//void							onCommand(const Command& command, sf::Time dt);
+	virtual unsigned int			getCategory() const;
+	void							onCommand(const Command& command, sf::Time dt);
 
 private:
 	virtual void					updateCurrent(sf::Time dt);

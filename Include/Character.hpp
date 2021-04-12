@@ -18,6 +18,8 @@ public:
 	explicit			Character(Type type, const TextureHolder& textures);
 	virtual void		drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
+	unsigned int		getCategory() const;
+
 private:
 	Type			mType;
 	sf::Sprite		mSprite;

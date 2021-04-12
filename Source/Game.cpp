@@ -41,7 +41,7 @@ void Game::run()
 		while (timeSinceLastUpdate > TimePerFrame)
 		{
 			timeSinceLastUpdate -= TimePerFrame;
-			processEvents();
+			processInput();
 			if (!mIsPaused)
 			{
 				update(TimePerFrame);
@@ -62,8 +62,10 @@ void Game::run()
 	}
 }
 
-void Game::processEvents()
+void Game::processInput()
 {
+	CommandQueue& commands = mWorld.getCommandQueue();
+
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
@@ -75,29 +77,20 @@ void Game::processEvents()
 		{
 			mIsPaused = true;
 		}
-		switch (event.type)
+
+		mPlayer.handleEvent(event, commands);
+
+		if (event.type == sf::Event::Closed)
 		{
-			case sf::Event::Closed:
-				mWindow.close();
-				break;
+			mWindow.close();
 		}
 	}
+
+	mPlayer.handleRealtimeInput(commands);
 }
 
 void Game::update(sf::Time dt)
 {
-	sf::Vector2f movement(0.f, 0.f);
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	//	movement.y -= PlayerSpeed;
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	//	movement.y += PlayerSpeed;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		movement.x -= PlayerSpeed;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		movement.x += PlayerSpeed;
-
-	mPlayer.move(movement * dt.asSeconds());
-
 	mWorld.update(dt);
 }
 
