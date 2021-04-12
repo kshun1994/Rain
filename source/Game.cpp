@@ -2,8 +2,15 @@
 #include <sstream>
 #include <Game.hpp>
 
-const float Game::PlayerSpeed = 200.f;
+const float Game::PlayerSpeed = 500.f;
 const sf::Time Game::TimePerFrame = sf::seconds(1.f / 60.f);
+const bool Game::bPauseOnLostFocus = true; // if true, game does not update when window is not in focus
+
+//const int YuzuSpriteWidth = 864;
+//const int YuzuSpriteHeight = 640;
+//const int YuzuIdleFrameEnd = 36;
+//const int YuzuFWalkFrameEnd = 48;
+//const int YuzuBWalkFrameEnd = 60;
 
 Game::Game()
 : mWindow(sf::VideoMode(1280, 720), "Window", sf::Style::Titlebar | sf::Style::Close)
@@ -13,16 +20,13 @@ Game::Game()
 , mStatsText()
 , mStatsUpdateTime()
 , mStatsNumFrames(0)
-, mIsMovingUp(false)
-, mIsMovingDown(false)
-, mIsMovingRight(false)
-, mIsMovingLeft(false)
 {
-	if (!mTexture.loadFromFile("media/sprite/yuzuriha/000.png"))
+	if (!mTexture.loadFromFile("Media/Sprite/Yuzuriha/000.png"))
 	{
 		std::cout << "Texture not loaded!\n";
 	}
 	mPlayer.setTexture(mTexture);
+
 	sf::FloatRect bounds = mPlayer.getLocalBounds(); // get rect for sprite bounding box
 	mPlayer.setOrigin(bounds.width / 2.f, bounds.height); // set sprite origin for transforms to be horizontal midpoint, vertical bottom
 	mPlayer.setPosition(mWindow.getSize().x / 2, mWindow.getSize().y); // set initial sprite position to be centered at the bottom of the screen
@@ -33,6 +37,8 @@ Game::Game()
 	mStatsText.setFont(mFont);
 	mStatsText.setPosition(5.f, 5.f);
 	mStatsText.setCharacterSize(20);
+
+	mIsPaused = false;
 }
 
 void Game::run()
@@ -49,7 +55,10 @@ void Game::run()
 		{
 			timeSinceLastUpdate -= TimePerFrame;
 			processEvents();
-			update(TimePerFrame);
+			if (!mIsPaused)
+			{
+				update(TimePerFrame);
+			}
 			mStatsNumFrames += 1; // for calculating fps
 		}
 		// updateStatistics(elapsedTime);
@@ -71,16 +80,16 @@ void Game::processEvents()
 	sf::Event event;
 	while (mWindow.pollEvent(event))
 	{
+		if (event.type == sf::Event::GainedFocus && bPauseOnLostFocus)
+		{
+			mIsPaused = false;
+		}
+		else if (event.type == sf::Event::LostFocus && bPauseOnLostFocus)
+		{
+			mIsPaused = true;
+		}
 		switch (event.type)
 		{
-			case sf::Event::KeyPressed:
-				handlePlayerInput(event.key.code, true);
-				break;
-
-			case sf::Event::KeyReleased:
-				handlePlayerInput(event.key.code, false);
-				break;
-
 			case sf::Event::Closed:
 				mWindow.close();
 				break;
@@ -88,28 +97,16 @@ void Game::processEvents()
 	}
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key key, bool bPressed)
-{
-	if		(key == sf::Keyboard::W)
-		mIsMovingUp		= bPressed;
-	else if (key == sf::Keyboard::S)
-		mIsMovingDown	= bPressed;
-	else if (key == sf::Keyboard::A)
-		mIsMovingLeft	= bPressed;
-	else if (key == sf::Keyboard::D)
-		mIsMovingRight	= bPressed;
-}
-
 void Game::update(sf::Time dt)
 {
 	sf::Vector2f movement(0.f, 0.f);
-	if (mIsMovingUp)
-		movement.y -= PlayerSpeed;
-	if (mIsMovingDown)
-		movement.y += PlayerSpeed;
-	if (mIsMovingLeft)
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	//	movement.y -= PlayerSpeed;
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+	//	movement.y += PlayerSpeed;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		movement.x -= PlayerSpeed;
-	if (mIsMovingRight)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		movement.x += PlayerSpeed;
 
 	mPlayer.move(movement * dt.asSeconds());

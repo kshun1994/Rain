@@ -1,8 +1,11 @@
+#pragma once
+
 #include <iostream>
 #include <map>
 #include <string>
 #include <memory>
 #include <cassert>
+
 
 template <typename Resource, typename Identifier>
 class ResourceHolder
@@ -17,10 +20,10 @@ class ResourceHolder
 		const Resource&											get(Identifier id) const;
 
 	private:
-		void ResourceHolder<Resource, Identifier>::insertResource(Identifier id, std::unique_ptr<Resource> resource)
+		void													insertResource(Identifier id, std::unique_ptr<Resource> resource);
 
 	private:
-		std::map<Identifier, std::unique_ptr<Resource>>		mResourceMap; // mapping of enums to a unique pointer to a Resource object
+		std::map<Identifier, std::unique_ptr<Resource>>			mResourceMap; // mapping of enums to a unique pointer to a Resource object
 };
 
 #include "ResourceHolder.inl"

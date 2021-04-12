@@ -2,29 +2,30 @@
 template <typename Resource, typename Identifier>
 void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string& filename)
 {
+	// Create and load resource
 	std::unique_ptr<Resource> resource(new Resource());
-	if (resource->loadFromFile(filename))
+	if (!resource->loadFromFile(filename))
 	{
-		throw std::runtime_error("ResourceHolder::Load - Failed to load " + filename);
+		throw std::runtime_error("ResourceHolder::load - Failed to load " + filename);
 	}
 
 	// If loading successful, insert resource to map
 	insertResource(id, std::move(resource));
 }
 
-template <typename Resource, typename Identifier>
-template <typename Parameter>
-void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string& filename, const Parameter& secondParam)
-{
-	std::unique_ptr<Resource> resource(new Resource());
-	if (resource->loadFromFile(filename, secondParam))
-	{
-		throw std::runtime_error("ResourceHolder::Load - Failed to load " + filename);
-	}
-
-	// If loading successful, insert resource to map
-	insertResource(id, std::move(resource));
-}
+//template <typename Resource, typename Identifier>
+//template <typename Parameter>
+//void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string& filename, const Parameter& secondParam)
+//{
+//	std::unique_ptr<Resource> resource(new Resource());
+//	if (!resource->loadFromFile(filename, secondParam))
+//	{
+//		throw std::runtime_error("ResourceHolder::Load - Failed to load " + filename);
+//	}
+//
+//	// If loading successful, insert resource to map
+//	insertResource(id, std::move(resource));
+//}
 
 template <typename Resource, typename Identifier>
 Resource& ResourceHolder<Resource, Identifier>::get(Identifier id)
