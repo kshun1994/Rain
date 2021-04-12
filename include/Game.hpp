@@ -2,7 +2,7 @@
 
 #include <World.hpp>
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp> 
 //#include <Animation.hpp>
 
 class Game
