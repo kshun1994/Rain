@@ -154,6 +154,8 @@
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\SceneNode.cpp" />
     <ClCompile Include="Source\SpriteNode.cpp" />
+    <ClCompile Include="Source\State.cpp" />
+    <ClCompile Include="Source\StateStack.cpp" />
     <ClCompile Include="Source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -168,10 +170,14 @@
     <ClInclude Include="Include\ResourceIdentifiers.hpp" />
     <ClInclude Include="Include\SceneNode.hpp" />
     <ClInclude Include="Include\SpriteNode.hpp" />
+    <ClInclude Include="Include\State.hpp" />
+    <ClInclude Include="Include\StateIdentifiers.hpp" />
+    <ClInclude Include="Include\StateStack.hpp" />
     <ClInclude Include="Include\World.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\ResourceHolder.inl" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
