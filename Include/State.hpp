@@ -20,14 +20,18 @@ class State
 {
 public:
 	typedef std::unique_ptr<State> Ptr;
-	struct Context
-	{
-	/*	Context(sf::RenderWindow& window, TextureHolder& textures, FontHolder& fonts, Player& player);
 
-		sf::RenderWindow* window;
-		TextureHolder* textures;
-		FontHolder* fonts;
-		Player* player;*/
+	struct Context // holds objects shared between all game states so as not to waste memory storing the same resource multiple times
+	{
+																Context(sf::RenderWindow& window, 
+																		TextureHolder& textures, 
+																		FontHolder& fonts, 
+																		Player& player);
+
+		sf::RenderWindow*										window;
+		TextureHolder*											textures;
+		FontHolder*												fonts;
+		Player*													player;
 	};
 
 public:
