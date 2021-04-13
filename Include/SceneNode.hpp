@@ -1,7 +1,7 @@
+#pragma once
+
 #include <memory>
 #include <vector>
-
-#pragma once
 
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Drawable.hpp>

@@ -9,9 +9,9 @@ Textures::ID toTextureID(Character::Type type)
 	switch (type)
 	{
 	case Character::Yuzuriha:
-		return Textures::Yuzuriha;
+		return Textures::ID::Yuzuriha;
 	case Character::Enkidu:
-		return Textures::Enkidu;
+		return Textures::ID::Enkidu;
 	}
 }
 

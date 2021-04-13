@@ -9,17 +9,19 @@ namespace sf
 
 namespace Textures
 {
-	enum ID
+	enum class ID
 	{
 		Yuzuriha,
 		Enkidu,
 		StageMomiji,
+		TitleScreen,
+		MainMenu,
 	};
 }
 
 namespace Fonts
 {
-	enum ID
+	enum class ID
 	{
 		Main,
 	};

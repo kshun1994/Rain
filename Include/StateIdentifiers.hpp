@@ -1,9 +1,8 @@
 #pragma once
 
-
 namespace States
 {
-	enum ID
+	enum class ID
 	{
 		None,
 		Title,

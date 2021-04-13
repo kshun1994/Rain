@@ -28,9 +28,9 @@ World::World(sf::RenderWindow& window)
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::Enkidu,		"Media/Texture/Enkidu/000.png");
-	mTextures.load(Textures::Yuzuriha,		"Media/Texture/Yuzuriha/000.png");
-	mTextures.load(Textures::StageMomiji,	"Media/Texture/_Stage/MomijiShrineScaledx3.png");
+	mTextures.load(Textures::ID::Enkidu,		"Media/Texture/Enkidu/000.png");
+	mTextures.load(Textures::ID::Yuzuriha,		"Media/Texture/Yuzuriha/000.png");
+	mTextures.load(Textures::ID::StageMomiji,	"Media/Texture/_Stage/MomijiShrineScaledx3.png");
 }
 
 void World::buildScene()
@@ -43,7 +43,7 @@ void World::buildScene()
 		mSceneGraph.attachChild(std::move(layer)); // attach the newest node to scene graph's root node
 	}
 
-	sf::Texture& texture = mTextures.get(Textures::StageMomiji);
+	sf::Texture& texture = mTextures.get(Textures::ID::StageMomiji);
 	sf::IntRect textureRect(mWorldBounds);
 
 	std::unique_ptr<SpriteNode> backgroundSprite(new SpriteNode(texture, textureRect));

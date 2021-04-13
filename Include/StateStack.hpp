@@ -1,4 +1,5 @@
 #pragma once
+
 #include <State.hpp>
 #include <StateIdentifiers.hpp>
 #include <ResourceIdentifiers.hpp>
@@ -11,9 +12,16 @@
 #include <functional>
 #include <map>
 
+
+namespace sf
+{
+	class Event;
+	class RenderWindow;
+}
+
 class StateStack : private sf::NonCopyable
 {
-public: 
+public:
 	enum Action
 	{
 		Push,
@@ -21,37 +29,53 @@ public:
 		Clear,
 	};
 
+
 public:
-	explicit StateStack(State::Context context);
+	explicit			StateStack(State::Context context);
 
 	template <typename T>
-	void														registerState(States::ID stateID); // inserts state mappings
-	void														update(sf::Time dt);
-	void														draw();
-	void														handleEvent(const sf::Event& event);
+	void				registerState(States::ID stateID);
 
-	void														pushState(States::ID stateID); // add state to active stack
-	void														popState(); // remove state from active stack
-	void														clearStates();
+	void				update(sf::Time dt);
+	void				draw();
+	void				handleEvent(const sf::Event& event);
 
-	bool														isEmpty() const;
+	void				pushState(States::ID stateID);
+	void				popState();
+	void				clearStates();
 
-private:
-	State::Ptr													createState(States::ID stateID);
-	void														applyPendingChanges();
+	bool				isEmpty() const;
+
 
 private:
-	struct PendingChange // an object that stores a change type and the state to perform the change on
+	State::Ptr			createState(States::ID stateID);
+	void				applyPendingChanges();
+
+
+private:
+	struct PendingChange
 	{
-		explicit												PendingChange(Action action, States::ID stateID = States::None);
+		explicit			PendingChange(Action action, States::ID stateID = States::ID::None);
 
-		Action													action;
-		States::ID												stateID;
+		Action				action;
+		States::ID			stateID;
 	};
 
+
 private:
-	std::vector<State::Ptr>										mStack;
-	std::vector<PendingChange>									mPendingList;
-	State::Context												mContext;
-	std::map<States::ID, std::function<State::Ptr()>>			mFactories; // factory functions that create states on demand, mapped to IDs
+	std::vector<State::Ptr>								mStack;
+	std::vector<PendingChange>							mPendingList;
+
+	State::Context										mContext;
+	std::map<States::ID, std::function<State::Ptr()>>	mFactories;
 };
+
+
+template <typename T>
+void StateStack::registerState(States::ID stateID)
+{
+	mFactories[stateID] = [this]()
+	{
+		return State::Ptr(new T(*this, mContext));
+	};
+}

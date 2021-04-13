@@ -1,4 +1,5 @@
 #pragma once
+
 #include <StateIdentifiers.hpp>
 #include <ResourceIdentifiers.hpp>
 
@@ -45,7 +46,7 @@ public:
 protected:
 	void														requestStackPush(States::ID states);
 	void														requestStackPop();
-	void														requestStackClear();
+	void														requestStateClear();
 
 	Context														getContext() const;
 
