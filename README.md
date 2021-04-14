@@ -1,7 +1,7 @@
 # Cloudburst
 Rainy days
 
-# TODO
+# Ideas
 * Wrapper to output keyboard/joystick-agnostic input
 * Input stream
 	* Store previous inputs
@@ -17,3 +17,6 @@ Rainy days
 	* Display position/dims in text boxes for precise editing
 	* Editable frame data and animation frame IDs/durations
 	* Customizable hit vector parameters and hitstun/blockstun durations
+	* Onion skinning to compare changes in boxes between adjacent animation frames
+* Hit vectors?
+	* Just use parabolic arc formula and inputs of initial angle, velocity, and object weight?

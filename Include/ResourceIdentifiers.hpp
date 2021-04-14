@@ -16,6 +16,9 @@ namespace Textures
 		StageMomiji,
 		TitleScreen,
 		MainMenu,
+		ButtonNormal,
+		ButtonSelected,
+		ButtonPressed,
 	};
 }
 

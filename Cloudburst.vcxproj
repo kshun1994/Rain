@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -146,11 +146,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Include\Application.cpp" />
+    <ClCompile Include="Include\Component.cpp" />
+    <ClCompile Include="Include\Container.cpp" />
+    <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\Character.cpp" />
     <ClCompile Include="Source\Command.cpp" />
     <ClCompile Include="Source\CommandQueue.cpp" />
     <ClCompile Include="Source\Entity.cpp" />
     <ClCompile Include="Source\GameState.cpp" />
+    <ClCompile Include="Source\Label.cpp" />
     <ClCompile Include="Source\LoadingState.cpp" />
     <ClCompile Include="source\Main.cpp" />
     <ClCompile Include="Source\MenuState.cpp" />
@@ -167,12 +171,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Application.hpp" />
+    <ClInclude Include="Include\Button.hpp" />
     <ClInclude Include="Include\Category.hpp" />
     <ClInclude Include="Include\Character.hpp" />
     <ClInclude Include="Include\Command.hpp" />
     <ClInclude Include="Include\CommandQueue.hpp" />
+    <ClInclude Include="Include\Component.hpp" />
+    <ClInclude Include="Include\Container.hpp" />
     <ClInclude Include="Include\Entity.hpp" />
     <ClInclude Include="Include\GameState.hpp" />
+    <ClInclude Include="Include\Label.hpp" />
     <ClInclude Include="Include\LoadingState.hpp" />
     <ClInclude Include="Include\MenuState.hpp" />
     <ClInclude Include="Include\ParallelTask.hpp" />

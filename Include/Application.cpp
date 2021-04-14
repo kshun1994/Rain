@@ -23,8 +23,13 @@ Application::Application()
 	mWindow.setKeyRepeatEnabled(false);
 
 	mFonts.load(Fonts::ID::Main, "Media/Font/CarroisGothicSC-Regular.ttf");
+
 	mTextures.load(Textures::ID::TitleScreen, "Media/Texture/State/Title.png");
-	mTextures.load(Textures::ID::MainMenu, "Media/Texture/State/MainMenu.png");
+
+	mTextures.load(Textures::ID::MainMenu,			"Media/Texture/State/MainMenu.png");
+	mTextures.load(Textures::ID::ButtonNormal,		"Media/Texture/UI/ButtonNormal.png");
+	mTextures.load(Textures::ID::ButtonSelected,	"Media/Texture/UI/ButtonSelected.png");
+	mTextures.load(Textures::ID::ButtonPressed,		"Media/Texture/UI/ButtonPressed.png");
 
 	mStatsText.setFont(mFonts.get(Fonts::ID::Main));
 	mStatsText.setPosition(5.f, 5.f);
