@@ -7,7 +7,7 @@ Rainy days
 	* Store previous inputs
 	* Retrieve inputs over specific buffer period number of frames
 	* Helper function to call that specifies input priorities and buffer period (*e.g.*, half circles get longer input windows than quarter circles)
-* addState() helper function to call when adding a state to an entity that takes care of mutual exclusivities in state
+* `addState()` helper function to call when adding a state to an entity that takes care of mutual exclusivities in state
 * Rollback implementation [[Pseudocode example](https://gist.github.com/rcmagic/f8d76bca32b5609e85ab156db38387e9)]
 	* Store game state
 	* Restore game state
