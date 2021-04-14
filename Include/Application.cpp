@@ -22,13 +22,13 @@ Application::Application()
 {
 	mWindow.setKeyRepeatEnabled(false);
 
-	mFonts.load(Fonts::ID::Main, "Media/Font/CC-Astro-City.ttf");
+	mFonts.load(Fonts::ID::Main, "Media/Font/CarroisGothicSC-Regular.ttf");
 	mTextures.load(Textures::ID::TitleScreen, "Media/Texture/State/Title.png");
 	mTextures.load(Textures::ID::MainMenu, "Media/Texture/State/MainMenu.png");
 
 	mStatsText.setFont(mFonts.get(Fonts::ID::Main));
 	mStatsText.setPosition(5.f, 5.f);
-	mStatsText.setCharacterSize(10u);
+	mStatsText.setCharacterSize(20u);
 
 	registerStates();
 	mStateStack.pushState(States::ID::Title);
