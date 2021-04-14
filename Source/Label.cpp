@@ -27,4 +27,9 @@ namespace GUI
 		states.transform *= getTransform();
 		target.draw(mText, states);
 	}
+
+	void Label::setText(const std::string& text)
+	{
+		mText.setString(text);
+	}
 }

@@ -148,6 +148,7 @@
     <ClCompile Include="Include\Application.cpp" />
     <ClCompile Include="Include\Component.cpp" />
     <ClCompile Include="Include\Container.cpp" />
+    <ClCompile Include="Include\SettingsState.cpp" />
     <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\Character.cpp" />
     <ClCompile Include="Source\Command.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="include\ResourceHolder.hpp" />
     <ClInclude Include="Include\ResourceIdentifiers.hpp" />
     <ClInclude Include="Include\SceneNode.hpp" />
+    <ClInclude Include="Include\SettingsState.hpp" />
     <ClInclude Include="Include\SpriteNode.hpp" />
     <ClInclude Include="Include\State.hpp" />
     <ClInclude Include="Include\StateIdentifiers.hpp" />

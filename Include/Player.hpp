@@ -1,20 +1,28 @@
 #pragma once
 
-#include <CommandQueue.hpp>
-#include <Character.hpp>
+#include <Command.hpp>
 
 #include <SFML/Window/Event.hpp>
 
-#include <iostream>
 #include <map>
+
+
+class CommandQueue;
 
 class Player
 {
 public:
 	enum Action
 	{
-		MoveLeft,
-		MoveRight,
+		Up,
+		Down,
+		Left,
+		Right,
+		//A,
+		//B,
+		//C,
+		//D,
+		ActionCount,
 	};
 
 public:

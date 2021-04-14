@@ -1,4 +1,10 @@
 #include <Player.hpp>
+#include <CommandQueue.hpp>
+#include <Character.hpp>
+
+#include <map>
+#include <string>
+#include <algorithm>
 
 struct CharacterMover
 {
@@ -17,8 +23,11 @@ struct CharacterMover
 
 Player::Player()
 {
-	mKeyBinding[sf::Keyboard::A] = MoveLeft;
-	mKeyBinding[sf::Keyboard::D] = MoveRight;
+	// Set default key bindings
+	mKeyBinding[sf::Keyboard::W] = Up;
+	mKeyBinding[sf::Keyboard::S] = Down;
+	mKeyBinding[sf::Keyboard::A] = Left;
+	mKeyBinding[sf::Keyboard::D] = Right;
 
 	// Set initial action bindings
 	initializeActions();
@@ -81,16 +90,18 @@ void Player::initializeActions()
 {
 	const float playerSpeed = 200.f;
 
-	mActionBinding[MoveLeft].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
-	mActionBinding[MoveRight].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
+	mActionBinding[Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
+	mActionBinding[Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
 }
 
 bool Player::isRealtimeAction(Action action)
 {
 	switch (action)
 	{
-	case MoveLeft:
-	case MoveRight:
+	case Up:
+	case Down:
+	case Left:
+	case Right:
 		return true;
 
 	default:

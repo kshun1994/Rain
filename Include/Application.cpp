@@ -6,6 +6,7 @@
 #include <GameState.hpp>
 #include <MenuState.hpp>
 #include <PauseState.hpp>
+#include <SettingsState.hpp>
 
 
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
@@ -24,12 +25,11 @@ Application::Application()
 
 	mFonts.load(Fonts::ID::Main, "Media/Font/CarroisGothicSC-Regular.ttf");
 
-	mTextures.load(Textures::ID::TitleScreen, "Media/Texture/State/Title.png");
-
-	mTextures.load(Textures::ID::MainMenu,			"Media/Texture/State/MainMenu.png");
-	mTextures.load(Textures::ID::ButtonNormal,		"Media/Texture/UI/ButtonNormal.png");
-	mTextures.load(Textures::ID::ButtonSelected,	"Media/Texture/UI/ButtonSelected.png");
-	mTextures.load(Textures::ID::ButtonPressed,		"Media/Texture/UI/ButtonPressed.png");
+	mTextures.load(Textures::ID::TitleScreen,    "Media/Texture/State/Title.png");
+	mTextures.load(Textures::ID::MainMenu,		 "Media/Texture/State/MainMenu.png");
+	mTextures.load(Textures::ID::ButtonNormal,	 "Media/Texture/UI/ButtonNormal.png");
+	mTextures.load(Textures::ID::ButtonSelected, "Media/Texture/UI/ButtonSelected.png");
+	mTextures.load(Textures::ID::ButtonPressed,	 "Media/Texture/UI/ButtonPressed.png");
 
 	mStatsText.setFont(mFonts.get(Fonts::ID::Main));
 	mStatsText.setPosition(5.f, 5.f);
@@ -109,8 +109,9 @@ void Application::updateStatistics(sf::Time dt)
 
 void Application::registerStates()
 {
-	mStateStack.registerState<TitleState>(States::ID::Title);
-	mStateStack.registerState<MenuState >(States::ID::Menu);
-	mStateStack.registerState<GameState >(States::ID::Game);
-	mStateStack.registerState<PauseState>(States::ID::Pause);
+	mStateStack.registerState<TitleState   >(States::ID::Title);
+	mStateStack.registerState<MenuState    >(States::ID::Menu);
+	mStateStack.registerState<GameState    >(States::ID::Game);
+	mStateStack.registerState<PauseState   >(States::ID::Pause);
+	mStateStack.registerState<SettingsState>(States::ID::Settings);
 }
