@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Include\Animation.cpp" />
     <ClCompile Include="Include\Application.cpp" />
     <ClCompile Include="Include\Component.cpp" />
     <ClCompile Include="Include\Container.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\Animation.hpp" />
     <ClInclude Include="Include\Application.hpp" />
     <ClInclude Include="Include\Button.hpp" />
     <ClInclude Include="Include\Category.hpp" />

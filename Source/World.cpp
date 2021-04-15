@@ -64,27 +64,15 @@ void World::draw()
 
 void World::update(sf::Time dt)
 {
-	//// Move the player sidewards (plane scouts follow the main aircraft)
 	sf::Vector2f position = mPlayerCharacter->getPosition();
-	//sf::Vector2f velocity = mPlayerCharacter->getVelocity();
-
-	//// If player touches borders, flip its X velocity
-	//if (position.x <= mWorldBounds.left + 635.f
-	//	|| position.x >= mWorldBounds.left + mWorldBounds.width - 635.f)
-	//{
-	//	velocity.x = -velocity.x;
-	//	mPlayerCharacter->setVelocity(velocity);
-	//}
 
 	mPlayerCharacter->setVelocity(0.f, 0.f);
-
 
 	// Forward commands to scene graph
 	while (!mCommandQueue.isEmpty())
 	{
 		mSceneGraph.onCommand(mCommandQueue.pop(), dt);
 	}
-
 
 	mSceneGraph.update(dt);
 	adaptPlayerPosition();
