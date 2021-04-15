@@ -5,12 +5,12 @@
 class Entity : public SceneNode
 {
 public:
-	explicit				Entity(int health);
+	/*explicit				Entity(int health);
 	void					damage(int points);
 	void					destroy();
 
 	int						getHitpoints() const;
-	bool					isDestroyed() const;
+	bool					isDestroyed() const;*/
 
 	void					setVelocity(sf::Vector2f velocity);
 	void					setVelocity(float vx, float vy);

@@ -18,10 +18,10 @@ public:
 		Down,
 		Left,
 		Right,
-		//A,
-		//B,
-		//C,
-		//D,
+		A,
+		B,
+		C,
+		D,
 		ActionCount,
 	};
 

@@ -24,10 +24,14 @@ struct CharacterMover
 Player::Player()
 {
 	// Set default key bindings
-	mKeyBinding[sf::Keyboard::W] = Up;
-	mKeyBinding[sf::Keyboard::S] = Down;
-	mKeyBinding[sf::Keyboard::A] = Left;
-	mKeyBinding[sf::Keyboard::D] = Right;
+	mKeyBinding[sf::Keyboard::W]		 = Up;
+	mKeyBinding[sf::Keyboard::S]		 = Down;
+	mKeyBinding[sf::Keyboard::A]		 = Left;
+	mKeyBinding[sf::Keyboard::D]		 = Right;
+	mKeyBinding[sf::Keyboard::J]		 = A;
+	mKeyBinding[sf::Keyboard::K]		 = B;
+	mKeyBinding[sf::Keyboard::L]		 = C;
+	mKeyBinding[sf::Keyboard::SemiColon] = D;
 
 	// Set initial action bindings
 	initializeActions();
