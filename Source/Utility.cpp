@@ -18,6 +18,12 @@ void centerOrigin(sf::Text& text)
 	text.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
 }
 
+void centerOrigin(Animation& animation)
+{
+	sf::FloatRect bounds = animation.getLocalBounds();
+	animation.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
+}
+
 std::string keyToString(sf::Keyboard::Key key)
 {
 #define KEYTOSTRING_CASE(KEY) case sf::Keyboard::KEY: return #KEY;

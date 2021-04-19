@@ -28,7 +28,7 @@ World::World(sf::RenderWindow& window)
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::ID::Enkidu,		"Media/Texture/Enkidu/000.png");
+	mTextures.load(Textures::ID::Enkidu,		"Media/Texture/Enkidu/Enkidu_idle.png");
 	mTextures.load(Textures::ID::Yuzuriha,		"Media/Texture/Yuzuriha/000.png");
 	mTextures.load(Textures::ID::StageMomiji,	"Media/Texture/_Stage/MomijiShrineScaledx3.png");
 }
@@ -62,6 +62,7 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 }
 
+#include <iostream>
 void World::update(sf::Time dt)
 {
 	sf::Vector2f position = mPlayerCharacter->getPosition();
@@ -76,7 +77,8 @@ void World::update(sf::Time dt)
 
 	mSceneGraph.update(dt);
 	adaptPlayerPosition();
-	mWorldView.setCenter(mPlayerCharacter->getPosition().x, mPlayerCharacter->getPosition().y - ViewYOffset);
+	mWorldView.setCenter(mPlayerCharacter->getPosition().x, 
+						 mPlayerCharacter->getPosition().y - ViewYOffset);
 }
 
 CommandQueue& World::getCommandQueue()

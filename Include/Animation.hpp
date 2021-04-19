@@ -3,14 +3,36 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
+#include <vector>
+
+
+struct Frame
+{
+	sf::IntRect							rect; // bounding box of animation frame in sprite sheet
+	int									duration; // num render frames to display animation frame for
+};
 
 class Animation : public sf::Drawable, public sf::Transformable
 {
 public:
-	Animation();
-	Animation(const sf::Texture& texture);
+										Animation();
+										Animation(const sf::Texture& texture);
+										Animation(const sf::Texture& texture,
+												  const std::vector<int>& frameIDs,
+												  const std::vector<int>& durations,
+												  const sf::Vector2i& rect);
+
+										Animation(const sf::Texture& texture,
+												  const std::vector<sf::IntRect>& frameRects,
+												  const std::vector<int>& durations);
 
 	void								setTexture(const sf::Texture& texture);
+	void								setFrames(const std::vector<sf::IntRect>& frameRects,
+												  const std::vector<int>& durations);
+	void								setFrames(const std::vector<int>& frameIDs,
+												  const std::vector<int>& durations,
+												  const sf::Vector2i& rect);
+
 	void								setFrameSize(sf::Vector2i frameSize);
 	void								setNumFrames(std::size_t numFrames);
 	void								setDuration(sf::Time duration);
@@ -36,6 +58,7 @@ private:
 	sf::Vector2i						mFrameSize; // size of one frame rect
 	std::size_t							mNumFrames;
 	std::size_t							mCurrentFrame;
+	std::vector<Frame>					mFrames;
 	sf::Time							mDuration;
 	sf::Time							mElapsedTime;
 	bool								mRepeat;

@@ -3,6 +3,11 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <cassert>
+#include <iostream>
+
+int nSpritesheetCol = 5;
+
 Animation::Animation()
 : mSprite()
 , mFrameSize()
@@ -25,10 +30,94 @@ Animation::Animation(const sf::Texture& texture)
 {
 }
 
+Animation::Animation(const sf::Texture& texture, 
+					 const std::vector<int>& frameIDs, 
+					 const std::vector<int>& durations, 
+					 const sf::Vector2i& rect)
+: mSprite(texture)
+, mFrameSize()
+, mCurrentFrame(0)
+, mDuration(sf::Time::Zero)
+, mElapsedTime(sf::Time::Zero)
+, mRepeat(false)
+{
+	mNumFrames = durations.size();
+	assert(frameIDs.size() == durations.size()); // make sure the two vectors are the same size
+
+	sf::IntRect currentRect;
+	currentRect.width  = rect.x;
+	currentRect.height = rect.y;
+
+	for (int i = 0; i != durations.size(); i++)
+	{
+		int currentFrameID = frameIDs[i];
+		currentRect.left   = rect.x * (currentFrameID % nSpritesheetCol);
+		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
+
+		Frame frame = { currentRect, durations[i] };
+		mFrames.push_back(std::move(frame));
+	}
+}
+
+Animation::Animation(const sf::Texture& texture,
+					 const std::vector<sf::IntRect>& frameRects,
+					 const std::vector<int>& durations)
+: mSprite(texture)
+, mFrameSize()
+, mCurrentFrame(0)
+, mDuration(sf::Time::Zero)
+, mElapsedTime(sf::Time::Zero)
+, mRepeat(false)
+{
+	mNumFrames = durations.size();
+
+	for (int i = 0; i != durations.size(); i++)
+	{
+		Frame frame = { frameRects[i], durations[i] };
+		mFrames.push_back(std::move(frame));
+	}
+}
+
 void Animation::setTexture(const sf::Texture& texture)
 {
 	mSprite.setTexture(texture);
 }
+
+void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, 
+						  const std::vector<int>& durations)
+{
+	mNumFrames = durations.size();
+	assert(frameRects.size() == durations.size()); // make sure the two vectors are the same size
+
+	for (int i = 0; i != durations.size(); i++)
+	{
+		Frame frame = { frameRects[i], durations[i] };
+		mFrames.push_back(std::move(frame));
+	}
+}
+
+void Animation::setFrames(const std::vector<int>& frameIDs, 
+						  const std::vector<int>& durations,
+						  const sf::Vector2i& rect)
+{
+	mNumFrames = durations.size();
+	assert(frameIDs.size() == durations.size()); // make sure the two vectors are the same size
+
+	for (int i = 0; i != durations.size(); i++)
+	{
+		int currentFrameID = frameIDs[i];
+
+		sf::IntRect currentRect;
+		currentRect.width  = rect.x;
+		currentRect.height = rect.y;
+		currentRect.left   = rect.x * (currentFrameID % nSpritesheetCol);
+		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
+
+		Frame frame = { currentRect, durations[i] };
+		mFrames.push_back(std::move(frame));
+	}
+}
+
 
 const sf::Texture* Animation::getTexture() const
 {
@@ -97,44 +186,23 @@ sf::FloatRect Animation::getGlobalBounds() const
 
 void Animation::update(sf::Time dt)
 {
-	sf::Time timePerFrame = mDuration / static_cast<float>(mNumFrames);
 	mElapsedTime += dt;
 
-	sf::Vector2i textureBounds(mSprite.getTexture()->getSize());
-	sf::IntRect textureRect = mSprite.getTextureRect();
-
-	if (mCurrentFrame == 0)
+	sf::Time timePerImageFrame = sf::seconds(mFrames[mCurrentFrame].duration / 60.f);
+	while (mElapsedTime >= timePerImageFrame && (mCurrentFrame != mFrames.size() || mRepeat))
 	{
-		textureRect = sf::IntRect(0, 0, mFrameSize.x, mFrameSize.y);
-	}
+		mElapsedTime -= timePerImageFrame;
 
-	while (mElapsedTime >= timePerFrame && (mCurrentFrame <= mNumFrames || mRepeat))
-	{
-		textureRect.left += textureRect.width;
+		mSprite.setTextureRect(mFrames[mCurrentFrame].rect);
 
-		if (textureRect.left + textureRect.width > textureBounds.x)
+		if (mRepeat && mCurrentFrame == mFrames.size() - 1)
 		{
-			textureRect.left = 0;
-			textureRect.top += textureRect.height;
+			mCurrentFrame = 0;
 		}
-
-		mElapsedTime -= timePerFrame;
-
-		if (mRepeat)
+		else
 		{
-			mCurrentFrame = (mCurrentFrame + 1) % mNumFrames;
-
-			if (mCurrentFrame == 0)
-			{
-				textureRect = sf::IntRect(0, 0, mFrameSize.x, mFrameSize.y);
-			}
-			else
-			{
-				mCurrentFrame++;
-			}
+		mCurrentFrame++;
 		}
-
-		mSprite.setTextureRect(textureRect);
 	}
 }
 

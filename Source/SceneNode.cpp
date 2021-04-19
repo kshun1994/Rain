@@ -25,12 +25,6 @@ SceneNode::Ptr SceneNode::detachChild(const SceneNode& node)
 	return result;
 }
 
-void SceneNode::update(sf::Time dt)
-{
-	updateCurrent(dt);
-	updateChildren(dt);
-}
-
 sf::Transform SceneNode::getWorldTransform() const
 {
 	sf::Transform transform = sf::Transform::Identity; // identity transform does nothing; base to multiply all parent transforms onto
@@ -66,8 +60,15 @@ void SceneNode::onCommand(const Command& command, sf::Time dt)
 	}
 }
 
+void SceneNode::update(sf::Time dt)
+{
+	updateCurrent(dt);
+	updateChildren(dt);
+}
+
 void SceneNode::updateCurrent(sf::Time)
 {
+	// do nothing by default
 }
 
 void SceneNode::updateChildren(sf::Time dt)
