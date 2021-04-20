@@ -14,6 +14,7 @@ public:
 	{
 		Yuzuriha,
 		Enkidu,
+		Shun,
 	};
 
 public:

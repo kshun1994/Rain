@@ -83,8 +83,8 @@ void Animation::setTexture(const sf::Texture& texture)
 	mSprite.setTexture(texture);
 }
 
-void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, 
-						  const std::vector<int>& durations)
+void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, // sprite sheet bounding boxes
+						  const std::vector<int>& durations)		  // corresponding durations in frames
 {
 	mNumFrames = durations.size();
 	assert(frameRects.size() == durations.size()); // make sure the two vectors are the same size
@@ -96,9 +96,9 @@ void Animation::setFrames(const std::vector<sf::IntRect>& frameRects,
 	}
 }
 
-void Animation::setFrames(const std::vector<int>& frameIDs, 
-						  const std::vector<int>& durations,
-						  const sf::Vector2i& rect)
+void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indices (start at 0)
+						  const std::vector<int>& durations, // corresponding durations in frames
+						  const sf::Vector2i& rect)			 // bounding box width/height
 {
 	mNumFrames = durations.size();
 	assert(frameIDs.size() == durations.size()); // make sure the two vectors are the same size

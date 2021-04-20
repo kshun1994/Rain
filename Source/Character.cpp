@@ -15,6 +15,8 @@ Textures::ID toTextureID(Character::Type type)
 		return Textures::ID::Yuzuriha;
 	case Character::Enkidu:
 		return Textures::ID::Enkidu;
+	case Character::Shun:
+		return Textures::ID::Shun;
 	}
 }
 

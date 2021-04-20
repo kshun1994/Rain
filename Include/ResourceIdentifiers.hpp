@@ -13,6 +13,7 @@ namespace Textures
 	{
 		Yuzuriha,
 		Enkidu,
+		Shun,
 		StageMomiji,
 		TitleScreen,
 		MainMenu,
