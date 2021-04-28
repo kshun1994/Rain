@@ -30,7 +30,7 @@ void World::loadTextures()
 {
 	mTextures.load(Textures::ID::Enkidu,		"Media/Texture/Enkidu/Enkidu_idle.png");
 	mTextures.load(Textures::ID::Yuzuriha,		"Media/Texture/Enkidu/aok0000.png");
-	//mTextures.load(Textures::ID::Shun,			"Media/Texture/Enkidu/shun_design.png");
+	mTextures.load(Textures::ID::Shun,			"Media/Texture/Enkidu/shun_design.png");
 	mTextures.load(Textures::ID::StageMomiji,	"Media/Texture/_Stage/MomijiShrineScaledx3.png");
 }
 
@@ -59,13 +59,13 @@ void World::buildScene()
 
 	std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, mTextures));
 	mPlayerCharacter = enkidu.get();
-	mPlayerCharacter->setPosition(mSpawnPosition.x + 500, mSpawnPosition.y);
+	mPlayerCharacter->setPosition(mSpawnPosition.x, mSpawnPosition.y - 50);
 	mSceneLayers[Characters]->attachChild(std::move(enkidu));
 
 	//std::unique_ptr<Character> shun(new Character(Character::Shun, mTextures));
 	//mPlayerCharacter = shun.get();
-	//mPlayerCharacter->setScale(sf::Vector2f(2.0f, 2.0f));
-	//mPlayerCharacter->setPosition(mSpawnPosition.x + 700, mSpawnPosition.y - 80);
+	//mPlayerCharacter->setScale(sf::Vector2f(5.0f, 5.0f));
+	//mPlayerCharacter->setPosition(mSpawnPosition.x, mSpawnPosition.y);
 	//mSceneLayers[Characters]->attachChild(std::move(shun));
 }
 
@@ -90,7 +90,7 @@ void World::update(sf::Time dt)
 
 	mSceneGraph.update(dt);
 	adaptPlayerPosition();
-	mWorldView.setCenter(mPlayerCharacter->getPosition().x + 150, 
+	mWorldView.setCenter(mPlayerCharacter->getPosition().x, 
 						 mPlayerCharacter->getPosition().y - ViewYOffset);
 }
 

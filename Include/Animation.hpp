@@ -58,7 +58,7 @@ private:
 	sf::Vector2i						mFrameSize; // size of one frame rect
 	std::size_t							mNumFrames;
 	std::size_t							mCurrentFrame;
-	std::vector<Frame>					mFrames;
+	std::vector<Frame>					mFrameVector;
 	sf::Time							mDuration;
 	sf::Time							mElapsedTime;
 	bool								mRepeat;

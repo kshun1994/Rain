@@ -55,7 +55,7 @@ Animation::Animation(const sf::Texture& texture,
 		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
 
 		Frame frame = { currentRect, durations[i] };
-		mFrames.push_back(std::move(frame));
+		mFrameVector.push_back(std::move(frame));
 	}
 }
 
@@ -74,7 +74,7 @@ Animation::Animation(const sf::Texture& texture,
 	for (int i = 0; i != durations.size(); i++)
 	{
 		Frame frame = { frameRects[i], durations[i] };
-		mFrames.push_back(std::move(frame));
+		mFrameVector.push_back(std::move(frame));
 	}
 }
 
@@ -92,7 +92,7 @@ void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, // sprite 
 	for (int i = 0; i != durations.size(); i++)
 	{
 		Frame frame = { frameRects[i], durations[i] };
-		mFrames.push_back(std::move(frame));
+		mFrameVector.push_back(std::move(frame));
 	}
 }
 
@@ -114,7 +114,7 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
 
 		Frame frame = { currentRect, durations[i] };
-		mFrames.push_back(std::move(frame));
+		mFrameVector.push_back(std::move(frame));
 	}
 }
 
@@ -188,14 +188,14 @@ void Animation::update(sf::Time dt)
 {
 	mElapsedTime += dt;
 
-	sf::Time timePerImageFrame = sf::seconds(mFrames[mCurrentFrame].duration / 60.f);
-	while (mElapsedTime >= timePerImageFrame && (mCurrentFrame != mFrames.size() || mRepeat))
+	sf::Time timePerImageFrame = sf::seconds(mFrameVector[mCurrentFrame].duration / 60.f);
+	while (mElapsedTime >= timePerImageFrame && (mCurrentFrame != mFrameVector.size() || mRepeat))
 	{
 		mElapsedTime -= timePerImageFrame;
 
-		mSprite.setTextureRect(mFrames[mCurrentFrame].rect);
+		mSprite.setTextureRect(mFrameVector[mCurrentFrame].rect);
 
-		if (mRepeat && mCurrentFrame == mFrames.size() - 1)
+		if (mRepeat && mCurrentFrame == mFrameVector.size() - 1)
 		{
 			mCurrentFrame = 0;
 		}
