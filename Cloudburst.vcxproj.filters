@@ -1,186 +1,189 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Character.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SpriteNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\World.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\CommandQueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Include\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\LoadingState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MenuState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ParallelTask.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PauseState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\State.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StateStack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\TitleState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Include\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Include\Container.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Label.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Button.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Include\SettingsState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Include\Animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\ResourceHolder.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Character.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Entity.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\SceneNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\SpriteNode.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\World.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ResourceIdentifiers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Command.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Category.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\CommandQueue.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Player.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\StateStack.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\State.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\StateIdentifiers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Application.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\GameState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\TitleState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\MenuState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\PauseState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\LoadingState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ParallelTask.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Container.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Component.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Label.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Button.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\SettingsState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Animation.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="include\ResourceHolder.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="README.md" />
+    <None Include="src\ResourceHolder.inl">
+      <Filter>src\Cloudburst</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Character.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Command.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommandQueue.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneNode.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteNode.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utility.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World.cpp">
+      <Filter>src\Cloudburst</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\Button.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\Component.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\Container.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\GameState.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\Label.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\LoadingState.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\MenuState.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\ParallelTask.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\PauseState.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\SettingsState.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\State.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\StateStack.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\TitleState.cpp">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\pch.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Animation.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Category.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Character.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Command.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommandQueue.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Entity.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Player.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResourceHolder.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResourceIdentifiers.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneNode.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SpriteNode.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utility.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World.h">
+      <Filter>src\Cloudburst</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\Button.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\Component.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\Container.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\GameState.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\Label.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\LoadingState.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\MenuState.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\ParallelTask.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\PauseState.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\SettingsState.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\State.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\StateIdentifiers.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\StateStack.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\TitleState.h">
+      <Filter>src\Cloudburst\state</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{5e9808d2-a25f-4beb-b341-2a4dae2c792c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Cloudburst">
+      <UniqueIdentifier>{02c3c00b-446a-4e06-b059-ca63b4fd1b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Cloudburst\state">
+      <UniqueIdentifier>{44bbbadc-62c3-4b29-ba48-83c9fba4d1e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -88,7 +88,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\Include;D:\code\C++\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src\state;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src;D:\code\C++\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,65 +147,70 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Include\Animation.cpp" />
-    <ClCompile Include="Include\Application.cpp" />
-    <ClCompile Include="Include\Component.cpp" />
-    <ClCompile Include="Include\Container.cpp" />
-    <ClCompile Include="Include\SettingsState.cpp" />
-    <ClCompile Include="Source\Button.cpp" />
-    <ClCompile Include="Source\Character.cpp" />
-    <ClCompile Include="Source\Command.cpp" />
-    <ClCompile Include="Source\CommandQueue.cpp" />
-    <ClCompile Include="Source\Entity.cpp" />
-    <ClCompile Include="Source\GameState.cpp" />
-    <ClCompile Include="Source\Label.cpp" />
-    <ClCompile Include="Source\LoadingState.cpp" />
-    <ClCompile Include="source\Main.cpp" />
-    <ClCompile Include="Source\MenuState.cpp" />
-    <ClCompile Include="Source\ParallelTask.cpp" />
-    <ClCompile Include="Source\PauseState.cpp" />
-    <ClCompile Include="Source\Player.cpp" />
-    <ClCompile Include="Source\SceneNode.cpp" />
-    <ClCompile Include="Source\SpriteNode.cpp" />
-    <ClCompile Include="Source\State.cpp" />
-    <ClCompile Include="Source\StateStack.cpp" />
-    <ClCompile Include="Source\TitleState.cpp" />
-    <ClCompile Include="Source\Utility.cpp" />
-    <ClCompile Include="Source\World.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Include\Animation.hpp" />
-    <ClInclude Include="Include\Application.hpp" />
-    <ClInclude Include="Include\Button.hpp" />
-    <ClInclude Include="Include\Category.hpp" />
-    <ClInclude Include="Include\Character.hpp" />
-    <ClInclude Include="Include\Command.hpp" />
-    <ClInclude Include="Include\CommandQueue.hpp" />
-    <ClInclude Include="Include\Component.hpp" />
-    <ClInclude Include="Include\Container.hpp" />
-    <ClInclude Include="Include\Entity.hpp" />
-    <ClInclude Include="Include\GameState.hpp" />
-    <ClInclude Include="Include\Label.hpp" />
-    <ClInclude Include="Include\LoadingState.hpp" />
-    <ClInclude Include="Include\MenuState.hpp" />
-    <ClInclude Include="Include\ParallelTask.hpp" />
-    <ClInclude Include="Include\PauseState.hpp" />
-    <ClInclude Include="Include\Player.hpp" />
-    <ClInclude Include="include\ResourceHolder.hpp" />
-    <ClInclude Include="Include\ResourceIdentifiers.hpp" />
-    <ClInclude Include="Include\SceneNode.hpp" />
-    <ClInclude Include="Include\SettingsState.hpp" />
-    <ClInclude Include="Include\SpriteNode.hpp" />
-    <ClInclude Include="Include\State.hpp" />
-    <ClInclude Include="Include\StateIdentifiers.hpp" />
-    <ClInclude Include="Include\StateStack.hpp" />
-    <ClInclude Include="Include\TitleState.hpp" />
-    <ClInclude Include="Include\Utility.hpp" />
-    <ClInclude Include="Include\World.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="include\ResourceHolder.inl" />
     <None Include="README.md" />
+    <None Include="src\ResourceHolder.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Animation.cpp" />
+    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Character.cpp" />
+    <ClCompile Include="src\Command.cpp" />
+    <ClCompile Include="src\CommandQueue.cpp" />
+    <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\SceneNode.cpp" />
+    <ClCompile Include="src\SpriteNode.cpp" />
+    <ClCompile Include="src\state\Button.cpp" />
+    <ClCompile Include="src\state\Component.cpp" />
+    <ClCompile Include="src\state\Container.cpp" />
+    <ClCompile Include="src\state\GameState.cpp" />
+    <ClCompile Include="src\state\Label.cpp" />
+    <ClCompile Include="src\state\LoadingState.cpp" />
+    <ClCompile Include="src\state\MenuState.cpp" />
+    <ClCompile Include="src\state\ParallelTask.cpp" />
+    <ClCompile Include="src\state\PauseState.cpp" />
+    <ClCompile Include="src\state\SettingsState.cpp" />
+    <ClCompile Include="src\state\State.cpp" />
+    <ClCompile Include="src\state\StateStack.cpp" />
+    <ClCompile Include="src\state\TitleState.cpp" />
+    <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\World.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Animation.h" />
+    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\Category.h" />
+    <ClInclude Include="src\Character.h" />
+    <ClInclude Include="src\Command.h" />
+    <ClInclude Include="src\CommandQueue.h" />
+    <ClInclude Include="src\Entity.h" />
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\ResourceHolder.h" />
+    <ClInclude Include="src\ResourceIdentifiers.h" />
+    <ClInclude Include="src\SceneNode.h" />
+    <ClInclude Include="src\SpriteNode.h" />
+    <ClInclude Include="src\state\Button.h" />
+    <ClInclude Include="src\state\Component.h" />
+    <ClInclude Include="src\state\Container.h" />
+    <ClInclude Include="src\state\GameState.h" />
+    <ClInclude Include="src\state\Label.h" />
+    <ClInclude Include="src\state\LoadingState.h" />
+    <ClInclude Include="src\state\MenuState.h" />
+    <ClInclude Include="src\state\ParallelTask.h" />
+    <ClInclude Include="src\state\PauseState.h" />
+    <ClInclude Include="src\state\SettingsState.h" />
+    <ClInclude Include="src\state\State.h" />
+    <ClInclude Include="src\state\StateIdentifiers.h" />
+    <ClInclude Include="src\state\StateStack.h" />
+    <ClInclude Include="src\state\TitleState.h" />
+    <ClInclude Include="src\Utility.h" />
+    <ClInclude Include="src\World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
