@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="src\ResourceHolder.inl">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -11,79 +11,82 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\Animation.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\Application.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\Character.cpp">
-      <Filter>src\Cloudburst</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Command.cpp">
-      <Filter>src\Cloudburst</Filter>
-    </ClCompile>
-    <ClCompile Include="src\CommandQueue.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\Entity.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\Main.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\Player.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\SceneNode.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\SpriteNode.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\Utility.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\World.cpp">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClCompile>
     <ClCompile Include="src\state\Button.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\Component.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\Container.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\GameState.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\Label.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\LoadingState.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\MenuState.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\ParallelTask.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\PauseState.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\SettingsState.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\State.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\StateStack.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClCompile>
     <ClCompile Include="src\state\TitleState.cpp">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Command.cpp">
+      <Filter>src\Rain\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommandQueue.cpp">
+      <Filter>src\Rain\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>src\Rain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,99 +94,105 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Animation.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\Application.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\Category.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\Character.h">
-      <Filter>src\Cloudburst</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Command.h">
-      <Filter>src\Cloudburst</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CommandQueue.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\Entity.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\Player.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\ResourceHolder.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\ResourceIdentifiers.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneNode.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\SpriteNode.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\Utility.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\World.h">
-      <Filter>src\Cloudburst</Filter>
+      <Filter>src\Rain</Filter>
     </ClInclude>
     <ClInclude Include="src\state\Button.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\Component.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\Container.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\GameState.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\Label.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\LoadingState.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\MenuState.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\ParallelTask.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\PauseState.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\SettingsState.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\State.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\StateIdentifiers.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\StateStack.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
     </ClInclude>
     <ClInclude Include="src\state\TitleState.h">
-      <Filter>src\Cloudburst\state</Filter>
+      <Filter>src\Rain\state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Command.h">
+      <Filter>src\Rain\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommandQueue.h">
+      <Filter>src\Rain\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>src\Rain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{5e9808d2-a25f-4beb-b341-2a4dae2c792c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Cloudburst">
+    <Filter Include="src\Rain">
       <UniqueIdentifier>{02c3c00b-446a-4e06-b059-ca63b4fd1b4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Cloudburst\state">
+    <Filter Include="src\Rain\state">
       <UniqueIdentifier>{44bbbadc-62c3-4b29-ba48-83c9fba4d1e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Rain\input">
+      <UniqueIdentifier>{e96d2e8a-f783-4d2e-8876-9bbb7957bd0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

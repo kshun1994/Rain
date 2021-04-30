@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Log.h"
+
 #include <iostream>
 #include <cassert>
 #include <memory>

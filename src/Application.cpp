@@ -46,6 +46,8 @@ void Application::run()
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
+	Log::Init(); // Initialize logging
+
 	while (mWindow.isOpen())
 	{
 		sf::Time dt = clock.restart();
