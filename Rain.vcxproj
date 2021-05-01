@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2FB18B7C-1BE8-8C0D-C4D4-7210B0EA080F}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Rain</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\Debug-windows-x86_64\Rain\</OutDir>
+    <IntDir>..\bin-int\Debug-windows-x86_64\Rain\</IntDir>
+    <TargetName>Rain</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Release-windows-x86_64\Rain\</OutDir>
+    <IntDir>..\bin-int\Release-windows-x86_64\Rain\</IntDir>
+    <TargetName>Rain</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>rnpch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>SFML_STATIC;RN_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>source;vendor\spdlog\include;vendor\sfml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>sfml-window-s-d.lib;sfml-system-s-d.lib;sfml-audio-s-d.lib;sfml-graphics-s-d.lib;sfml-network-s-d.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;freetype.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sfml\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>rnpch.h</PrecompiledHeaderFile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>SFML_STATIC;RN_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>source;vendor\spdlog\include;vendor\sfml\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>sfml-window-s.lib;sfml-system-s.lib;sfml-audio-s.lib;sfml-graphics-s.lib;sfml-network-s.lib;opengl32.lib;winmm.lib;gdi32.lib;ws2_32.lib;freetype.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>vendor\sfml\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="source\Animation.h" />
+    <ClInclude Include="source\Application.h" />
+    <ClInclude Include="source\Button.h" />
+    <ClInclude Include="source\Category.h" />
+    <ClInclude Include="source\Character.h" />
+    <ClInclude Include="source\Command.h" />
+    <ClInclude Include="source\CommandQueue.h" />
+    <ClInclude Include="source\Component.h" />
+    <ClInclude Include="source\Container.h" />
+    <ClInclude Include="source\Entity.h" />
+    <ClInclude Include="source\GameState.h" />
+    <ClInclude Include="source\InputWrapper.h" />
+    <ClInclude Include="source\Label.h" />
+    <ClInclude Include="source\LoadingState.h" />
+    <ClInclude Include="source\Log.h" />
+    <ClInclude Include="source\MenuState.h" />
+    <ClInclude Include="source\ParallelTask.h" />
+    <ClInclude Include="source\PauseState.h" />
+    <ClInclude Include="source\Player.h" />
+    <ClInclude Include="source\ResourceHolder.h" />
+    <ClInclude Include="source\ResourceIdentifiers.h" />
+    <ClInclude Include="source\SceneNode.h" />
+    <ClInclude Include="source\SettingsState.h" />
+    <ClInclude Include="source\SpriteNode.h" />
+    <ClInclude Include="source\State.h" />
+    <ClInclude Include="source\StateIdentifiers.h" />
+    <ClInclude Include="source\StateStack.h" />
+    <ClInclude Include="source\TitleState.h" />
+    <ClInclude Include="source\Utility.h" />
+    <ClInclude Include="source\World.h" />
+    <ClInclude Include="source\rnpch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Animation.cpp" />
+    <ClCompile Include="source\Application.cpp" />
+    <ClCompile Include="source\Button.cpp" />
+    <ClCompile Include="source\Character.cpp" />
+    <ClCompile Include="source\Command.cpp" />
+    <ClCompile Include="source\CommandQueue.cpp" />
+    <ClCompile Include="source\Component.cpp" />
+    <ClCompile Include="source\Container.cpp" />
+    <ClCompile Include="source\Entity.cpp" />
+    <ClCompile Include="source\GameState.cpp" />
+    <ClCompile Include="source\InputWrapper.cpp" />
+    <ClCompile Include="source\Label.cpp" />
+    <ClCompile Include="source\LoadingState.cpp" />
+    <ClCompile Include="source\Log.cpp" />
+    <ClCompile Include="source\Main.cpp" />
+    <ClCompile Include="source\MenuState.cpp" />
+    <ClCompile Include="source\ParallelTask.cpp" />
+    <ClCompile Include="source\PauseState.cpp" />
+    <ClCompile Include="source\Player.cpp" />
+    <ClCompile Include="source\SceneNode.cpp" />
+    <ClCompile Include="source\SettingsState.cpp" />
+    <ClCompile Include="source\SpriteNode.cpp" />
+    <ClCompile Include="source\State.cpp" />
+    <ClCompile Include="source\StateStack.cpp" />
+    <ClCompile Include="source\TitleState.cpp" />
+    <ClCompile Include="source\Utility.cpp" />
+    <ClCompile Include="source\World.cpp" />
+    <ClCompile Include="source\rnpch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
