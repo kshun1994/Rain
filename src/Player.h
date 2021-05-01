@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Command.h"
+#include "InputWrapper.h"
 
 #include <SFML/Window/Event.hpp>
 
@@ -9,20 +10,6 @@ class CommandQueue;
 
 class Player
 {
-public:
-	enum Action
-	{
-		Up,
-		Down,
-		Left,
-		Right,
-		A,
-		B,
-		C,
-		D,
-		ActionCount,
-	};
-
 public:
 												Player();
 

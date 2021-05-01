@@ -88,6 +88,9 @@
     <ClCompile Include="src\Log.cpp">
       <Filter>src\Rain</Filter>
     </ClCompile>
+    <ClCompile Include="InputWrapper.cpp">
+      <Filter>src\Rain\input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\pch.h">
@@ -179,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="src\Log.h">
       <Filter>src\Rain</Filter>
+    </ClInclude>
+    <ClInclude Include="InputWrapper.h">
+      <Filter>src\Rain\input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

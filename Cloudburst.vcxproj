@@ -89,7 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\vendor\spdlog\include;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src\state;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src;D:\code\C++\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src\input;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\vendor\spdlog\include;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src\state;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src;D:\code\C++\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\vendor\spdlog\include;D:\code\C++\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\src\input;C:\Users\kshun\Documents\GitHub\Cloudburst\Cloudburst\vendor\spdlog\include;D:\code\C++\libraries\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +152,7 @@
     <None Include="src\ResourceHolder.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="InputWrapper.cpp" />
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Character.cpp" />
@@ -184,6 +185,7 @@
     <ClCompile Include="src\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="InputWrapper.h" />
     <ClInclude Include="src\Animation.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Category.h" />
