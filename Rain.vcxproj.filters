@@ -1,3 +1,195 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="source\Animation.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Application.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Button.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Command.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CommandQueue.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Component.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Container.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InputWrapper.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Label.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Log.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\rnpch.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SceneNode.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SpriteNode.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Utility.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\World.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Character.cpp">
+      <Filter>source\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Entity.cpp">
+      <Filter>source\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Player.cpp">
+      <Filter>source\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="source\GameState.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\LoadingState.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MenuState.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ParallelTask.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PauseState.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SettingsState.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\State.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\StateStack.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TitleState.cpp">
+      <Filter>source\state</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\Animation.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Application.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Button.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Category.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Command.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CommandQueue.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Component.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Container.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InputWrapper.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Label.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Log.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceHolder.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ResourceIdentifiers.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\rnpch.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SceneNode.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SpriteNode.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utility.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\World.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Character.h">
+      <Filter>source\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Entity.h">
+      <Filter>source\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Player.h">
+      <Filter>source\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="source\GameState.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\LoadingState.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\MenuState.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ParallelTask.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PauseState.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SettingsState.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\State.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateIdentifiers.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\StateStack.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+    <ClInclude Include="source\TitleState.h">
+      <Filter>source\state</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{087d5bb0-b186-432c-a487-c335f1f9b26d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\entity">
+      <UniqueIdentifier>{02aa2b53-5841-4d3c-bedb-5eb11cc2156d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\state">
+      <UniqueIdentifier>{b90f2c20-ffbb-4c4d-baa1-734a7d75ad79}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
 </Project>
