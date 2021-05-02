@@ -56,9 +56,9 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 	target.draw(mIdleAnimation, states);
 }
 
-void Character::updateCurrent(sf::Time dt)
+void Character::updateCurrent()
 {
-	mIdleAnimation.update(dt);
+	mIdleAnimation.update();
 }
 
 unsigned int Character::getCategory() const

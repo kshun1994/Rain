@@ -42,8 +42,6 @@ Application::Application()
 	registerStates();
 	RN_DEBUG("States registered.");
 	mStateStack.pushState(States::ID::Title);
-
-	RN_DEBUG("Current stack size - {}", mStateStack.getStackSize());
 }
 
 void Application::run()
@@ -60,7 +58,7 @@ void Application::run()
 			timeSinceLastUpdate -= TimePerFrame;
 
 			processInput();
-			update(TimePerFrame);
+			update();
 
 			// Check inside this loop, because stack might be empty before update() call
 			if (mStateStack.isEmpty())
@@ -84,9 +82,9 @@ void Application::processInput()
 	}
 }
 
-void Application::update(sf::Time dt)
+void Application::update()
 {
-	mStateStack.update(dt);
+	mStateStack.update();
 }
 
 void Application::render()

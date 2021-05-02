@@ -22,17 +22,17 @@ public:
 	void							attachChild(Ptr child);
 	Ptr								detachChild(const SceneNode& node);
 
-	void							update(sf::Time dt);
+	void							update();
 
 	sf::Vector2f					getWorldPosition() const;
 	sf::Transform					getWorldTransform() const;
 
 	virtual unsigned int			getCategory() const;
-	void							onCommand(const Command& command, sf::Time dt);
+	void							onCommand(const Command& command);
 
 private:
-	virtual void					updateCurrent(sf::Time dt);
-	void							updateChildren(sf::Time dt);
+	virtual void					updateCurrent();
+	void							updateChildren();
 
 	virtual void					draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual void					drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;

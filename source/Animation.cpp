@@ -187,10 +187,8 @@ sf::FloatRect Animation::getGlobalBounds() const
 	return getTransform().transformRect(getLocalBounds());
 }
 
-void Animation::update(sf::Time dt)
+void Animation::update()
 {
-	mElapsedTime += dt;
-
 	mElapsedTicks++;
 
 	while (mElapsedTicks >= mFrameVector[mCurrentFrame].duration && (mCurrentFrame != mFrameVector.size() || mRepeat))

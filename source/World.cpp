@@ -77,7 +77,7 @@ void World::draw()
 }
 
 #include <iostream>
-void World::update(sf::Time dt)
+void World::update()
 {
 	sf::Vector2f position = mPlayerCharacter->getPosition();
 
@@ -86,10 +86,10 @@ void World::update(sf::Time dt)
 	// Forward commands to scene graph
 	while (!mCommandQueue.isEmpty())
 	{
-		mSceneGraph.onCommand(mCommandQueue.pop(), dt);
+		mSceneGraph.onCommand(mCommandQueue.pop());
 	}
 
-	mSceneGraph.update(dt);
+	mSceneGraph.update();
 	adaptPlayerPosition();
 	mWorldView.setCenter(mPlayerCharacter->getPosition().x, 
 						 mPlayerCharacter->getPosition().y - ViewYOffset);

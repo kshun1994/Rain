@@ -47,35 +47,35 @@ unsigned int SceneNode::getCategory() const // return unsigned int instead of Ca
 	return Category::Scene;
 }
 
-void SceneNode::onCommand(const Command& command, sf::Time dt)
+void SceneNode::onCommand(const Command& command)
 {
 	if (command.category & getCategory()) // if category of command matches node category
 	{
-		command.action(*this, dt); // run command on node
+		command.action(*this); // run command on node
 	}
 
 	for (const Ptr& child : mChildren)
 	{
-		child->onCommand(command, dt); // propagate command down node children chain
+		child->onCommand(command); // propagate command down node children chain
 	}
 }
 
-void SceneNode::update(sf::Time dt)
+void SceneNode::update()
 {
-	updateCurrent(dt);
-	updateChildren(dt);
+	updateCurrent();
+	updateChildren();
 }
 
-void SceneNode::updateCurrent(sf::Time)
+void SceneNode::updateCurrent()
 {
 	// do nothing by default
 }
 
-void SceneNode::updateChildren(sf::Time dt)
+void SceneNode::updateChildren()
 {
 	for (const Ptr& child : mChildren)
 	{
-		child->update(dt);
+		child->update();
 	}
 }
 

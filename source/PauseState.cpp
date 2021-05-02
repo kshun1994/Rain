@@ -43,7 +43,7 @@ void PauseState::draw()
 	window.draw(mInstructionText);
 }
 
-bool PauseState::update(sf::Time)
+bool PauseState::update()
 {
 	return false;
 }

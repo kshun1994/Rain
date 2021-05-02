@@ -20,7 +20,7 @@ public:
 public:
 	explicit			Character(Type type, const TextureHolder& textures);
 	virtual void		drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void		updateCurrent(sf::Time dt);
+	virtual void		updateCurrent();
 
 	unsigned int		getCategory() const;
 

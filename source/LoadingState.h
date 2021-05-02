@@ -14,7 +14,7 @@ public:
 	LoadingState(StateStack& stack, Context context);
 
 	virtual void			draw();
-	virtual bool			update(sf::Time dt);
+	virtual bool			update();
 	virtual bool			handleEvent(const sf::Event& event);
 
 	void					setCompletion(float percent);

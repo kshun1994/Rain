@@ -18,7 +18,7 @@ public:
 	void					accelerate(sf::Vector2f velocity);
 
 private:
-	virtual void			updateCurrent(sf::Time dt);
+	virtual void			updateCurrent();
 
 private:
 	int						mHealth;

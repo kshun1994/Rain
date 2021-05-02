@@ -22,7 +22,7 @@ class World : private sf::NonCopyable
 {
 public:
 	explicit											World(sf::RenderWindow& window);
-	void												update(sf::Time dt);
+	void												update();
 	void												draw();
 	CommandQueue&										getCommandQueue();
 

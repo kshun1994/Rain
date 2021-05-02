@@ -11,7 +11,7 @@ struct CharacterMover
 	{
 	}
 
-	void operator() (Character& character, sf::Time) const
+	void operator() (Character& character) const
 	{
 		character.accelerate(velocity);
 	}

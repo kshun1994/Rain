@@ -42,7 +42,7 @@ void SettingsState::draw()
 	window.draw(mGUIContainer);
 }
 
-bool SettingsState::update(sf::Time dt)
+bool SettingsState::update()
 {
 	return true;
 }

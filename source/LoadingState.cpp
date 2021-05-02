@@ -43,7 +43,7 @@ void LoadingState::draw()
 	window.draw(mProgressBar);
 }
 
-bool LoadingState::update(sf::Time)
+bool LoadingState::update()
 {
 	// Update the progress bar from the remote task or finish it
 	if (mLoadingTask.isFinished())

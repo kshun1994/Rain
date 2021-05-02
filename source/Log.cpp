@@ -6,7 +6,7 @@
 
 void Log::Init()
 {
-	spdlog::set_pattern("%^[%T] [Function %!] [Line %#]: %v%$");
+	spdlog::set_pattern("%^[%T] [%!] [Line %#]: %v%$");
 
 	spdlog::set_level(spdlog::level::trace);
 }

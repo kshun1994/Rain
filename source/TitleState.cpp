@@ -31,15 +31,15 @@ void TitleState::draw()
 		window.draw(mText);
 }
 
-bool TitleState::update(sf::Time dt)
+bool TitleState::update()
 {
-	mTextEffectTime += dt;
+	// mTextEffectTime += dt;
 
-	if (mTextEffectTime >= sf::seconds(0.5f))
-	{
-		mShowText = !mShowText; // toggle text visibility every half second
-		mTextEffectTime = sf::Time::Zero;
-	}
+	//if (mTextEffectTime >= sf::seconds(0.5f))
+	//{
+	//	mShowText = !mShowText; // toggle text visibility every half second
+	//	mTextEffectTime = sf::Time::Zero;
+	//}
 
 	return true;
 }

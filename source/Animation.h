@@ -48,7 +48,7 @@ public:
 	sf::FloatRect						getLocalBounds() const;
 	sf::FloatRect						getGlobalBounds() const;
 
-	void								update(sf::Time dt);
+	void								update();
 	void								draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
