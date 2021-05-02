@@ -26,27 +26,30 @@ Application::Application()
 	mWindow.setKeyRepeatEnabled(false);
 
 	mFonts.load(Fonts::ID::Main, "media/font/CarroisGothicSC-Regular.ttf");
+	RN_DEBUG("Font(s) loaded.");
 
 	mTextures.load(Textures::ID::TitleScreen,    "media/texture/state/Title.png");
 	mTextures.load(Textures::ID::MainMenu,		 "media/texture/state/MainMenu.png");
 	mTextures.load(Textures::ID::ButtonNormal,	 "media/texture/ui/ButtonNormal.png");
 	mTextures.load(Textures::ID::ButtonSelected, "media/texture/ui/ButtonSelected.png");
 	mTextures.load(Textures::ID::ButtonPressed,	 "media/texture/ui/ButtonPressed.png");
+	RN_DEBUG("Textures(s) loaded.");
 
 	mStatsText.setFont(mFonts.get(Fonts::ID::Main));
 	mStatsText.setPosition(5.f, 5.f);
 	mStatsText.setCharacterSize(20u);
 
 	registerStates();
+	RN_DEBUG("States registered.");
 	mStateStack.pushState(States::ID::Title);
+
+	RN_DEBUG("Current stack size - {}", mStateStack.getStackSize());
 }
 
 void Application::run()
 {
 	sf::Clock clock;
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-
-	Log::Init(); // Initialize logging
 
 	while (mWindow.isOpen())
 	{
@@ -83,7 +86,9 @@ void Application::processInput()
 
 void Application::update(sf::Time dt)
 {
+	RN_DEBUG("Previous stack size - {}", mStateStack.getStackSize());
 	mStateStack.update(dt);
+	RN_DEBUG("Current stack size -- {}", mStateStack.getStackSize());
 }
 
 void Application::render()

@@ -40,6 +40,7 @@ public:
 	void													clearStates();
 															
 	bool													isEmpty() const;
+	int														getStackSize() const;
 															
 															
 private:													

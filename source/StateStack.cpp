@@ -44,16 +44,27 @@ void StateStack::handleEvent(const sf::Event& event)
 void StateStack::pushState(States::ID stateID)
 {
 	mPendingList.push_back(PendingChange(Push, stateID));
+	RN_DEBUG("State pushed - {}.", stateID);
+	RN_DEBUG("Current stack size - {}.", mStack.size());
 }
 
 void StateStack::popState()
 {
 	mPendingList.push_back(PendingChange(Pop));
+	RN_DEBUG("State popped.");
+	RN_DEBUG("Current stack size - {}.", mStack.size());
 }
 
 void StateStack::clearStates()
 {
 	mPendingList.push_back(PendingChange(Clear));
+	RN_DEBUG("State stack cleared.");
+	RN_DEBUG("Current stack size - {}.", mStack.size());
+}
+
+int StateStack::getStackSize() const
+{
+	return mStack.size();
 }
 
 bool StateStack::isEmpty() const
