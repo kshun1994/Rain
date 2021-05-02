@@ -49,9 +49,6 @@ Application::Application()
 
 void Application::run()
 {
-	sf::Clock clock;
-	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-
 	while (mWindow.isOpen())
 	{
 		auto timePoint1(std::chrono::high_resolution_clock::now());
