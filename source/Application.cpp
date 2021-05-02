@@ -11,7 +11,6 @@
 #include "SettingsState.h"
 
 
-const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
 const float ftSlice = 1000.f / 60.f;
 
 Application::Application()
