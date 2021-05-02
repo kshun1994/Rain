@@ -12,6 +12,7 @@
 
 
 const sf::Time Application::TimePerFrame = sf::seconds(1.f / 60.f);
+const float ftSlice = 1000.f / 60.f;
 
 Application::Application()
 	: mWindow(sf::VideoMode(1280, 720), "Window", sf::Style::Titlebar | sf::Style::Close)
@@ -19,11 +20,12 @@ Application::Application()
 	, mFonts()
 	, mPlayer()
 	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer))
+	, mCurrentSlice(0.f)
+	, mLastFT(0.f)
 	, mStatsText()
-	, mStatsUpdateTime()
-	, mStatsNumFrames(0)
 {
 	mWindow.setKeyRepeatEnabled(false);
+	mWindow.setFramerateLimit(60);
 
 	mFonts.load(Fonts::ID::Main, "media/font/CarroisGothicSC-Regular.ttf");
 	RN_DEBUG("Font(s) loaded.");
@@ -42,6 +44,8 @@ Application::Application()
 	registerStates();
 	RN_DEBUG("States registered.");
 	mStateStack.pushState(States::ID::Title);
+
+	update();
 }
 
 void Application::run()
@@ -51,22 +55,27 @@ void Application::run()
 
 	while (mWindow.isOpen())
 	{
-		sf::Time dt = clock.restart();
-		timeSinceLastUpdate += dt;
-		while (timeSinceLastUpdate > TimePerFrame)
+		auto timePoint1(std::chrono::high_resolution_clock::now());
+
+		processInput();
+
+		mCurrentSlice += mLastFT;
+
+		for (; mCurrentSlice >= ftSlice; mCurrentSlice -= ftSlice)
 		{
-			timeSinceLastUpdate -= TimePerFrame;
-
-			processInput();
-			update();
-
-			// Check inside this loop, because stack might be empty before update() call
-			if (mStateStack.isEmpty())
-				mWindow.close();
+		update();
 		}
 
-		updateStatistics(dt);
+		if (mStateStack.isEmpty())
+			mWindow.close();
+
 		render();
+
+		auto timePoint2(std::chrono::high_resolution_clock::now());
+		auto elapsedTime(timePoint2 - timePoint1);
+		mLastFT = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(elapsedTime).count();
+
+		updateStatistics(mLastFT);
 	}
 }
 
@@ -99,17 +108,12 @@ void Application::render()
 	mWindow.display();
 }
 
-void Application::updateStatistics(sf::Time dt)
+void Application::updateStatistics(float ft)
 {
-	mStatsUpdateTime += dt;
-	mStatsNumFrames += 1;
-	if (mStatsUpdateTime >= sf::seconds(1.0f))
-	{
-		mStatsText.setString("Updates per second: " + std::to_string(mStatsNumFrames));
+	auto ftSeconds = ft / 1000.f;
+	auto fps = 1.f / ftSeconds;
 
-		mStatsUpdateTime -= sf::seconds(1.0f);
-		mStatsNumFrames = 0;
-	}
+	mStatsText.setString("Frame duration: " + std::to_string(ft) + "\nFPS: " + std::to_string(fps));
 }
 
 void Application::registerStates()

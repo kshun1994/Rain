@@ -21,7 +21,7 @@ private:
 	void					update();
 	void					render();
 
-	void					updateStatistics(sf::Time dt);
+	void					updateStatistics(float ft);
 	void					registerStates();
 
 
@@ -35,7 +35,8 @@ private:
 
 	StateStack				mStateStack;
 
+	float					mCurrentSlice;
+	float					mLastFT;
+
 	sf::Text				mStatsText;
-	sf::Time				mStatsUpdateTime;
-	std::size_t				mStatsNumFrames;
 };
