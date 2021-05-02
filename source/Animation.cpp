@@ -14,6 +14,7 @@ Animation::Animation()
 , mCurrentFrame(0)
 , mDuration(sf::Time::Zero)
 , mElapsedTime(sf::Time::Zero)
+, mElapsedTicks(0)
 , mRepeat(false)
 {
 }
@@ -25,6 +26,7 @@ Animation::Animation(const sf::Texture& texture)
 , mCurrentFrame(0)
 , mDuration(sf::Time::Zero)
 , mElapsedTime(sf::Time::Zero)
+, mElapsedTicks(0)
 , mRepeat(false)
 {
 }
@@ -38,6 +40,7 @@ Animation::Animation(const sf::Texture& texture,
 , mCurrentFrame(0)
 , mDuration(sf::Time::Zero)
 , mElapsedTime(sf::Time::Zero)
+, mElapsedTicks(0)
 , mRepeat(false)
 {
 	mNumFrames = durations.size();
@@ -66,6 +69,7 @@ Animation::Animation(const sf::Texture& texture,
 , mCurrentFrame(0)
 , mDuration(sf::Time::Zero)
 , mElapsedTime(sf::Time::Zero)
+, mElapsedTicks(0)
 , mRepeat(false)
 {
 	mNumFrames = durations.size();
@@ -187,11 +191,10 @@ void Animation::update(sf::Time dt)
 {
 	mElapsedTime += dt;
 
-	sf::Time timePerImageFrame = sf::seconds(mFrameVector[mCurrentFrame].duration / 60.f);
-	while (mElapsedTime >= timePerImageFrame && (mCurrentFrame != mFrameVector.size() || mRepeat))
-	{
-		mElapsedTime -= timePerImageFrame;
+	mElapsedTicks++;
 
+	while (mElapsedTicks >= mFrameVector[mCurrentFrame].duration && (mCurrentFrame != mFrameVector.size() || mRepeat))
+	{
 		mSprite.setTextureRect(mFrameVector[mCurrentFrame].rect);
 
 		if (mRepeat && mCurrentFrame == mFrameVector.size() - 1)
@@ -202,6 +205,8 @@ void Animation::update(sf::Time dt)
 		{
 		mCurrentFrame++;
 		}
+
+		mElapsedTicks = 0;
 	}
 }
 

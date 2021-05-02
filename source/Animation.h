@@ -59,5 +59,6 @@ private:
 	std::vector<Frame>					mFrameVector;
 	sf::Time							mDuration;
 	sf::Time							mElapsedTime;
+	int									mElapsedTicks;
 	bool								mRepeat;
 };

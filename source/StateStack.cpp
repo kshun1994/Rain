@@ -44,21 +44,21 @@ void StateStack::handleEvent(const sf::Event& event)
 void StateStack::pushState(States::ID stateID)
 {
 	mPendingList.push_back(PendingChange(Push, stateID));
-	RN_DEBUG("State pushed - {}.", stateID);
+	RN_DEBUG("State push requested - {}.", stateID);
 	RN_DEBUG("Current stack size - {}.", mStack.size());
 }
 
 void StateStack::popState()
 {
 	mPendingList.push_back(PendingChange(Pop));
-	RN_DEBUG("State popped.");
+	RN_DEBUG("State pop requested.");
 	RN_DEBUG("Current stack size - {}.", mStack.size());
 }
 
 void StateStack::clearStates()
 {
 	mPendingList.push_back(PendingChange(Clear));
-	RN_DEBUG("State stack cleared.");
+	RN_DEBUG("Stack clear requested.");
 	RN_DEBUG("Current stack size - {}.", mStack.size());
 }
 
@@ -88,16 +88,20 @@ void StateStack::applyPendingChanges()
 		{
 		case Action::Push:
 			mStack.push_back(createState(change.stateID));
+			RN_DEBUG("State pushed - {}.", change.stateID);
 			break;
 
 		case Action::Pop:
 			mStack.pop_back();
+			RN_DEBUG("State popped.");
 			break;
 
 		case Action::Clear:
 			mStack.clear();
+			RN_DEBUG("Stack cleared.");
 			break;
 		}
+		RN_DEBUG("Current stack size - {}", mStack.size());
 	}
 
 	mPendingList.clear();

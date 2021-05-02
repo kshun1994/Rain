@@ -86,9 +86,7 @@ void Application::processInput()
 
 void Application::update(sf::Time dt)
 {
-	RN_DEBUG("Previous stack size - {}", mStateStack.getStackSize());
 	mStateStack.update(dt);
-	RN_DEBUG("Current stack size -- {}", mStateStack.getStackSize());
 }
 
 void Application::render()
