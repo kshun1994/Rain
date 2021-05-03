@@ -33,17 +33,12 @@ public:
 
 	void								setFrameSize(sf::Vector2i frameSize);
 	void								setNumFrames(std::size_t numFrames);
-	void								setDuration(sf::Time duration);
 	void								setRepeating(bool flag);
 
 	const sf::Texture*					getTexture() const;
 	sf::Vector2i						getFrameSize() const;
 	std::size_t							getNumFrames() const;
-	sf::Time							getDuration() const;
 	bool								isRepeating() const;
-
-	void								restart();
-	bool								isFinished() const;
 
 	sf::FloatRect						getLocalBounds() const;
 	sf::FloatRect						getGlobalBounds() const;

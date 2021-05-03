@@ -44,7 +44,7 @@ void StateStack::handleEvent(const sf::Event& event)
 void StateStack::pushState(States::ID stateID)
 {
 	mPendingList.push_back(PendingChange(Push, stateID));
-	RN_DEBUG("State push requested - {}.", stateID);
+	RN_DEBUG("State push requested - {}.", magic_enum::enum_name(stateID));
 	RN_DEBUG("Current stack size - {}.", mStack.size());
 }
 
@@ -88,7 +88,7 @@ void StateStack::applyPendingChanges()
 		{
 		case Action::Push:
 			mStack.push_back(createState(change.stateID));
-			RN_DEBUG("State pushed - {}.", change.stateID);
+			RN_DEBUG("State pushed - {}.", magic_enum::enum_name(change.stateID));
 			break;
 
 		case Action::Pop:

@@ -26,6 +26,5 @@ public:
 
 private:
 	Type				mType;
-	sf::Sprite			mSprite;
-	Animation			mIdleAnimation;
+	Animation			mSprite;
 };

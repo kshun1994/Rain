@@ -22,9 +22,6 @@
     <ClCompile Include="source\Container.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\InputWrapper.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="source\Label.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -55,9 +52,6 @@
     <ClCompile Include="source\Entity.cpp">
       <Filter>source\entity</Filter>
     </ClCompile>
-    <ClCompile Include="source\Player.cpp">
-      <Filter>source\entity</Filter>
-    </ClCompile>
     <ClCompile Include="source\GameState.cpp">
       <Filter>source\state</Filter>
     </ClCompile>
@@ -85,6 +79,10 @@
     <ClCompile Include="source\TitleState.cpp">
       <Filter>source\state</Filter>
     </ClCompile>
+    <ClCompile Include="source\Player.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InputWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -109,9 +107,6 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Container.h">
-      <Filter>source</Filter>
-    </ClInclude>
-    <ClInclude Include="source\InputWrapper.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Label.h">
@@ -147,9 +142,6 @@
     <ClInclude Include="source\Entity.h">
       <Filter>source\entity</Filter>
     </ClInclude>
-    <ClInclude Include="source\Player.h">
-      <Filter>source\entity</Filter>
-    </ClInclude>
     <ClInclude Include="source\GameState.h">
       <Filter>source\state</Filter>
     </ClInclude>
@@ -180,6 +172,10 @@
     <ClInclude Include="source\TitleState.h">
       <Filter>source\state</Filter>
     </ClInclude>
+    <ClInclude Include="source\Player.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InputWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">
@@ -191,5 +187,8 @@
     <Filter Include="source\state">
       <UniqueIdentifier>{b90f2c20-ffbb-4c4d-baa1-734a7d75ad79}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

@@ -93,6 +93,9 @@ void World::update()
 	adaptPlayerPosition();
 	mWorldView.setCenter(mPlayerCharacter->getPosition().x, 
 						 mPlayerCharacter->getPosition().y - ViewYOffset);
+
+	// RN_DEBUG("Current character coordinates are: ({0}, {1}).", 
+	// 	mPlayerCharacter->getPosition().x, mPlayerCharacter->getPosition().y);
 }
 
 CommandQueue& World::getCommandQueue()

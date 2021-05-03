@@ -19,3 +19,7 @@ bool CommandQueue::isEmpty() const
 {
 	return mQueue.empty();
 }
+int CommandQueue::getQueueSize() const
+{
+	return mQueue.size();
+}

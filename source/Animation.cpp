@@ -147,16 +147,6 @@ std::size_t Animation::getNumFrames() const
 	return mNumFrames;
 }
 
-void Animation::setDuration(sf::Time duration)
-{
-	mDuration = duration;
-}
-
-sf::Time Animation::getDuration() const
-{
-	return mDuration;
-}
-
 void Animation::setRepeating(bool flag)
 {
 	mRepeat = flag;
@@ -165,16 +155,6 @@ void Animation::setRepeating(bool flag)
 bool Animation::isRepeating() const
 {
 	return mRepeat;
-}
-
-void Animation::restart()
-{
-	mCurrentFrame = 0;
-}
-
-bool Animation::isFinished() const
-{
-	return mCurrentFrame >= mNumFrames;
 }
 
 sf::FloatRect Animation::getLocalBounds() const

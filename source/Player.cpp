@@ -20,6 +20,9 @@ struct CharacterMover
 };
 
 Player::Player()
+: mPlayerID(0)
+, mIsUsingKeyboard(true)
+, mJoystickID(0)
 {
 	// Set default key bindings
 	mKeyBinding[sf::Keyboard::W]		 = Up;
@@ -38,6 +41,36 @@ Player::Player()
 	{
 		pair.second.category = Category::Character;
 	}
+}
+
+void Player::setPlayerID(int playerID)
+{
+	mPlayerID = playerID;
+}
+
+int Player::getPlayerID() const
+{
+	return mPlayerID;
+}
+
+void Player::setUsingKeyboard(bool flag)
+{
+	mIsUsingKeyboard = flag;
+}
+
+bool Player::isUsingKeyboard() const
+{
+	return mIsUsingKeyboard;
+}
+
+void Player::setJoystickID(int joystickID)
+{
+	mJoystickID = joystickID;
+}
+
+int Player::getJoystickID() const
+{
+	return mJoystickID;
 }
 
 void Player::handleRealtimeInput(CommandQueue& commands)
@@ -92,8 +125,8 @@ void Player::initializeActions()
 {
 	const float playerSpeed = 200.f;
 
-	mActionBinding[Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
-	mActionBinding[Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
+	mActionBinding[Action::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
+	mActionBinding[Action::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
 }
 
 bool Player::isRealtimeAction(Action action)

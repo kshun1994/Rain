@@ -13,18 +13,18 @@
 class SettingsState : public State
 {
 public:
-															SettingsState(StateStack& stack, Context context);
-	virtual void											draw();
-	virtual bool											update();
-	virtual bool											handleEvent(const sf::Event& event);
+																				SettingsState(StateStack& stack, Context context);
+	virtual void																draw();
+	virtual bool																update();
+	virtual bool																handleEvent(const sf::Event& event);
 
 private:
-	void													updateLabels();
-	void													addButtonLabel(Player::Action action, float y, const std::string& text, Context context);
+	void																		updateLabels();
+	void																		addButtonLabel(Player::Action action, float y, const std::string& text, Context context);
 
 private:
-	sf::Sprite												mBackgroundSprite;
-	GUI::Container											mGUIContainer;
-	std::array<GUI::Button::Ptr, Player::ActionCount>		mBindingButtons;
-	std::array<GUI::Label::Ptr, Player::ActionCount>		mBindingLabels;
+	sf::Sprite																	mBackgroundSprite;
+	GUI::Container																mGUIContainer;
+	std::array<GUI::Button::Ptr, magic_enum::enum_count<Player::Action>()>		mBindingButtons;
+	std::array<GUI::Label::Ptr, magic_enum::enum_count<Player::Action>()>		mBindingLabels;
 };

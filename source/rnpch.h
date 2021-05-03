@@ -19,6 +19,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <magic_enum.hpp>
+
 #ifdef RN_PLATFORM_WINDOWS
 #include <Windows.hpp>
 #endif // RN_PLATFORM_WINDOWS

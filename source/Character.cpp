@@ -20,22 +20,10 @@ Textures::ID toTextureID(Character::Type type)
 	}
 }
 
-//Character::Character(Type type, const TextureHolder& textures)
-//	: mType(type)
-//	, mSprite(textures.get(toTextureID(type)))
-//{
-//	sf::FloatRect bounds = mSprite.getLocalBounds();
-//	mSprite.setOrigin(bounds.width / 2.f, bounds.height / 2.f);
-//}
-
 Character::Character(Type type, const TextureHolder& textures)
 : mType(type)
 , mSprite(textures.get(toTextureID(type)))
-, mIdleAnimation(textures.get(toTextureID(type)))
 {
-	sf::FloatRect bounds = mSprite.getLocalBounds();
-	mSprite.setOrigin(bounds.width / 2.f, bounds.height); // set origin to horizontal midpoint at bottom of sprite
-
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
 	const sf::Vector2i EnkSpriteDims(1600, 768);
@@ -46,19 +34,19 @@ Character::Character(Type type, const TextureHolder& textures)
 		durations.push_back(7);
 	}
 	
-	mIdleAnimation.setFrames(frameIDs, durations, EnkSpriteDims);
-	mIdleAnimation.setRepeating(true);
-	mIdleAnimation.setOrigin(EnkSpriteDims.x / 2.f, EnkSpriteDims.y);
+	mSprite.setFrames(frameIDs, durations, EnkSpriteDims);
+	mSprite.setRepeating(true);
+	mSprite.setOrigin(EnkSpriteDims.x / 2.f, EnkSpriteDims.y);
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(mIdleAnimation, states);
+	target.draw(mSprite, states);
 }
 
 void Character::updateCurrent()
 {
-	mIdleAnimation.update();
+	mSprite.update();
 }
 
 unsigned int Character::getCategory() const
