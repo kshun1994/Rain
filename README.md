@@ -20,6 +20,8 @@ Rainy days
 	- Just handle everything through input stream
 	- Entities have access to inputs over the last X frames
 	- Inputs are represented as controller state per frame, represented as bit flag sum int
+- [ ] Expand settings state to allow joystick button binding
+	- Analog stick threshold/axis binding
 - [ ] SOCD
 	- Currently possible to input opposite directions at the same time---needs to be fixed
 - [ ] Device select state: 
