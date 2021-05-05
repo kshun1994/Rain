@@ -21,7 +21,7 @@ bool GameState::update()
 	CommandQueue& commands = mWorld.getCommandQueue();
 	mPlayer.handleRealtimeInput(commands);
 	
-	RN_DEBUG("Current queue size - {}.", commands.getQueueSize());
+	// RN_DEBUG("Current queue size - {}.", commands.getQueueSize());
 
 	return true;
 }

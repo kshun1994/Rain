@@ -22,7 +22,13 @@ struct CharacterMover
 Player::Player()
 : mPlayerID(0)
 , mIsUsingKeyboard(true)
-, mJoystickID(0)
+, mJoystickID()
+, mIsUsingAnalogStick(false)
+, mAnalogThreshold(25)
+, mAnalogXAxis(sf::Joystick::X)
+, mAnalogYAxis(sf::Joystick::Y)
+, mInputState()
+, mAccumulatedInput()
 {
 	// Set default key bindings
 	mKeyBinding[sf::Keyboard::W]		 = Up;
@@ -73,6 +79,31 @@ int Player::getJoystickID() const
 	return mJoystickID;
 }
 
+bool Player::isUsingAnalogStick() const
+{
+	return mIsUsingAnalogStick;
+}
+
+void Player::setAnalogThreshold(float threshold)
+{
+	mAnalogThreshold = threshold;
+}
+
+void Player::setUsingAnalogStick(bool flag)
+{
+	mIsUsingAnalogStick = flag;
+}
+
+void Player::setAnalogXAxis(sf::Joystick::Axis axis)
+{
+	mAnalogXAxis = axis;
+}
+
+void Player::setAnalogYAxis(sf::Joystick::Axis axis)
+{
+	mAnalogYAxis = axis;
+}
+
 void Player::handleRealtimeInput(CommandQueue& commands)
 {
 	for (auto pair : mKeyBinding)
@@ -82,6 +113,71 @@ void Player::handleRealtimeInput(CommandQueue& commands)
 			commands.push(mActionBinding[pair.second]);
 		}
 	}
+}
+
+int Player::getCurrentInputState()
+{
+	mInputState = 0;
+
+	if (mIsUsingKeyboard)
+	{
+		for (auto pair : mKeyBinding)
+		{
+			if (sf::Keyboard::isKeyPressed(pair.first))
+			{
+				mInputState |= pair.second;
+			}
+		}
+	}
+	else // If using a joystick
+	{
+		if (mIsUsingAnalogStick)
+		{
+			if		(sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) > mAnalogThreshold)
+			{
+				mInputState |= Action::Up;
+			}
+			else if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) < -mAnalogThreshold)
+			{
+				mInputState |= Action::Down;
+			}
+
+			if		(sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) > mAnalogThreshold)
+			{
+				mInputState |= Action::Right;
+			}
+			else if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) < -mAnalogThreshold)
+			{
+				mInputState |= Action::Left;
+			}
+
+		}
+
+		for (auto pair : mKeyBinding)
+		{
+			if (sf::Joystick::isButtonPressed(mJoystickID, pair.first))
+			{
+				mInputState |= pair.second;
+			}
+		}
+	}
+
+	return mInputState;
+}
+
+void Player::accumulateInput(int input)
+{
+	mAccumulatedInput |= mInputState;
+}
+
+int	Player::getAccumulatedInput() const
+{
+	return mAccumulatedInput;
+}
+
+void Player::clearAccumulatedInput()
+{
+	mAccumulatedInput = 0;
 }
 
 void Player::handleEvent(const sf::Event& event, CommandQueue& commands)

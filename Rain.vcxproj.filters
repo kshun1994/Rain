@@ -83,6 +83,9 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="source\InputWrapper.cpp" />
+    <ClCompile Include="InputDevice.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -176,6 +179,9 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\InputWrapper.h" />
+    <ClInclude Include="InputDevice.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

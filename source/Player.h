@@ -36,17 +36,25 @@ public:
 
 	void										setJoystickID(int joystickID);
 	int											getJoystickID() const;
+	bool										isUsingAnalogStick() const;
+	void										setAnalogThreshold(float threshold);
+	void										setUsingAnalogStick(bool flag);
+	void										setAnalogXAxis(sf::Joystick::Axis axis);
+	void										setAnalogYAxis(sf::Joystick::Axis axis);
 
 	void										assignKey(Action action, sf::Keyboard::Key key);
 	sf::Keyboard::Key							getAssignedKey(Action action) const;
 
 	void										handleEvent(const sf::Event& event, CommandQueue& commands);
 	void										handleRealtimeInput(CommandQueue& commands);
+	int											getCurrentInputState();
+	void										accumulateInput(int input);
+	int											getAccumulatedInput() const;
+	void										clearAccumulatedInput();
 
 private:
 	static bool									isRealtimeAction(Action action);
 	void										initializeActions();
-	void										interpretInputState();
 
 private:
 	int											mPlayerID;
@@ -56,6 +64,11 @@ private:
 
 	bool										mIsUsingKeyboard;
 	int											mJoystickID;
+	int											mIsUsingAnalogStick;
+	float										mAnalogThreshold;
+	sf::Joystick::Axis							mAnalogXAxis;
+	sf::Joystick::Axis							mAnalogYAxis;
 
 	int											mInputState;
+	int											mAccumulatedInput;
 };

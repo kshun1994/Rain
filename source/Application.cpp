@@ -11,7 +11,7 @@
 #include "SettingsState.h"
 
 
-const float ftSlice = 1000.f / 60.f;
+const float TickDuration = 1000.f / 60.f;
 
 Application::Application()
 	: mWindow(sf::VideoMode(1280, 720), "Window", sf::Style::Titlebar | sf::Style::Close)
@@ -24,7 +24,16 @@ Application::Application()
 	, mStatsText()
 {
 	mWindow.setKeyRepeatEnabled(false);
-	mWindow.setFramerateLimit(60);
+	mWindow.setFramerateLimit(0);
+
+	// // Register connected joysticks (SFML supports up to 8)
+	// for (int ID = 0; ID < 7; ID++)
+	// {
+	// 	if (sf::Joystick::isConnected(ID))
+	// 	{
+	// 		// Assign joystick to InputDevice instance if connected
+	// 	}
+	// }
 
 	mFonts.load(Fonts::ID::Main, "media/font/CarroisGothicSC-Regular.ttf");
 	RN_DEBUG("Font(s) loaded.");
@@ -44,9 +53,11 @@ Application::Application()
 	RN_DEBUG("States registered.");
 	mStateStack.pushState(States::ID::Title);
 
+
 	update();
 }
 
+int previousInput = 0;
 void Application::run()
 {
 	while (mWindow.isOpen())
@@ -57,9 +68,16 @@ void Application::run()
 
 		mCurrentSlice += mLastFT;
 
-		for (; mCurrentSlice >= ftSlice; mCurrentSlice -= ftSlice)
+		for (; mCurrentSlice >= TickDuration; mCurrentSlice -= TickDuration)
 		{
-		update();
+			int input = mPlayer.getAccumulatedInput();
+			if (input != previousInput)
+			{
+				RN_DEBUG("Accumulated input state -- {}", input);
+			}
+			previousInput = input;
+			update();
+			mPlayer.clearAccumulatedInput();
 		}
 
 		if (mStateStack.isEmpty())
@@ -85,6 +103,9 @@ void Application::processInput()
 		if (event.type == sf::Event::Closed)
 			mWindow.close();
 	}
+
+	// Get current input state every slice and then accumulate into a single input
+	mPlayer.accumulateInput(mPlayer.getCurrentInputState());
 }
 
 void Application::update()
