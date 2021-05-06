@@ -91,7 +91,7 @@ void Player::setAnalogThreshold(float threshold)
 
 void Player::setUsingAnalogStick(bool flag)
 {
-	mIsUsingAnalogStick = flag;
+mIsUsingAnalogStick = flag;
 }
 
 void Player::setAnalogXAxis(sf::Joystick::Axis axis)
@@ -133,7 +133,7 @@ int Player::getCurrentInputState()
 	{
 		if (mIsUsingAnalogStick)
 		{
-			if		(sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) > mAnalogThreshold)
+			if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) > mAnalogThreshold)
 			{
 				mInputState |= Action::Up;
 			}
@@ -142,7 +142,7 @@ int Player::getCurrentInputState()
 				mInputState |= Action::Down;
 			}
 
-			if		(sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) > mAnalogThreshold)
+			if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) > mAnalogThreshold)
 			{
 				mInputState |= Action::Right;
 			}
@@ -168,6 +168,7 @@ int Player::getCurrentInputState()
 void Player::accumulateInput(int input)
 {
 	mAccumulatedInput |= mInputState;
+	cleanInput();
 }
 
 int	Player::getAccumulatedInput() const
@@ -178,6 +179,20 @@ int	Player::getAccumulatedInput() const
 void Player::clearAccumulatedInput()
 {
 	mAccumulatedInput = 0;
+}
+
+void Player::cleanInput()
+{
+	// Clean inputs according to SOCD
+	if ((mAccumulatedInput & Left) && (mAccumulatedInput & Right))
+	{
+		mAccumulatedInput &= ~(Left | Right); // Left + Right = Neutral
+	}
+
+	if ((mAccumulatedInput & Up) && (mAccumulatedInput & Down))
+	{
+		mAccumulatedInput &= ~Down; // Up + Down = Up
+	}
 }
 
 void Player::handleEvent(const sf::Event& event, CommandQueue& commands)

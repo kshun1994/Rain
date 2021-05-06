@@ -13,17 +13,18 @@ class Player
 public:
 	enum Action
 	{
-		Up				= 1,
-		Down			= 2,
-		Left			= 4,
-		Right			= 8,
-		A				= 16,
-		B				= 32,
-		C				= 64,
-		D				= 128,
-		Start			= 256,
-		Select			= 512,
+		Up				= 1 << 0,
+		Down			= 1 << 1,
+		Left			= 1 << 2,
+		Right			= 1 << 3,
+		A				= 1 << 4,
+		B				= 1 << 5,
+		C				= 1 << 6,
+		D				= 1 << 7,
+		Start			= 1 << 8,
+		Select			= 1 << 9,
 	};
+
 
 public:
 												Player();
@@ -55,6 +56,8 @@ public:
 private:
 	static bool									isRealtimeAction(Action action);
 	void										initializeActions();
+
+	void										cleanInput();
 
 private:
 	int											mPlayerID;
