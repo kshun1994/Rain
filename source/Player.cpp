@@ -39,6 +39,8 @@ Player::Player()
 	mKeyBinding[sf::Keyboard::K]		 = B;
 	mKeyBinding[sf::Keyboard::L]		 = C;
 	mKeyBinding[sf::Keyboard::SemiColon] = D;
+	mKeyBinding[sf::Keyboard::Enter]	 = Start;
+	mKeyBinding[sf::Keyboard::Backspace] = Select;
 
 	// Set initial action bindings
 	initializeActions();
@@ -91,7 +93,7 @@ void Player::setAnalogThreshold(float threshold)
 
 void Player::setUsingAnalogStick(bool flag)
 {
-mIsUsingAnalogStick = flag;
+	mIsUsingAnalogStick = flag;
 }
 
 void Player::setAnalogXAxis(sf::Joystick::Axis axis)
@@ -167,8 +169,8 @@ int Player::getCurrentInputState()
 
 void Player::accumulateInput(int input)
 {
-	mAccumulatedInput |= mInputState;
-	cleanInput();
+	mAccumulatedInput |= mInputState; // Add controller state on current update into accumulated input
+	cleanInput(); // Clean accumulated update as according to SOCD
 }
 
 int	Player::getAccumulatedInput() const

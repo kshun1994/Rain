@@ -25,6 +25,6 @@ private:
 private:
 	sf::Sprite																	mBackgroundSprite;
 	GUI::Container																mGUIContainer;
-	std::array<GUI::Button::Ptr, magic_enum::enum_count<Player::Action>()>		mBindingButtons;
-	std::array<GUI::Label::Ptr, magic_enum::enum_count<Player::Action>()>		mBindingLabels;
+	std::map<Player::Action, GUI::Button::Ptr>									mBindingButtons;
+	std::map<Player::Action, GUI::Label::Ptr>									mBindingLabels;
 };

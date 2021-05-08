@@ -14,20 +14,27 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	centerOrigin(mBackgroundSprite);
 	mBackgroundSprite.setPosition(context.window->getView().getSize() / 2.f);
 
+	float windowWidth = context.window->getSize().x;
+	float windowHeight = context.window->getSize().y;
+
+	RN_DEBUG("Building button labels...");
 	// Build key binding buttons and labels
-	addButtonLabel(Player::Left,  150.f, "Left",  context);
-	addButtonLabel(Player::Right, 200.f, "Right", context);
-	addButtonLabel(Player::Up,    250.f, "Up",	  context);
-	addButtonLabel(Player::Down,  300.f, "Down",  context);
-	addButtonLabel(Player::A,     350.f, "A",     context);
-	addButtonLabel(Player::B,	  400.f, "B",     context);
-	addButtonLabel(Player::C,     450.f, "C",     context);
-	addButtonLabel(Player::D,     500.f, "D",     context);
+	addButtonLabel(Player::Left,   100.f, "Left",	context);
+	addButtonLabel(Player::Right,  150.f, "Right",	context);
+	addButtonLabel(Player::Up,     200.f, "Up",		context);
+	addButtonLabel(Player::Down,   250.f, "Down",   context);
+	addButtonLabel(Player::A,      300.f, "A",      context);
+	addButtonLabel(Player::B,	   350.f, "B",      context);
+	addButtonLabel(Player::C,      400.f, "C",      context);
+	addButtonLabel(Player::D,      450.f, "D",      context);
+	addButtonLabel(Player::Start,  500.f, "Start",  context);
+	addButtonLabel(Player::Select, 550.f, "Select", context);
+	RN_DEBUG("Done!");
 
 	updateLabels();
 
 	auto backButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	backButton->setPosition(80.f, 575.f);
+	backButton->setPosition(80.f, 625.f);
 	backButton->setText("Back");
 	backButton->setCallback(std::bind(&SettingsState::requestStackPop, this));
 
@@ -51,8 +58,9 @@ bool SettingsState::handleEvent(const sf::Event& event)
 {
 	bool isKeyBinding = false;
 
-	for (std::size_t action = 0; action < magic_enum::enum_count<Player::Action>(); ++action)
+	for (std::size_t i = 0; i < magic_enum::enum_count<Player::Action>(); ++i)
 	{
+		Player::Action action = magic_enum::enum_value<Player::Action>(i);
 		if (mBindingButtons[action]->isActive())
 		{
 			isKeyBinding = true;
@@ -82,13 +90,15 @@ void SettingsState::updateLabels()
 
 	for (std::size_t i = 0; i < magic_enum::enum_count<Player::Action>(); ++i)
 	{
-		sf::Keyboard::Key key = player.getAssignedKey(static_cast<Player::Action>(i));
-		mBindingLabels[i]->setText(keyToString(key));
+		Player::Action action = magic_enum::enum_value<Player::Action>(i);
+		sf::Keyboard::Key key = player.getAssignedKey(static_cast<Player::Action>(action));
+		mBindingLabels[action]->setText(keyToString(key));
 	}
 }
 
 void SettingsState::addButtonLabel(Player::Action action, float y, const std::string& text, Context context)
 {
+	//std::size_t ind = magic_enum::enum_value<Player::Action>
 	mBindingButtons[action] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
 	mBindingButtons[action]->setPosition(80.f, y);
 	mBindingButtons[action]->setText(text);
