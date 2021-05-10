@@ -17,7 +17,6 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	float windowWidth = context.window->getSize().x;
 	float windowHeight = context.window->getSize().y;
 
-	RN_DEBUG("Building button labels...");
 	// Build key binding buttons and labels
 	addButtonLabel(Player::Left,   100.f, "Left",	context);
 	addButtonLabel(Player::Right,  150.f, "Right",	context);
@@ -29,7 +28,6 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	addButtonLabel(Player::D,      450.f, "D",      context);
 	addButtonLabel(Player::Start,  500.f, "Start",  context);
 	addButtonLabel(Player::Select, 550.f, "Select", context);
-	RN_DEBUG("Done!");
 
 	updateLabels();
 

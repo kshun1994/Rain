@@ -182,6 +182,9 @@
     <ClInclude Include="InputDevice.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="source\Constants.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

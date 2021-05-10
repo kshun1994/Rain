@@ -11,14 +11,13 @@
 #include "SettingsState.h"
 
 
-const float TickDuration = 1000.f / 60.f;
-
 Application::Application()
 	: mWindow(sf::VideoMode(1280, 720), "Window", sf::Style::Titlebar | sf::Style::Close)
 	, mTextures()
 	, mFonts()
-	, mPlayer()
-	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer))
+	, mPlayer1()
+	, mPlayer2()
+	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer1, mPlayer2))
 	, mCurrentSlice(0.f)
 	, mLastFT(0.f)
 	, mStatsText()
@@ -68,16 +67,16 @@ void Application::run()
 
 		mCurrentSlice += mLastFT;
 
-		for (; mCurrentSlice >= TickDuration; mCurrentSlice -= TickDuration)
+		for (; mCurrentSlice >= CONST_TICK_DURATION; mCurrentSlice -= CONST_TICK_DURATION)
 		{
-			int input = mPlayer.getAccumulatedInput();
+			int input = mPlayer1.getAccumulatedInput();
 			if (input != previousInput)
 			{
 				RN_DEBUG("Accumulated input state -- {}", input);
 			}
 			previousInput = input;
 			update();
-			mPlayer.clearAccumulatedInput();
+			mPlayer1.clearAccumulatedInput();
 		}
 
 		if (mStateStack.isEmpty())
@@ -105,7 +104,7 @@ void Application::processInput()
 	}
 
 	// Get current input state every slice and then accumulate into a single input
-	mPlayer.accumulateInput(mPlayer.getCurrentInputState());
+	mPlayer1.accumulateInput(mPlayer1.getCurrentInputState());
 }
 
 void Application::update()
@@ -120,7 +119,10 @@ void Application::render()
 	mStateStack.draw();
 
 	mWindow.setView(mWindow.getDefaultView());
-	mWindow.draw(mStatsText);
+
+	#ifdef RN_DEBUG
+		mWindow.draw(mStatsText);
+	#endif // RN_DEBUG
 
 	mWindow.display();
 }

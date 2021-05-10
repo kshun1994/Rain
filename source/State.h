@@ -25,12 +25,14 @@ public:
 												Context(sf::RenderWindow& window, 
 														TextureHolder& textures, 
 														FontHolder& fonts, 
-														Player& player);
+														Player& player1,
+														Player& player2);
 
 		sf::RenderWindow*						window;
 		TextureHolder*							textures;
 		FontHolder*								fonts;
-		Player*									player;
+		Player*									player1;
+		Player*									player2;
 	};
 
 public:

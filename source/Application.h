@@ -32,7 +32,8 @@ private:
 	sf::RenderWindow			mWindow;
 	TextureHolder				mTextures;
 	FontHolder					mFonts;
-	Player						mPlayer;
+	Player						mPlayer1;
+	Player						mPlayer2;
 
 	StateStack					mStateStack;
 
