@@ -18,11 +18,17 @@ namespace sf
 	class RenderWindow;
 }
 
+struct InputElement
+{
+	int							Input;
+	int							Duration;
+};
+
 class World : private sf::NonCopyable
 {
 public:
 	explicit											World(sf::RenderWindow& window);
-	void												update();
+	void												update(unsigned int player1Input, unsigned int player2Input);
 	void												draw();
 	CommandQueue&										getCommandQueue();
 
@@ -30,6 +36,8 @@ private:
 	void												loadTextures();
 	void												buildScene();
 	void												adaptPlayerPosition();
+	unsigned int										translateToNumpadInput(unsigned int playerInput);
+	void												updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> inputBuffer);
 
 private:
 	enum Layer
@@ -50,5 +58,10 @@ private:
 	sf::FloatRect										mWorldBounds;
 	sf::Vector2f										mSpawnPosition;
 	float												mScrollSpeed;
-	Character*											mPlayerCharacter;
+
+	Character*											mP1Character;
+	Character*											mP2Character;
+
+	std::deque<unsigned int>							mP1InputBuffer;
+	std::deque<unsigned int>							mP2InputBuffer;
 };

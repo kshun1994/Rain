@@ -19,7 +19,7 @@ public:
 
 private:
 	void						processInput();
-	void						update();
+	void						update(unsigned int player1Input, unsigned int player2Input);
 	void						render();
 
 	void						updateStatistics(float ft);
@@ -32,8 +32,11 @@ private:
 	sf::RenderWindow			mWindow;
 	TextureHolder				mTextures;
 	FontHolder					mFonts;
+
 	Player						mPlayer1;
 	Player						mPlayer2;
+	unsigned int				mPlayer1Input;
+	unsigned int				mPlayer2Input;
 
 	StateStack					mStateStack;
 

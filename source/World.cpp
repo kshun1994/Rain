@@ -1,7 +1,8 @@
 #include "rnpch.h"
 #include "World.h"
 
-#include <SFML/Graphics/RenderWindow.hpp>
+#include "Action.h"
+
 
 const int StageWidth = 2400;
 const int StageHeight = 1008;
@@ -18,7 +19,8 @@ World::World(sf::RenderWindow& window)
 	, mWorldBounds(0.f, 0.f, StageWidth, StageHeight)
 	, mSpawnPosition(mWorldView.getSize().x / 2.f, mWorldBounds.height)
 	, mScrollSpeed(-50.f)
-	, mPlayerCharacter(nullptr)
+	, mP1Character(nullptr)
+	, mP2Character(nullptr)
 {
 	loadTextures();
 	buildScene();
@@ -53,20 +55,20 @@ void World::buildScene()
 	mSceneLayers[Background]->attachChild(std::move(backgroundSprite));
 
 	//std::unique_ptr<Character> aokoTest(new Character(Character::Yuzuriha, mTextures));
-	//mPlayerCharacter = aokoTest.get();
-	//mPlayerCharacter->setScale(sf::Vector2f(3.7f, 3.7f));
-	//mPlayerCharacter->setPosition(mSpawnPosition.x, mSpawnPosition.y + 50);
+	//mP1Character = aokoTest.get();
+	//mP1Character->setScale(sf::Vector2f(3.7f, 3.7f));
+	//mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y + 50);
 	//mSceneLayers[Characters]->attachChild(std::move(aokoTest));
 
 	std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, mTextures));
-	mPlayerCharacter = enkidu.get();
-	mPlayerCharacter->setPosition(mSpawnPosition.x, mSpawnPosition.y - 50);
+	mP1Character = enkidu.get();
+	mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y - 50);
 	mSceneLayers[Characters]->attachChild(std::move(enkidu));
 
 	//std::unique_ptr<Character> shun(new Character(Character::Shun, mTextures));
-	//mPlayerCharacter = shun.get();
-	//mPlayerCharacter->setScale(sf::Vector2f(5.0f, 5.0f));
-	//mPlayerCharacter->setPosition(mSpawnPosition.x, mSpawnPosition.y);
+	//mP1Character = shun.get();
+	//mP1Character->setScale(sf::Vector2f(5.0f, 5.0f));
+	//mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y);
 	//mSceneLayers[Characters]->attachChild(std::move(shun));
 }
 
@@ -76,12 +78,25 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 }
 
-#include <iostream>
-void World::update()
+void World::update(unsigned int player1Input, unsigned int player2Input)
 {
-	sf::Vector2f position = mPlayerCharacter->getPosition();
+	// TODO: should character facings be updated before or after input buffers are updated?
 
-	mPlayerCharacter->setVelocity(0.f, 0.f);
+	// Read in accumulated player input for current update and add to input buffer
+	updateInputBuffer(translateToNumpadInput(player1Input), mP1InputBuffer);
+	updateInputBuffer(translateToNumpadInput(player2Input), mP2InputBuffer);
+
+	// Check hitbox/hurtbox overlaps
+
+	// Check if player characters are actionable
+
+		// If actionable, initiate action based on input buffer readout
+
+
+
+	sf::Vector2f position = mP1Character->getPosition();
+
+	mP1Character->setVelocity(0.f, 0.f);
 
 	// Forward commands to scene graph
 	while (!mCommandQueue.isEmpty())
@@ -91,11 +106,11 @@ void World::update()
 
 	mSceneGraph.update();
 	adaptPlayerPosition();
-	mWorldView.setCenter(mPlayerCharacter->getPosition().x, 
-						 mPlayerCharacter->getPosition().y - ViewYOffset);
+	mWorldView.setCenter(mP1Character->getPosition().x, 
+						 mP1Character->getPosition().y - ViewYOffset);
 
 	// RN_DEBUG("Current character coordinates are: ({0}, {1}).", 
-	// 	mPlayerCharacter->getPosition().x, mPlayerCharacter->getPosition().y);
+	// 	mP1Character->getPosition().x, mP1Character->getPosition().y);
 }
 
 CommandQueue& World::getCommandQueue()
@@ -109,8 +124,57 @@ void World::adaptPlayerPosition()
 	sf::FloatRect viewBounds(mWorldView.getCenter() - mWorldView.getSize() / 2.f, mWorldView.getSize());
 	const float borderDistance = 40.f;
 
-	sf::Vector2f position = mPlayerCharacter->getPosition();
+	sf::Vector2f position = mP1Character->getPosition();
 	position.x = std::max(position.x, mWorldBounds.left + borderDistance);
 	position.x = std::min(position.x, mWorldBounds.left + mWorldBounds.width - borderDistance);
-	mPlayerCharacter->setPosition(position);
+	mP1Character->setPosition(position);
+}
+
+// TODO: need a function to update character facings
+
+#ifdef RN_DEBUG
+unsigned int prevInput = 0;
+#endif // RN_DEBUG
+
+unsigned int World::translateToNumpadInput(unsigned int playerInput)
+{
+	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
+	// notation doesn't go past 9, the entire numpad + buttons input can be stored as a single int.
+
+	unsigned int numpad = 5; // Neutral
+
+	if ((playerInput & (Action::Left | Action::Right)) == (1 << 1 & mP1Character->getFacing())) // second part of this statement is a bitmask on character facing
+	{
+		numpad += 1;
+	}
+	unsigned int test = ~mP1Character->getFacing();
+	if ((playerInput & (Action::Left | Action::Right)) == (mP1Character->getFacing() ^ Action::Left ^ Action::Right))
+	{
+		numpad -= 1;
+	}
+	if (playerInput & Action::Up)
+	{
+		numpad += 3;
+	}
+	if (playerInput & Action::Down)
+	{
+		numpad -= 3;
+	}
+
+	if (numpad != prevInput)
+	{
+		RN_DEBUG("Input (Numpad) -- {}", numpad);
+		prevInput = numpad;
+	}
+
+	return numpad + (playerInput << 4 >> 4); // Convert the first four bits in playerInput to 0s; preserve bits pertaining to buttons (fifth onward)
+}
+
+void World::updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> inputBuffer)
+{
+	inputBuffer.push_back(numpadInput);
+	while (inputBuffer.size() > CONST_MAX_INPUT_BUFFER)
+	{
+		inputBuffer.pop_front();
+	}
 }

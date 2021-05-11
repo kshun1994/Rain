@@ -17,6 +17,8 @@ Application::Application()
 	, mFonts()
 	, mPlayer1()
 	, mPlayer2()
+	, mPlayer1Input(0)
+	, mPlayer2Input(0)
 	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer1, mPlayer2))
 	, mCurrentSlice(0.f)
 	, mLastFT(0.f)
@@ -53,10 +55,14 @@ Application::Application()
 	mStateStack.pushState(States::ID::Title);
 
 
-	update();
+	update(mPlayer1Input, mPlayer2Input);
 }
 
-int previousInput = 0;
+// For logging per-update input
+#ifdef RN_DEBUG
+	unsigned int previousInput = 0;
+#endif // RN_DEBUG
+
 void Application::run()
 {
 	while (mWindow.isOpen())
@@ -69,14 +75,20 @@ void Application::run()
 
 		for (; mCurrentSlice >= CONST_TICK_DURATION; mCurrentSlice -= CONST_TICK_DURATION)
 		{
-			int input = mPlayer1.getAccumulatedInput();
-			if (input != previousInput)
+			mPlayer1Input = mPlayer1.getAccumulatedInput();
+			mPlayer2Input = mPlayer2.getAccumulatedInput();
+
+			if (mPlayer1Input != previousInput)
 			{
-				RN_DEBUG("Accumulated input state -- {}", input);
+				//RN_DEBUG("Accumulated input state -- {}", mPlayer1Input);
 			}
-			previousInput = input;
-			update();
+			previousInput = mPlayer1Input;
+
+			update(mPlayer1Input, mPlayer2Input);
+
+			// Clear latest update's input from next set of accumulations
 			mPlayer1.clearAccumulatedInput();
+			mPlayer2.clearAccumulatedInput();
 		}
 
 		if (mStateStack.isEmpty())
@@ -105,11 +117,12 @@ void Application::processInput()
 
 	// Get current input state every slice and then accumulate into a single input
 	mPlayer1.accumulateInput(mPlayer1.getCurrentInputState());
+	mPlayer2.accumulateInput(mPlayer2.getCurrentInputState());
 }
 
-void Application::update()
+void Application::update(unsigned int mPlayer1Input, unsigned int mPlayer2Input)
 {
-	mStateStack.update();
+	mStateStack.update(mPlayer1Input, mPlayer2Input);
 }
 
 void Application::render()

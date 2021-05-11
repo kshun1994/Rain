@@ -40,7 +40,7 @@ public:
 	virtual										~State();
 
 	virtual void								draw() = 0;
-	virtual bool								update() = 0;
+	virtual bool								update(unsigned int player1Input, unsigned int player2Input) = 0;
 	virtual bool								handleEvent(const sf::Event& event) = 0;
 
 protected:

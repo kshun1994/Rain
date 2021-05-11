@@ -4,6 +4,7 @@
 #include "ResourceIdentifiers.h"
 #include "Animation.h"
 #include "CommandQueue.h"
+#include "Action.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -19,8 +20,8 @@ public:
 
 	enum Facing
 	{
-		Left,
-		Right,
+		Left	= Action::Left,
+		Right	= Action::Right,
 	};
 
 	enum Posture
@@ -36,10 +37,10 @@ public:
 	enum ActionState
 	{
 		None			= Actionable,
-		Recovery		= NotActionable << 0,
-		Hitstun			= NotActionable << 1,
-		Blockstun		= NotActionable << 2,
-		Knockdown		= NotActionable << 3,
+		Recovery		= NotActionable + 0,
+		Hitstun			= NotActionable + 1,
+		Blockstun		= NotActionable + 2,
+		Knockdown		= NotActionable + 3,
 	};
 
 public:
@@ -51,7 +52,7 @@ public:
 
 	float				getHealth() const;
 	float				getMeter() const;
-	sf::Vector2i		getPosition() const;
+	sf::Vector2f		getPosition() const;
 	Facing				getFacing() const;
 	Posture				getPosture() const;
 	ActionState			getActionState() const;
@@ -62,7 +63,8 @@ public:
 	void				setMeter(float value);
 	void				addMeter(float value);
 	void				subtractMeter(float value);
-	void				setPosition(sf::Vector2i position);
+	void				setPosition(sf::Vector2f position);
+	void				setPosition(float x, float y);
 	void				setFacing(Facing facing);
 	void				setPosture(Posture posture);
 	void				setActionState(ActionState actionState);
@@ -73,7 +75,7 @@ private:
 
 	float				mHealth;
 	float				mMeter;
-	sf::Vector2i		mPosition;
+	sf::Vector2f		mPosition;
 	Facing				mFacing;
 	Posture				mPosture;
 	ActionState			mActionState;

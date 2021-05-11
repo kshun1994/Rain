@@ -43,7 +43,7 @@ void PauseState::draw()
 	window.draw(mInstructionText);
 }
 
-bool PauseState::update()
+bool PauseState::update(unsigned int player1Input, unsigned int player2Input)
 {
 	return false;
 }

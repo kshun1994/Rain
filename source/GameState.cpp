@@ -15,18 +15,9 @@ void GameState::draw()
 	mWorld.draw();
 }
 
-bool GameState::update()
+bool GameState::update(unsigned int player1Input, unsigned int player2Input)
 {
-	// Read in accumulated player input for current update and add to input buffer
-
-	// Check hitbox/hurtbox overlaps
-
-	// Check if player characters are actionable
-
-		// If actionable, initiate action based on input buffer readout
-
-
-	mWorld.update();
+	mWorld.update(player1Input, player2Input);
 
 	CommandQueue& commands = mWorld.getCommandQueue();
 	// mPlayer.handleRealtimeInput(commands);

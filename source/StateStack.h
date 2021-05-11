@@ -31,7 +31,7 @@ public:
 	template <typename T>
 	void													registerState(States::ID stateID);
 															
-	void													update();
+	void													update(unsigned int player1Input, unsigned int player2Input);
 	void													draw();
 	void													handleEvent(const sf::Event& event);
 															

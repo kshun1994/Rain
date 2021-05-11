@@ -117,7 +117,7 @@ void Player::handleRealtimeInput(CommandQueue& commands)
 	}
 }
 
-int Player::getCurrentInputState()
+unsigned int Player::getCurrentInputState()
 {
 	mInputState = 0;
 
@@ -167,13 +167,13 @@ int Player::getCurrentInputState()
 	return mInputState;
 }
 
-void Player::accumulateInput(int input)
+void Player::accumulateInput(unsigned int input)
 {
 	mAccumulatedInput |= mInputState; // Add controller state on current update into accumulated input
 	cleanInput(); // Clean accumulated update as according to SOCD
 }
 
-int	Player::getAccumulatedInput() const
+unsigned int Player::getAccumulatedInput() const
 {
 	return mAccumulatedInput;
 }

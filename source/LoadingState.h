@@ -14,7 +14,7 @@ public:
 	LoadingState(StateStack& stack, Context context);
 
 	virtual void			draw();
-	virtual bool			update();
+	virtual bool			update(unsigned int player1Input, unsigned int player2Input);
 	virtual bool			handleEvent(const sf::Event& event);
 
 	void					setCompletion(float percent);

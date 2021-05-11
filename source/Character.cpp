@@ -3,9 +3,6 @@
 #include "ResourceHolder.h"
 #include "Utility.h"
 
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-
 
 Textures::ID toTextureID(Character::Type type)
 {
@@ -44,11 +41,11 @@ Character::Character(Type type, const TextureHolder& textures)
 	mSprite.setRepeating(true);
 	mSprite.setOrigin(EnkSpriteDims.x / 2.f, EnkSpriteDims.y);
 
-	mHealth		= 1000.f;
-	mMeter		= 0.f;
-	mPosition	= sf::Vector2i(0, 0);
-	mFacing		= Facing::Right;
-	mPosture	= Posture::Standing;
+	mHealth			= 1000.f;
+	mMeter			= 0.f;
+	mPosition		= sf::Vector2f(0.f, 0.f);
+	mFacing			= Facing::Right;
+	mPosture		= Posture::Standing;
 	mActionState	= ActionState::None;
 }
 
@@ -77,7 +74,7 @@ float Character::getMeter() const
 	return mMeter;
 }
 
-sf::Vector2i Character::getPosition() const
+sf::Vector2f Character::getPosition() const
 {
 	return mPosition;
 }
@@ -139,9 +136,14 @@ void Character::subtractMeter(float value)
 	}
 }
 
-void Character::setPosition(sf::Vector2i position)
+void Character::setPosition(sf::Vector2f position)
 {
 	mPosition = position;
+}
+
+void Character::setPosition(float x, float y)
+{
+	mPosition = sf::Vector2f(x, y);
 }
 
 void Character::setFacing(Facing facing)
