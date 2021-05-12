@@ -27,6 +27,20 @@ struct InputElement
 class World : private sf::NonCopyable
 {
 public:
+	enum class Numpad
+	{
+		Num1,
+		Num2,
+		Num3,
+		Num4,
+		Num5,
+		Num6,
+		Num7,
+		Num8,
+		Num9,
+	};
+
+public:
 	explicit											World(sf::RenderWindow& window);
 	void												update(unsigned int player1Input, unsigned int player2Input);
 	void												draw();
@@ -35,9 +49,13 @@ public:
 private:
 	void												loadTextures();
 	void												buildScene();
+
 	void												adaptPlayerPosition();
+
 	unsigned int										translateToNumpadInput(unsigned int playerInput);
-	void												updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> inputBuffer);
+	void												updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> &inputBuffer);
+	
+	void												hadoukenTrigger(std::deque<unsigned int> inputBuffer);
 
 private:
 	enum Layer

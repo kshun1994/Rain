@@ -23,6 +23,7 @@
 
 #include <queue>
 #include <array>
+#include <valarray>
 #include <string>
 #include <vector>
 #include <map>

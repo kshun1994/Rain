@@ -78,6 +78,96 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 }
 
+int cooldown = 0;
+
+int timer = CONST_BUFFER_236;
+bool b2 = false;
+bool b3 = false;
+bool b6 = false;
+
+void World::hadoukenTrigger(std::deque<unsigned int> inputBuffer)
+{
+	// Get most recent segment of player input buffer
+	//std::deque<unsigned int> buffer = inputBuffer[std::slice(inputBuffer.size() - CONST_BUFFER_236, CONST_BUFFER_236, 1)];
+
+	if (((inputBuffer.back() & 15) == 2))
+	{
+		b2 = true;
+	}
+	if ((inputBuffer.back() & 15) == 3 && b2)
+	{
+		b3 = true;
+	}
+	if ((inputBuffer.back() & 15) == 6 && b3)
+	{
+		b6 = true;
+	}
+
+	if (b2 && b3 && b6)
+	{
+		RN_DEBUG("Hadouken!");
+
+		timer = CONST_BUFFER_236;
+		b2 = false;
+		b3 = false;
+		b6 = false;
+	}
+
+	if (timer > 0)
+	{
+		timer--;
+	}
+	else if (timer == 0)
+	{
+		timer = CONST_BUFFER_236;
+		b2 = false;
+		b3 = false;
+		b6 = false;
+	}
+
+	//std::array<unsigned int, CONST_BUFFER_236> buffer;
+
+	//for (int i = 0; i < CONST_BUFFER_236 && i < inputBuffer.size(); i++)
+	//{
+	//	int j = (inputBuffer.size() - CONST_BUFFER_236) < 0 ? inputBuffer.size() - CONST_BUFFER_236 + i : i;
+
+	//	buffer[i] = inputBuffer[j];
+	//}
+
+	//if (cooldown == 0)
+	//{
+	//	for (int i2 = 0; i2 < CONST_BUFFER_236; i2++)
+	//	{
+	//		if ((buffer[i2] & 15) == 2)
+	//		{
+	//			for (int i3 = i2; i3 < CONST_BUFFER_236; i3++)
+	//			{
+	//				if ((buffer[i3] % 15) == 3)
+	//				{
+	//					for (int i6 = i3; i6 < CONST_BUFFER_236; i6++)
+	//					{
+	//						if ((buffer[i6] & 15) == 6)
+	//						{
+	//							cooldown = CONST_BUFFER_236;
+	//							RN_DEBUG("Hadouken!");
+	//							break;
+	//						}
+	//					}
+	//					break;
+	//				}
+	//			}
+	//		}
+	//		break;
+	//	}
+	//}
+
+	//if (cooldown > 0)
+	//{
+	//	cooldown--;
+	//}
+	//// Slice base input buffer
+}
+
 void World::update(unsigned int player1Input, unsigned int player2Input)
 {
 	// TODO: should character facings be updated before or after input buffers are updated?
@@ -85,6 +175,8 @@ void World::update(unsigned int player1Input, unsigned int player2Input)
 	// Read in accumulated player input for current update and add to input buffer
 	updateInputBuffer(translateToNumpadInput(player1Input), mP1InputBuffer);
 	updateInputBuffer(translateToNumpadInput(player2Input), mP2InputBuffer);
+
+	hadoukenTrigger(mP1InputBuffer);
 
 	// Check hitbox/hurtbox overlaps
 
@@ -143,19 +235,22 @@ unsigned int World::translateToNumpadInput(unsigned int playerInput)
 
 	unsigned int numpad = 5; // Neutral
 
-	if ((playerInput & (Action::Left | Action::Right)) == (1 << 1 & mP1Character->getFacing())) // second part of this statement is a bitmask on character facing
+	// If x-axis input matches current character facing
+	if ((playerInput & (Action::Left | Action::Right)) == mP1Character->getFacing())
 	{
 		numpad += 1;
 	}
-	unsigned int test = ~mP1Character->getFacing();
-	if ((playerInput & (Action::Left | Action::Right)) == (mP1Character->getFacing() ^ Action::Left ^ Action::Right))
+	// If x-axis input is opposite of current character facing
+	if ((playerInput & (Action::Left | Action::Right)) == (mP1Character->getFacing() ^ Action::Left ^ Action::Right)) // Flip the bits on character facing to get opposite
 	{
 		numpad -= 1;
 	}
+	// If upward input
 	if (playerInput & Action::Up)
 	{
 		numpad += 3;
 	}
+	// If downward input
 	if (playerInput & Action::Down)
 	{
 		numpad -= 3;
@@ -165,12 +260,13 @@ unsigned int World::translateToNumpadInput(unsigned int playerInput)
 	{
 		RN_DEBUG("Input (Numpad) -- {}", numpad);
 		prevInput = numpad;
+		//RN_DEBUG("Full input ------ {}", numpad + (playerInput >> 4 << 4));
 	}
 
-	return numpad + (playerInput << 4 >> 4); // Convert the first four bits in playerInput to 0s; preserve bits pertaining to buttons (fifth onward)
+	return numpad + (playerInput >> 4 << 4); // Convert the first four bits in playerInput to 0s; preserve bits pertaining to buttons (fifth onward)
 }
 
-void World::updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> inputBuffer)
+void World::updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> &inputBuffer)
 {
 	inputBuffer.push_back(numpadInput);
 	while (inputBuffer.size() > CONST_MAX_INPUT_BUFFER)
