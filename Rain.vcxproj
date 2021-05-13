@@ -93,7 +93,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="InputDevice.h" />
     <ClInclude Include="source\Action.h" />
     <ClInclude Include="source\Animation.h" />
     <ClInclude Include="source\Application.h" />
@@ -107,6 +106,7 @@
     <ClInclude Include="source\Container.h" />
     <ClInclude Include="source\Entity.h" />
     <ClInclude Include="source\GameState.h" />
+    <ClInclude Include="source\InputTrigger.h" />
     <ClInclude Include="source\InputWrapper.h" />
     <ClInclude Include="source\Label.h" />
     <ClInclude Include="source\LoadingState.h" />
@@ -129,7 +129,6 @@
     <ClInclude Include="source\rnpch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\Application.cpp" />
     <ClCompile Include="source\Button.cpp" />
@@ -140,6 +139,7 @@
     <ClCompile Include="source\Container.cpp" />
     <ClCompile Include="source\Entity.cpp" />
     <ClCompile Include="source\GameState.cpp" />
+    <ClCompile Include="source\InputTrigger.cpp" />
     <ClCompile Include="source\InputWrapper.cpp" />
     <ClCompile Include="source\Label.cpp" />
     <ClCompile Include="source\LoadingState.cpp" />

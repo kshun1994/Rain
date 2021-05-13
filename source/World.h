@@ -6,6 +6,7 @@
 #include "SpriteNode.h"
 #include "Character.h"
 #include "CommandQueue.h"
+#include "InputTrigger.h"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -42,6 +43,8 @@ public:
 
 public:
 	explicit											World(sf::RenderWindow& window);
+														~World();
+
 	void												update(unsigned int player1Input, unsigned int player2Input);
 	void												draw();
 	CommandQueue&										getCommandQueue();
@@ -55,8 +58,6 @@ private:
 	unsigned int										translateToNumpadInput(unsigned int playerInput);
 	void												updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> &inputBuffer);
 	
-	void												hadoukenTrigger(std::deque<unsigned int> inputBuffer);
-
 private:
 	enum Layer
 	{
@@ -82,4 +83,8 @@ private:
 
 	std::deque<unsigned int>							mP1InputBuffer;
 	std::deque<unsigned int>							mP2InputBuffer;
+
+	std::vector<int>									inputs;
+
+	std::vector<std::unique_ptr<InputTrigger>>			mTriggerArray;
 };

@@ -27,6 +27,41 @@ World::World(sf::RenderWindow& window)
 
 	// Prepare the view
 	mWorldView.setCenter(mSpawnPosition.x, mSpawnPosition.y - ViewYOffset);
+
+	// TEST STUFF
+	// Initialize input triggers
+	std::vector<std::vector<unsigned int>> inputs =
+	{
+		{ 2, 3, 6 },	
+		{ 6, 2, 3 },	
+		{ 2, 1, 4 },	
+		{ 4, 2, 1 },	
+		{ 4, 1, 2, 3, 6},
+		{ 6, 3, 2, 1, 4},
+		{ 2, 5, 2 },	
+	};
+
+	std::vector<unsigned int> buffers =
+	{
+		CONST_BUFFER_236,
+		CONST_BUFFER_623,
+		CONST_BUFFER_214,
+		CONST_BUFFER_421,
+		CONST_BUFFER_HCF,
+		CONST_BUFFER_HCB,
+		CONST_BUFFER_22,
+	};
+
+	for (int i = 0; i < inputs.size(); i++)
+	{
+		mTriggerArray.push_back(std::make_unique<InputTrigger>());
+		mTriggerArray[i]->setMotion(inputs[i]);
+		mTriggerArray[i]->setBuffer(buffers[i]);
+	}
+}
+
+World::~World()
+{
 }
 
 void World::loadTextures()
@@ -78,95 +113,16 @@ void World::draw()
 	mWindow.draw(mSceneGraph);
 }
 
-int cooldown = 0;
-
-int timer = CONST_BUFFER_236;
-bool b2 = false;
-bool b3 = false;
-bool b6 = false;
-
-void World::hadoukenTrigger(std::deque<unsigned int> inputBuffer)
+std::vector<std::string> inputString =
 {
-	// Get most recent segment of player input buffer
-	//std::deque<unsigned int> buffer = inputBuffer[std::slice(inputBuffer.size() - CONST_BUFFER_236, CONST_BUFFER_236, 1)];
-
-	if (((inputBuffer.back() & 15) == 2))
-	{
-		b2 = true;
-	}
-	if ((inputBuffer.back() & 15) == 3 && b2)
-	{
-		b3 = true;
-	}
-	if ((inputBuffer.back() & 15) == 6 && b3)
-	{
-		b6 = true;
-	}
-
-	if (b2 && b3 && b6)
-	{
-		RN_DEBUG("Hadouken!");
-
-		timer = CONST_BUFFER_236;
-		b2 = false;
-		b3 = false;
-		b6 = false;
-	}
-
-	if (timer > 0)
-	{
-		timer--;
-	}
-	else if (timer == 0)
-	{
-		timer = CONST_BUFFER_236;
-		b2 = false;
-		b3 = false;
-		b6 = false;
-	}
-
-	//std::array<unsigned int, CONST_BUFFER_236> buffer;
-
-	//for (int i = 0; i < CONST_BUFFER_236 && i < inputBuffer.size(); i++)
-	//{
-	//	int j = (inputBuffer.size() - CONST_BUFFER_236) < 0 ? inputBuffer.size() - CONST_BUFFER_236 + i : i;
-
-	//	buffer[i] = inputBuffer[j];
-	//}
-
-	//if (cooldown == 0)
-	//{
-	//	for (int i2 = 0; i2 < CONST_BUFFER_236; i2++)
-	//	{
-	//		if ((buffer[i2] & 15) == 2)
-	//		{
-	//			for (int i3 = i2; i3 < CONST_BUFFER_236; i3++)
-	//			{
-	//				if ((buffer[i3] % 15) == 3)
-	//				{
-	//					for (int i6 = i3; i6 < CONST_BUFFER_236; i6++)
-	//					{
-	//						if ((buffer[i6] & 15) == 6)
-	//						{
-	//							cooldown = CONST_BUFFER_236;
-	//							RN_DEBUG("Hadouken!");
-	//							break;
-	//						}
-	//					}
-	//					break;
-	//				}
-	//			}
-	//		}
-	//		break;
-	//	}
-	//}
-
-	//if (cooldown > 0)
-	//{
-	//	cooldown--;
-	//}
-	//// Slice base input buffer
-}
+	"quarter-circle forward",
+	"dragon punch",
+	"quarter-circle backward",
+	"reverse dragon punch",
+	"half-circle forward",
+	"half-circle backward",
+	"down-down",
+};
 
 void World::update(unsigned int player1Input, unsigned int player2Input)
 {
@@ -176,7 +132,15 @@ void World::update(unsigned int player1Input, unsigned int player2Input)
 	updateInputBuffer(translateToNumpadInput(player1Input), mP1InputBuffer);
 	updateInputBuffer(translateToNumpadInput(player2Input), mP2InputBuffer);
 
-	hadoukenTrigger(mP1InputBuffer);
+	// Testing triggers
+	for (int i = 0; i < mTriggerArray.size(); i++)
+	{
+		mTriggerArray[i]->update(mP1InputBuffer.back());
+		if (mTriggerArray[i]->isTriggered())
+		{
+			RN_DEBUG("Motion input detected -- {}", inputString[i]);
+		}
+	}
 
 	// Check hitbox/hurtbox overlaps
 

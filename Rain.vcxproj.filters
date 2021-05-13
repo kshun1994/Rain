@@ -83,7 +83,7 @@
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="source\InputWrapper.cpp" />
-    <ClCompile Include="InputDevice.cpp">
+    <ClCompile Include="source\InputTrigger.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -179,13 +179,13 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\InputWrapper.h" />
-    <ClInclude Include="InputDevice.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="source\Constants.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Action.h" />
+    <ClInclude Include="source\InputTrigger.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

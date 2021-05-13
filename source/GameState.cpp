@@ -10,6 +10,10 @@ GameState::GameState(StateStack& stack, Context context)
 {
 }
 
+GameState::~GameState()
+{
+}
+
 void GameState::draw()
 {
 	mWorld.draw();

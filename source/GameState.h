@@ -9,6 +9,8 @@ class GameState : public State
 {
 public:
 								GameState(StateStack& stack, Context context);
+								~GameState();
+
 	virtual void				draw();
 	virtual bool				update(unsigned int player1Input, unsigned int player2Input);
 	virtual bool				handleEvent(const sf::Event& event);
