@@ -16,6 +16,8 @@ Rainy days
 	- Just use parabolic arc formula and inputs of initial angle, velocity, and object weight?
 
 # TODO
+- [ ] Include update rate in Applications::mStatisticsText
+- [ ] Create a trigger class for charge inputs or expand InputTrigger to handle those too
 - [ ] Gamepad buttons
 	- Try plugging a bunch of controllers in and have the engine output whatever button's being pressed to debug log
 - [ ] Expand settings state to allow joystick button binding

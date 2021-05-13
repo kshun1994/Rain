@@ -39,6 +39,7 @@ World::World(sf::RenderWindow& window)
 		{ 4, 1, 2, 3, 6},
 		{ 6, 3, 2, 1, 4},
 		{ 2, 5, 2 },	
+		{ 2, 3, 6, 2, 3, 6 },	
 	};
 
 	std::vector<unsigned int> buffers =
@@ -50,6 +51,7 @@ World::World(sf::RenderWindow& window)
 		CONST_BUFFER_HCF,
 		CONST_BUFFER_HCB,
 		CONST_BUFFER_22,
+		40,
 	};
 
 	for (int i = 0; i < inputs.size(); i++)
@@ -122,6 +124,7 @@ std::vector<std::string> inputString =
 	"half-circle forward",
 	"half-circle backward",
 	"down-down",
+	"double quarter-circle forward"
 };
 
 void World::update(unsigned int player1Input, unsigned int player2Input)

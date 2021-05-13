@@ -29,12 +29,6 @@ void InputTrigger::setBuffer(unsigned int buffer)
 	mBuffer = buffer;
 }
 
-void InputTrigger::setTimer(unsigned int timer)
-{
-	// I can't imagine why you'd ever use this function but why not
-	mTimer = timer;
-}
-
 void InputTrigger::setMotion(std::vector<unsigned int> motion)
 {
 	mMotion = motion;
@@ -52,7 +46,6 @@ unsigned int InputTrigger::getTimer()
 
 std::vector<unsigned int> InputTrigger::getMotion()
 {
-	// Again, not really sure what you'd use this for
 	return mMotion;
 }
 

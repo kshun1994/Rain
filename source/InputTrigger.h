@@ -1,3 +1,9 @@
+// Instantiate an InputTrigger per motion input available to a character before a match begins
+// InputTriggers will "listen" to inputs every update
+//     mTimer is the buffer duration for the move
+//     If an input on a given update matches the first required input for a motion, the object moves on to the next input in line
+//	   mTimer decrements by 1 every update. If mTimer reaches 0, undo all progres
+//	   If progress reaches end of motion before mTimer reachers 0, flip mTrigger---InputTrigger::isTriggered() method informs that the motion input has triggered
 #pragma once
 
 
@@ -11,7 +17,6 @@ public:
 	bool							isTriggered();
 
 	void							setBuffer(unsigned int buffer);
-	void							setTimer(unsigned int timer);
 	void							setMotion(std::vector<unsigned int> motion);
 
 	unsigned int					getBuffer();
@@ -30,11 +35,3 @@ private:
 	unsigned int					mProgressIndex;
 };
 
-// Instantiate an InputTrigger per motion input available to a character before a match begins
-// InputTriggers will "listen" to inputs every update
-//     mTimer is the buffer duration for the move
-//     If an input on a given update matches the first required input for a motion, the first bool in mTracker flips, mTimer is set, and InputTrigger waits for the next input
-//     If the next input is read on a following update AND the bool directly preceding the relevant input is true, then flip bool to true
-//	   Flipped bools will remain flipped until mTimer runs out
-//	   mTimer decrements by 1 every update. If mTimer reaches 0, unflip all bools in mTracker and reset mTimer
-//	   If all bools are flipped before mTimer reaches 0, flip mTrigger---InputTrigger.isTriggered() method informs that the motion input has triggered
