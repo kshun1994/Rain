@@ -16,14 +16,17 @@ Rainy days
 	- Just use parabolic arc formula and inputs of initial angle, velocity, and object weight?
 
 # TODO
-- [ ] Figure out where Enkidu's disappeared to
 - [ ] Include update rate in Applications::mStatisticsText
-- [ ] Create a trigger class for charge inputs or expand InputTrigger to handle those too
 - [ ] Gamepad buttons
 	- Try plugging a bunch of controllers in and have the engine output whatever button's being pressed to debug log
+- [ ] Figure out where Enkidu's disappeared to
+- [ ] Create an in-game logger to display things in World
+	- Create an Observer that monitors World entities for things to print to log
+- [ ] Create a trigger class for charge inputs or expand InputTrigger to handle those too
 - [ ] Expand settings state to allow joystick button binding
 	- Analog stick threshold/axis binding
 	- Make sure dpad inputs override analog stick inputs
+- [ ] Add state-based system to Characters
 - [ ] Device select state: 
 	- List available input devices
 	- "Move" device left or right to claim 1P/2P
