@@ -86,6 +86,7 @@
     <ClCompile Include="source\InputTrigger.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="WorldLogger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -186,6 +187,9 @@
     <ClInclude Include="source\InputTrigger.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="WorldLogger.h" />
+    <ClInclude Include="Observer.h" />
+    <ClInclude Include="Event.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

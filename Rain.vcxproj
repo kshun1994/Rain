@@ -93,6 +93,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="source\Action.h" />
     <ClInclude Include="source\Animation.h" />
     <ClInclude Include="source\Application.h" />
@@ -127,6 +129,7 @@
     <ClInclude Include="source\Utility.h" />
     <ClInclude Include="source\World.h" />
     <ClInclude Include="source\rnpch.h" />
+    <ClInclude Include="WorldLogger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Animation.cpp" />
@@ -160,6 +163,7 @@
     <ClCompile Include="source\rnpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="WorldLogger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
