@@ -66,6 +66,7 @@ private:
 	std::pair<Player::ID, std::deque<unsigned int>>		mP2InputBuffer;
 
 	std::vector<int>									inputs;
+	unsigned int										mDebugPrevInput;
 
 	std::vector<std::unique_ptr<InputTrigger>>			mTriggerArray;
 };

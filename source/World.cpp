@@ -21,6 +21,7 @@ World::World(sf::RenderWindow& window)
 	, mScrollSpeed(-50.f)
 	, mP1Character(nullptr)
 	, mP2Character(nullptr)
+	, mDebugPrevInput(0)
 {
 	loadTextures();
 	buildScene();
@@ -135,6 +136,12 @@ void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2
 	updateInputBuffer(translateToNumpadInput(player1Input), mP1InputBuffer);
 	updateInputBuffer(translateToNumpadInput(player2Input), mP2InputBuffer);
 
+	if ((mP1InputBuffer.second.back() & 15) != mDebugPrevInput)
+	{
+		RN_DEBUG("Player {} : Numpad Input -- {}", mP1InputBuffer.first + 1, mP1InputBuffer.second.back() & 15);
+		mDebugPrevInput = mP1InputBuffer.second.back() & 15;
+	}
+
 	// Testing triggers
 	for (int i = 0; i < mTriggerArray.size(); i++)
 	{
@@ -191,10 +198,6 @@ void World::adaptPlayerPosition()
 
 // TODO: need a function to update character facings
 
-#ifdef RN_DEBUG
-unsigned int prevInput = 0;
-#endif // RN_DEBUG
-
 Player::TaggedInput World::translateToNumpadInput(Player::TaggedInput playerInput)
 {
 	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
@@ -221,13 +224,6 @@ Player::TaggedInput World::translateToNumpadInput(Player::TaggedInput playerInpu
 	if (playerInput.second & Action::Down)
 	{
 		numpad -= 3;
-	}
-
-	if (numpad != prevInput)
-	{
-		RN_DEBUG("Player {0} : Input (Numpad) -- {1}", playerInput.first, numpad);
-		prevInput = numpad;
-		//RN_DEBUG("Full input ------ {}", numpad + (playerInput.second >> 4 << 4));
 	}
 
 	// Convert the first four bits in playerInput.second to 0s; preserve bits pertaining to buttons (fifth onward)
