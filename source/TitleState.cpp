@@ -31,7 +31,7 @@ void TitleState::draw()
 		window.draw(mText);
 }
 
-bool TitleState::update(unsigned int player1Input, unsigned int player2Input)
+bool TitleState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
 {
 	// mTextEffectTime += dt;
 

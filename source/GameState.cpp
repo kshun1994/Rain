@@ -19,7 +19,7 @@ void GameState::draw()
 	mWorld.draw();
 }
 
-bool GameState::update(unsigned int player1Input, unsigned int player2Input)
+bool GameState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
 {
 	mWorld.update(player1Input, player2Input);
 

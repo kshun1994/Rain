@@ -7,6 +7,7 @@
 #include "Character.h"
 #include "CommandQueue.h"
 #include "InputTrigger.h"
+#include "Player.h"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -19,33 +20,13 @@ namespace sf
 	class RenderWindow;
 }
 
-struct InputElement
-{
-	int							Input;
-	int							Duration;
-};
-
 class World : private sf::NonCopyable
 {
-public:
-	enum class Numpad
-	{
-		Num1,
-		Num2,
-		Num3,
-		Num4,
-		Num5,
-		Num6,
-		Num7,
-		Num8,
-		Num9,
-	};
-
 public:
 	explicit											World(sf::RenderWindow& window);
 														~World();
 
-	void												update(unsigned int player1Input, unsigned int player2Input);
+	void												update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
 	void												draw();
 	CommandQueue&										getCommandQueue();
 
@@ -55,8 +36,8 @@ private:
 
 	void												adaptPlayerPosition();
 
-	unsigned int										translateToNumpadInput(unsigned int playerInput);
-	void												updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> &inputBuffer);
+	Player::TaggedInput									translateToNumpadInput(Player::TaggedInput playerInput);
+	void												updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<unsigned int>> &inputBuffer);
 	
 private:
 	enum Layer
@@ -81,8 +62,8 @@ private:
 	Character*											mP1Character;
 	Character*											mP2Character;
 
-	std::deque<unsigned int>							mP1InputBuffer;
-	std::deque<unsigned int>							mP2InputBuffer;
+	std::pair<Player::ID, std::deque<unsigned int>>		mP1InputBuffer;
+	std::pair<Player::ID, std::deque<unsigned int>>		mP2InputBuffer;
 
 	std::vector<int>									inputs;
 

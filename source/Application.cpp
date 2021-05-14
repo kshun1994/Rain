@@ -17,8 +17,8 @@ Application::Application()
 	, mFonts()
 	, mPlayer1()
 	, mPlayer2()
-	, mPlayer1Input(0)
-	, mPlayer2Input(0)
+	, mPlayer1Input(Player::ID::Player1, 0)
+	, mPlayer2Input(Player::ID::Player2, 0)
 	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer1, mPlayer2))
 	, mCurrentSlice(0.f)
 	, mLastFT(0.f)
@@ -153,7 +153,7 @@ void Application::processInput()
 	mPlayer2.accumulateInput(mPlayer2.getCurrentInputState());
 }
 
-void Application::update(unsigned int mPlayer1Input, unsigned int mPlayer2Input)
+void Application::update(Player::TaggedInput mPlayer1Input, Player::TaggedInput mPlayer2Input)
 {
 	mStateStack.update(mPlayer1Input, mPlayer2Input);
 }

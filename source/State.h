@@ -2,6 +2,7 @@
 
 #include "StateIdentifiers.h"
 #include "ResourceIdentifiers.h"
+#include "Player.h"
 
 #include <SFML/System/Time.hpp>
 #include <SFML/Window/Event.hpp>
@@ -40,7 +41,7 @@ public:
 	virtual										~State();
 
 	virtual void								draw() = 0;
-	virtual bool								update(unsigned int player1Input, unsigned int player2Input) = 0;
+	virtual bool								update(Player::TaggedInput player1Input, Player::TaggedInput player2Input) = 0;
 	virtual bool								handleEvent(const sf::Event& event) = 0;
 
 protected:

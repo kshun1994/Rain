@@ -45,7 +45,7 @@ void SettingsState::draw()
 	window.draw(mGUIContainer);
 }
 
-bool SettingsState::update(unsigned int player1Input, unsigned int player2Input)
+bool SettingsState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
 {
 	return true;
 }

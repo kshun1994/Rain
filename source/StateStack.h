@@ -3,6 +3,7 @@
 #include "State.h"
 #include "StateIdentifiers.h"
 #include "ResourceIdentifiers.h"
+#include "Player.h"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Time.hpp>
@@ -31,7 +32,7 @@ public:
 	template <typename T>
 	void													registerState(States::ID stateID);
 															
-	void													update(unsigned int player1Input, unsigned int player2Input);
+	void													update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
 	void													draw();
 	void													handleEvent(const sf::Event& event);
 															

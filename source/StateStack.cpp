@@ -10,7 +10,7 @@ StateStack::StateStack(State::Context context)
 {
 }
 
-void StateStack::update(unsigned int player1Input, unsigned int player2Input)
+void StateStack::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
 {
 	// Iterate from top to bottom, stop as soon as update() returns false
 	for (auto itr = mStack.rbegin(); itr != mStack.rend(); ++itr)

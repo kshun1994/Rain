@@ -127,7 +127,7 @@ std::vector<std::string> inputString =
 	"double quarter-circle forward"
 };
 
-void World::update(unsigned int player1Input, unsigned int player2Input)
+void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
 {
 	// TODO: should character facings be updated before or after input buffers are updated?
 
@@ -138,7 +138,7 @@ void World::update(unsigned int player1Input, unsigned int player2Input)
 	// Testing triggers
 	for (int i = 0; i < mTriggerArray.size(); i++)
 	{
-		mTriggerArray[i]->update(mP1InputBuffer.back());
+		mTriggerArray[i]->update(mP1InputBuffer.second.back());
 		if (mTriggerArray[i]->isTriggered())
 		{
 			RN_DEBUG("Motion input detected -- {}", inputString[i]);
@@ -195,7 +195,7 @@ void World::adaptPlayerPosition()
 unsigned int prevInput = 0;
 #endif // RN_DEBUG
 
-unsigned int World::translateToNumpadInput(unsigned int playerInput)
+Player::TaggedInput World::translateToNumpadInput(Player::TaggedInput playerInput)
 {
 	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
 	// notation doesn't go past 9, the entire numpad + buttons input can be stored as a single int.
@@ -203,41 +203,42 @@ unsigned int World::translateToNumpadInput(unsigned int playerInput)
 	unsigned int numpad = 5; // Neutral
 
 	// If x-axis input matches current character facing
-	if ((playerInput & (Action::Left | Action::Right)) == mP1Character->getFacing())
+	if ((playerInput.second & (Action::Left | Action::Right)) == mP1Character->getFacing())
 	{
 		numpad += 1;
 	}
 	// If x-axis input is opposite of current character facing
-	if ((playerInput & (Action::Left | Action::Right)) == (mP1Character->getFacing() ^ Action::Left ^ Action::Right)) // Flip the bits on character facing to get opposite
+	if ((playerInput.second & (Action::Left | Action::Right)) == (mP1Character->getFacing() ^ Action::Left ^ Action::Right)) // Flip bits on character facing to get opposite
 	{
 		numpad -= 1;
 	}
 	// If upward input
-	if (playerInput & Action::Up)
+	if (playerInput.second & Action::Up)
 	{
 		numpad += 3;
 	}
 	// If downward input
-	if (playerInput & Action::Down)
+	if (playerInput.second & Action::Down)
 	{
 		numpad -= 3;
 	}
 
 	if (numpad != prevInput)
 	{
-		RN_DEBUG("Input (Numpad) -- {}", numpad);
+		RN_DEBUG("Player {0} : Input (Numpad) -- {1}", playerInput.first, numpad);
 		prevInput = numpad;
-		//RN_DEBUG("Full input ------ {}", numpad + (playerInput >> 4 << 4));
+		//RN_DEBUG("Full input ------ {}", numpad + (playerInput.second >> 4 << 4));
 	}
 
-	return numpad + (playerInput >> 4 << 4); // Convert the first four bits in playerInput to 0s; preserve bits pertaining to buttons (fifth onward)
+	// Convert the first four bits in playerInput.second to 0s; preserve bits pertaining to buttons (fifth onward)
+	return Player::TaggedInput(playerInput.first, numpad + (playerInput.second >> 4 << 4)); 
 }
 
-void World::updateInputBuffer(unsigned int numpadInput, std::deque<unsigned int> &inputBuffer)
+void World::updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<unsigned int>> &inputBuffer)
 {
-	inputBuffer.push_back(numpadInput);
-	while (inputBuffer.size() > CONST_MAX_INPUT_BUFFER)
+	inputBuffer.second.push_back(numpadInput.second);
+	while (inputBuffer.second.size() > CONST_MAX_INPUT_BUFFER)
 	{
-		inputBuffer.pop_front();
+		inputBuffer.second.pop_front();
 	}
 }

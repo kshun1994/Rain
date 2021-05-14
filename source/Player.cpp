@@ -20,7 +20,7 @@ struct CharacterMover
 };
 
 Player::Player()
-: mPlayerID(0)
+: mPlayerID()
 , mIsUsingKeyboard(true)
 , mJoystickID()
 , mIsUsingAnalogStick(false)
@@ -28,7 +28,7 @@ Player::Player()
 , mAnalogXAxis(sf::Joystick::X)
 , mAnalogYAxis(sf::Joystick::Y)
 , mInputState()
-, mAccumulatedInput()
+, mAccumulatedInput(Player::ID::Player1, 0)
 {
 	// Set default key bindings
 	mKeyBinding[sf::Keyboard::W]		 = Up;
@@ -51,12 +51,44 @@ Player::Player()
 	}
 }
 
-void Player::setPlayerID(int playerID)
+Player::Player(Player::ID PlayerID)
+: mPlayerID(PlayerID)
+, mIsUsingKeyboard(true)
+, mJoystickID()
+, mIsUsingAnalogStick(false)
+, mAnalogThreshold(25)
+, mAnalogXAxis(sf::Joystick::X)
+, mAnalogYAxis(sf::Joystick::Y)
+, mInputState()
+, mAccumulatedInput(PlayerID, 0)
 {
-	mPlayerID = playerID;
+	// Set default key bindings
+	mKeyBinding[sf::Keyboard::W]		 = Up;
+	mKeyBinding[sf::Keyboard::S]		 = Down;
+	mKeyBinding[sf::Keyboard::A]		 = Left;
+	mKeyBinding[sf::Keyboard::D]		 = Right;
+	mKeyBinding[sf::Keyboard::J]		 = A;
+	mKeyBinding[sf::Keyboard::K]		 = B;
+	mKeyBinding[sf::Keyboard::L]		 = C;
+	mKeyBinding[sf::Keyboard::SemiColon] = D;
+	mKeyBinding[sf::Keyboard::Enter]	 = Start;
+	mKeyBinding[sf::Keyboard::Backspace] = Select;
+
+	// Set initial action bindings
+	initializeActions();
+
+	for (auto& pair : mActionBinding)
+	{
+		pair.second.category = Category::Character;
+	}
 }
 
-int Player::getPlayerID() const
+void Player::setPlayerID(Player::ID PlayerID)
+{
+	mPlayerID = PlayerID;
+}
+
+Player::ID Player::getPlayerID() const
 {
 	return mPlayerID;
 }
@@ -169,31 +201,31 @@ unsigned int Player::getCurrentInputState()
 
 void Player::accumulateInput(unsigned int input)
 {
-	mAccumulatedInput |= mInputState; // Add controller state on current update into accumulated input
+	mAccumulatedInput.second |= mInputState; // Add controller state on current update into accumulated input
 	cleanInput(); // Clean accumulated update as according to SOCD
 }
 
-unsigned int Player::getAccumulatedInput() const
+std::pair<Player::ID, unsigned int> Player::getAccumulatedInput() const
 {
 	return mAccumulatedInput;
 }
 
 void Player::clearAccumulatedInput()
 {
-	mAccumulatedInput = 0;
+	mAccumulatedInput.second = 0;
 }
 
 void Player::cleanInput()
 {
 	// Clean inputs according to SOCD
-	if ((mAccumulatedInput & Left) && (mAccumulatedInput & Right))
+	if ((mAccumulatedInput.second & Left) && (mAccumulatedInput.second & Right))
 	{
-		mAccumulatedInput &= ~(Left | Right); // Left + Right = Neutral
+		mAccumulatedInput.second &= ~(Left | Right); // Left + Right = Neutral
 	}
 
-	if ((mAccumulatedInput & Up) && (mAccumulatedInput & Down))
+	if ((mAccumulatedInput.second & Up) && (mAccumulatedInput.second & Down))
 	{
-		mAccumulatedInput &= ~Down; // Up + Down = Up
+		mAccumulatedInput.second &= ~Down; // Up + Down = Up
 	}
 }
 

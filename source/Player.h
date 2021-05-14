@@ -12,10 +12,21 @@ class CommandQueue;
 class Player
 {
 public:
-												Player();
+	enum ID
+	{
+		Player1 = 1,
+		Player2 = 2,
+	};
 
-	void										setPlayerID(int playerID);
-	int											getPlayerID() const;
+public:
+	typedef std::pair<Player::ID, unsigned int> TaggedInput;
+
+public:
+												Player();
+												Player(ID PlayerID);
+
+	void										setPlayerID(ID PlayerID);
+	ID											getPlayerID() const;
 
 	void										setUsingKeyboard(bool flag);
 	bool										isUsingKeyboard() const;
@@ -35,7 +46,7 @@ public:
 	void										handleRealtimeInput(CommandQueue& commands);
 	unsigned int								getCurrentInputState();
 	void										accumulateInput(unsigned int input);
-	unsigned int								getAccumulatedInput() const;
+	std::pair<ID, unsigned int>					getAccumulatedInput() const;
 	void										clearAccumulatedInput();
 
 private:
@@ -45,7 +56,7 @@ private:
 	void										cleanInput();
 
 private:
-	int											mPlayerID;
+	ID											mPlayerID;
 
 	std::map<sf::Keyboard::Key, Action>			mKeyBinding;
 	std::map<Action, Command>					mActionBinding;
@@ -58,5 +69,5 @@ private:
 	sf::Joystick::Axis							mAnalogYAxis;
 
 	unsigned int								mInputState;
-	unsigned int								mAccumulatedInput;
+	std::pair<ID, unsigned int>					mAccumulatedInput;
 };
