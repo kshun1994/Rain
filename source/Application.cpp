@@ -23,6 +23,9 @@ Application::Application()
 	, mCurrentSlice(0.f)
 	, mLastFT(0.f)
 	, mStatsText()
+	, mTotalUpdates(0)
+	, mUpdatesPerSec(0)
+	, mStatsTimer(0)
 {
 	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(0);
@@ -56,12 +59,15 @@ Application::Application()
 
 
 	update(mPlayer1Input, mPlayer2Input);
-}
 
-// For logging per-update input
-#ifdef RN_DEBUG
-	unsigned int previousInput = 0;
-#endif // RN_DEBUG
+	for (int i = 0; i < 8; i++)
+	{
+		if (sf::Joystick::isConnected(i))
+		{
+			RN_DEBUG("Joystick ID {} is connected.", i);
+		}
+	}
+}
 
 void Application::run()
 {
@@ -69,22 +75,49 @@ void Application::run()
 	{
 		auto timePoint1(std::chrono::high_resolution_clock::now());
 
+		//for (int i = 0; i < 8; i++)
+		//{
+		//	for (int button = 0; button < sf::Joystick::getButtonCount(i); button++)
+		//	{
+		//		if (sf::Joystick::isButtonPressed(i, button))
+		//		{
+		//			RN_DEBUG("Joystick {0} -- Button {1} is pressed.", i, button);
+		//		}
+
+		//		if (sf::Joystick::hasAxis(i, sf::Joystick::Z))
+		//		{
+		//			RN_DEBUG("Joystick {0} -- Z Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::Z));
+		//		}
+
+		//		if (sf::Joystick::hasAxis(i, sf::Joystick::R))
+		//		{
+		//			RN_DEBUG("Joystick {0} -- R Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::R));
+		//		}
+
+		//		if (sf::Joystick::hasAxis(i, sf::Joystick::U))
+		//		{
+		//			RN_DEBUG("Joystick {0} -- U Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::U));
+		//		}
+
+		//		if (sf::Joystick::hasAxis(i, sf::Joystick::V))
+		//		{
+		//			RN_DEBUG("Joystick {0} -- V Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::V));
+		//		}
+		//	}
+		//}
+
 		processInput();
 
 		mCurrentSlice += mLastFT;
+		int mNumUpdates = 0;
 
 		for (; mCurrentSlice >= CONST_TICK_DURATION; mCurrentSlice -= CONST_TICK_DURATION)
 		{
 			mPlayer1Input = mPlayer1.getAccumulatedInput();
 			mPlayer2Input = mPlayer2.getAccumulatedInput();
 
-			if (mPlayer1Input != previousInput)
-			{
-				//RN_DEBUG("Accumulated input state -- {}", mPlayer1Input);
-			}
-			previousInput = mPlayer1Input;
-
 			update(mPlayer1Input, mPlayer2Input);
+			mNumUpdates++;
 
 			// Clear latest update's input from next set of accumulations
 			mPlayer1.clearAccumulatedInput();
@@ -100,7 +133,7 @@ void Application::run()
 		auto elapsedTime(timePoint2 - timePoint1);
 		mLastFT = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(elapsedTime).count();
 
-		updateStatistics(mLastFT);
+		updateStatistics(mLastFT, mNumUpdates);
 	}
 }
 
@@ -140,12 +173,23 @@ void Application::render()
 	mWindow.display();
 }
 
-void Application::updateStatistics(float ft)
+void Application::updateStatistics(float ft, int numUpdates)
 {
 	auto ftSeconds = ft / 1000.f;
 	auto fps = 1.f / ftSeconds;
 
-	mStatsText.setString("Frame duration: " + std::to_string(ft) + "\nFPS: " + std::to_string(fps));
+	mTotalUpdates += numUpdates;
+	mStatsTimer += ft;
+	while (mStatsTimer > 1000.f)
+	{
+		mUpdatesPerSec = mTotalUpdates;
+		mTotalUpdates = 0;
+		mStatsTimer -= 1000.f;
+	}
+
+	mStatsText.setString("Frame duration: " + std::to_string(ft) 
+				        + "\nFrames/sec.: " + std::to_string(fps) 
+					   + "\nUpdates/sec.: " + std::to_string(mUpdatesPerSec));
 }
 
 void Application::registerStates()

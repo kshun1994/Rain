@@ -22,7 +22,7 @@ private:
 	void						update(unsigned int player1Input, unsigned int player2Input);
 	void						render();
 
-	void						updateStatistics(float ft);
+	void						updateStatistics(float ft, int numUpdates);
 	void						registerStates();
 
 
@@ -43,5 +43,8 @@ private:
 	float						mCurrentSlice;
 	float						mLastFT;
 
+	float						mStatsTimer;
+	int							mTotalUpdates;
+	int							mUpdatesPerSec;
 	sf::Text					mStatsText;
 };
