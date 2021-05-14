@@ -33,6 +33,7 @@ Rainy days
 	- Would make use of animation class; read in animation frame details from same data file
 - [ ] Fix hardcoded pixel values
 	- Window resolution should be changeable and everything should scale to match
+
 - [X] ~~Gamepad buttons~~
 	- ~~Try plugging a bunch of controllers in and have the engine output whatever button's being pressed to debug log~~
 - [X] ~~Include update rate in Applications::mStatisticsText~~
