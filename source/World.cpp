@@ -36,14 +36,16 @@ World::World(sf::RenderWindow& window)
 	// Initialize input triggers
 	std::vector<std::vector<unsigned int>> inputs =
 	{
-		{ 2, 3, 6 },	
-		{ 6, 2, 3 },	
-		{ 2, 1, 4 },	
-		{ 4, 2, 1 },	
-		{ 4, 1, 2, 3, 6},
-		{ 6, 3, 2, 1, 4},
-		{ 2, 5, 2 },	
-		{ 2, 3, 6, 2, 3, 6 },	
+		{ 2, 3, 6 },					// qcf
+		{ 6, 2, 3 },					// dp
+		{ 2, 1, 4 },					// qcb
+		{ 4, 2, 1 },					// reverse dp
+		{ 4, 1, 2, 3, 6},				// hcf
+		{ 6, 3, 2, 1, 4},				// hcb
+		{ 2, 5, 2 },					// down down
+		{ 2, 3, 6, 2, 3, 6 },			// double qcf
+		{ 2, 8 },						// flash kick (charge)
+		{ 4, 6 },						// sonic boom (charge)
 	};
 
 	std::vector<unsigned int> buffers =
@@ -56,6 +58,8 @@ World::World(sf::RenderWindow& window)
 		CONST_BUFFER_HCB,
 		CONST_BUFFER_22,
 		40,
+		5,
+		10,
 	};
 
 	for (int i = 0; i < inputs.size(); i++)
@@ -64,6 +68,9 @@ World::World(sf::RenderWindow& window)
 		mTriggerArray[i]->setMotion(inputs[i]);
 		mTriggerArray[i]->setBuffer(buffers[i]);
 	}
+
+	mTriggerArray[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
+	mTriggerArray[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
 }
 
 World::~World()
@@ -128,7 +135,9 @@ std::vector<std::string> inputString =
 	"half-circle forward",
 	"half-circle backward",
 	"down-down",
-	"double quarter-circle forward"
+	"double quarter-circle forward",
+	"down-charge to up",
+	"back-charge to forward",
 };
 
 void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
@@ -172,14 +181,14 @@ void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2
 	{
 		mP1Character->move(-5.f, 0.f);
 	}
-	if ((mP1NumpadInput.second & 15) == 2)
-	{
-		mP1Character->move(0.f, 5.f);
-	}
-	if ((mP1NumpadInput.second & 15) == 8)
-	{
-		mP1Character->move(0.f, -5.f);
-	}
+	//if ((mP1NumpadInput.second & 15) == 2)
+	//{
+	//	mP1Character->move(0.f, 5.f);
+	//}
+	//if ((mP1NumpadInput.second & 15) == 8)
+	//{
+	//	mP1Character->move(0.f, -5.f);
+	//}
 
 
 
