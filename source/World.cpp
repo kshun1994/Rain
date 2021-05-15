@@ -46,6 +46,8 @@ World::World(sf::RenderWindow& window)
 		{ 2, 3, 6, 2, 3, 6 },			// double qcf
 		{ 2, 8 },						// flash kick (charge)
 		{ 4, 6 },						// sonic boom (charge)
+		{ 4, 6, 4, 6 },					// back-charge super
+		{ 1, 3, 1, 7 },					// delta super (charge)
 	};
 
 	std::vector<unsigned int> buffers =
@@ -60,6 +62,8 @@ World::World(sf::RenderWindow& window)
 		40,
 		5,
 		10,
+		20,
+		20,
 	};
 
 	for (int i = 0; i < inputs.size(); i++)
@@ -71,6 +75,8 @@ World::World(sf::RenderWindow& window)
 
 	mTriggerArray[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
 	mTriggerArray[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
+	mTriggerArray[10]->setCharge(40, std::vector<bool>{true, true, true, true}); // double-charge super
+	mTriggerArray[11]->setCharge(40, std::vector<bool>{false, false, false, true}); // delta super
 }
 
 World::~World()
@@ -138,6 +144,8 @@ std::vector<std::string> inputString =
 	"double quarter-circle forward",
 	"down-charge to up",
 	"back-charge to forward",
+	"back-charge super",
+	"delta super",
 };
 
 void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
