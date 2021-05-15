@@ -101,6 +101,7 @@ void InputTrigger::update(unsigned int playerInput)
 	unsigned int input = playerInput & 15;
 
 	// If there's a fuzzy mapping, convert relevant diagonal inputs to cardinals for input reading
+	// Note: current implementation means there's no way to make an input "unfuzzy" once registered in the mapping
 	for (auto it = mFuzzyMapping.begin(); it != mFuzzyMapping.end(); it++)
 	{
 		switch (it->first)
