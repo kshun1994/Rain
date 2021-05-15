@@ -14,8 +14,8 @@ class Player
 public:
 	enum ID
 	{
-		Player1,
-		Player2,
+		Player1 = 1,
+		Player2 = 2,
 	};
 
 public:

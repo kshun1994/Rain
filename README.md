@@ -16,7 +16,6 @@ Rainy days
 	- Just use parabolic arc formula and inputs of initial angle, velocity, and object weight?
 
 # TODO
-- [ ] Figure out where Enkidu's disappeared to
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log
 - [ ] Create a trigger class for charge inputs or expand InputTrigger to handle those too
@@ -33,6 +32,8 @@ Rainy days
 	- Would make use of animation class; read in animation frame details from same data file
 - [ ] Fix hardcoded pixel values
 	- Window resolution should be changeable and everything should scale to match
+---------------------------------------------------------------------------------------------------------------------------------------------
+- [X] ~~Figure out where Enkidu's disappeared to~~
 - [X] ~~**BUG** When keybindings are changed, old keybindings appear to persist and simultaneously add inputs while in GameState~~
 	- ~~If ESDF is set to directions instead of WASD, numpad input when pressing F ("right") is simultaneously 6 and 5. Pressing D ("down") is simultaneously 2 and 6~~
 - [X] ~~Gamepad buttons~~

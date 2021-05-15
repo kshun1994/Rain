@@ -52,7 +52,7 @@ public:
 
 	float				getHealth() const;
 	float				getMeter() const;
-	sf::Vector2f		getPosition() const;
+	//sf::Vector2f		getPosition() const;
 	Facing				getFacing() const;
 	Posture				getPosture() const;
 	ActionState			getActionState() const;
@@ -63,8 +63,8 @@ public:
 	void				setMeter(float value);
 	void				addMeter(float value);
 	void				subtractMeter(float value);
-	void				setPosition(sf::Vector2f position);
-	void				setPosition(float x, float y);
+	//void				setPosition(sf::Vector2f position);
+	//void				setPosition(float x, float y);
 	void				setFacing(Facing facing);
 	void				setPosture(Posture posture);
 	void				setActionState(ActionState actionState);
@@ -75,7 +75,7 @@ private:
 
 	float				mHealth;
 	float				mMeter;
-	sf::Vector2f		mPosition;
+	//sf::Vector2f		mPosition;
 	Facing				mFacing;
 	Posture				mPosture;
 	ActionState			mActionState;

@@ -20,12 +20,12 @@ Textures::ID toTextureID(Character::Type type)
 Character::Character(Type type, const TextureHolder& textures)
 : mType(type)
 , mSprite(textures.get(toTextureID(type)))
-, mHealth()
-, mMeter()
-, mPosition()
-, mFacing()
-, mPosture()
-, mActionState()
+, mHealth(0.f)
+, mMeter(0.f)
+//, mPosition(0, 0)
+, mFacing(Character::Facing::Right)
+, mPosture(Character::Posture::Standing)
+, mActionState(Character::ActionState::None)
 {
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
@@ -43,10 +43,7 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	mHealth			= 1000.f;
 	mMeter			= 0.f;
-	mPosition		= sf::Vector2f(0.f, 0.f);
-	mFacing			= Facing::Right;
-	mPosture		= Posture::Standing;
-	mActionState	= ActionState::None;
+	//mPosition		= sf::Vector2f(0.f, 0.f);
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -74,10 +71,10 @@ float Character::getMeter() const
 	return mMeter;
 }
 
-sf::Vector2f Character::getPosition() const
-{
-	return mPosition;
-}
+//sf::Vector2f Character::getPosition() const
+//{
+//	return mPosition;
+//}
 
 Character::Facing Character::getFacing() const
 {
@@ -136,16 +133,16 @@ void Character::subtractMeter(float value)
 	}
 }
 
-void Character::setPosition(sf::Vector2f position)
-{
-	mPosition = position;
-}
-
-void Character::setPosition(float x, float y)
-{
-	mPosition = sf::Vector2f(x, y);
-}
-
+//void Character::setPosition(sf::Vector2f position)
+//{
+//	mPosition = position;
+//}
+//
+//void Character::setPosition(float x, float y)
+//{
+//	mPosition = sf::Vector2f(x, y);
+//}
+//
 void Character::setFacing(Facing facing)
 {
 	mFacing = facing;

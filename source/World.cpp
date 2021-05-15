@@ -29,6 +29,9 @@ World::World(sf::RenderWindow& window)
 	// Prepare the view
 	mWorldView.setCenter(mSpawnPosition.x, mSpawnPosition.y - ViewYOffset);
 
+	mP1InputBuffer.first = Player::ID::Player1;
+	mP2InputBuffer.first = Player::ID::Player2;
+
 	// TEST STUFF
 	// Initialize input triggers
 	std::vector<std::vector<unsigned int>> inputs =
@@ -100,7 +103,7 @@ void World::buildScene()
 
 	std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, mTextures));
 	mP1Character = enkidu.get();
-	mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y - 50);
+	mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y - 25);
 	mSceneLayers[Characters]->attachChild(std::move(enkidu));
 
 	//std::unique_ptr<Character> shun(new Character(Character::Shun, mTextures));
@@ -132,13 +135,16 @@ void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2
 {
 	// TODO: should character facings be updated before or after input buffers are updated?
 
-	// Read in accumulated player input for current update and add to input buffer
-	updateInputBuffer(translateToNumpadInput(player1Input), mP1InputBuffer);
-	updateInputBuffer(translateToNumpadInput(player2Input), mP2InputBuffer);
+	// Read in accumulated player input for current update, translate to numpad notation, and add to input buffer
+	Player::TaggedInput mP1NumpadInput = translateToNumpadInput(player1Input);
+	Player::TaggedInput mP2NumpadInput = translateToNumpadInput(player2Input);
+
+	updateInputBuffer(mP1NumpadInput, mP1InputBuffer);
+	updateInputBuffer(mP2NumpadInput, mP2InputBuffer);
 
 	if ((mP1InputBuffer.second.back() & 15) != mDebugPrevInput)
 	{
-		RN_DEBUG("Player {} : Numpad Input -- {}", mP1InputBuffer.first + 1, mP1InputBuffer.second.back() & 15);
+		RN_DEBUG("Player {} : Numpad Input -- {}", mP1InputBuffer.first, mP1InputBuffer.second.back() & 15);
 		mDebugPrevInput = mP1InputBuffer.second.back() & 15;
 	}
 
@@ -157,6 +163,23 @@ void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2
 	// Check if player characters are actionable
 
 		// If actionable, initiate action based on input buffer readout
+
+	if ((mP1NumpadInput.second & 15) == 6)
+	{
+		mP1Character->move(5.f, 0.f);
+	}
+	if ((mP1NumpadInput.second & 15) == 4)
+	{
+		mP1Character->move(-5.f, 0.f);
+	}
+	if ((mP1NumpadInput.second & 15) == 2)
+	{
+		mP1Character->move(0.f, 5.f);
+	}
+	if ((mP1NumpadInput.second & 15) == 8)
+	{
+		mP1Character->move(0.f, -5.f);
+	}
 
 
 
