@@ -61,6 +61,10 @@ unsigned int Character::getCategory() const
 	return Category::Character;
 }
 
+void Character::takeInput(Player::TaggedInput input)
+{
+}
+
 float Character::getHealth() const
 {
 	return mHealth;
@@ -133,16 +137,6 @@ void Character::subtractMeter(float value)
 	}
 }
 
-//void Character::setPosition(sf::Vector2f position)
-//{
-//	mPosition = position;
-//}
-//
-//void Character::setPosition(float x, float y)
-//{
-//	mPosition = sf::Vector2f(x, y);
-//}
-//
 void Character::setFacing(Facing facing)
 {
 	mFacing = facing;

@@ -21,6 +21,7 @@ struct CharacterMover
 
 Player::Player()
 : mPlayerID()
+, mCharacter(nullptr)
 , mIsUsingKeyboard(true)
 , mJoystickID()
 , mIsUsingAnalogStick(false)
@@ -28,7 +29,7 @@ Player::Player()
 , mAnalogXAxis(sf::Joystick::X)
 , mAnalogYAxis(sf::Joystick::Y)
 , mInputState()
-, mAccumulatedInput(Player::ID::Player1, 0)
+, mInput{Player::ID::Player1, 0}
 {
 	// Set default key bindings
 	mKeyBinding[sf::Keyboard::W]		 = Up;
@@ -53,14 +54,15 @@ Player::Player()
 
 Player::Player(Player::ID PlayerID)
 : mPlayerID(PlayerID)
+, mCharacter(nullptr)
 , mIsUsingKeyboard(true)
 , mJoystickID()
 , mIsUsingAnalogStick(false)
-, mAnalogThreshold(25)
+, mAnalogThreshold(50)
 , mAnalogXAxis(sf::Joystick::X)
 , mAnalogYAxis(sf::Joystick::Y)
 , mInputState()
-, mAccumulatedInput(PlayerID, 0)
+, mInput{PlayerID, 0}
 {
 	// Set default key bindings
 	mKeyBinding[sf::Keyboard::W]		 = Up;
@@ -169,20 +171,20 @@ unsigned int Player::getCurrentInputState()
 		{
 			if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) > mAnalogThreshold)
 			{
-				mInputState |= Action::Up;
+				mInputState |= Input::Up;
 			}
 			else if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) < -mAnalogThreshold)
 			{
-				mInputState |= Action::Down;
+				mInputState |= Input::Down;
 			}
 
 			if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) > mAnalogThreshold)
 			{
-				mInputState |= Action::Right;
+				mInputState |= Input::Right;
 			}
 			else if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) < -mAnalogThreshold)
 			{
-				mInputState |= Action::Left;
+				mInputState |= Input::Left;
 			}
 
 		}
@@ -201,65 +203,55 @@ unsigned int Player::getCurrentInputState()
 
 void Player::accumulateInput(unsigned int input)
 {
-	mAccumulatedInput.second |= mInputState; // Add controller state on current update into accumulated input
+	mInput.second |= mInputState; // Add controller state on current update into accumulated input
 	cleanInput(); // Clean accumulated update as according to SOCD
 }
 
-std::pair<Player::ID, unsigned int> Player::getAccumulatedInput() const
+Player::TaggedInput Player::getInput() const
 {
-	return mAccumulatedInput;
-}
-
-void Player::clearAccumulatedInput()
-{
-	mAccumulatedInput.second = 0;
+	return mInput;
 }
 
 void Player::cleanInput()
 {
 	// Clean inputs according to SOCD
-	if ((mAccumulatedInput.second & Left) && (mAccumulatedInput.second & Right))
+	if ((mInput.second & Left) && (mInput.second & Right))
 	{
-		mAccumulatedInput.second &= ~(Left | Right); // Left + Right = Neutral
+		mInput.second &= ~(Left | Right); // Left + Right = Neutral
 	}
 
-	if ((mAccumulatedInput.second & Up) && (mAccumulatedInput.second & Down))
+	if ((mInput.second & Up) && (mInput.second & Down))
 	{
-		mAccumulatedInput.second &= ~Down; // Up + Down = Up
+		mInput.second &= ~Down; // Up + Down = Up
 	}
 }
 
-void Player::handleEvent(const sf::Event& event, CommandQueue& commands)
+void Player::clearAccumulatedInput()
 {
-	if (event.type == sf::Event::KeyPressed)
-	{
-		// Check if pressed key appears in key binding, trigger command if so
-		auto found = mKeyBinding.find(event.key.code);
-		if (found != mKeyBinding.end() && !isRealtimeAction(found->second))
-			commands.push(mActionBinding[found->second]);
-	}
+	mInput.second = 0;
 }
 
-void Player::assignKey(Action action, sf::Keyboard::Key key)
+
+void Player::assignKey(Input input, sf::Keyboard::Key key)
 {
 	// Remove all keys that already map to action
 	for (auto itr = mKeyBinding.begin(); itr != mKeyBinding.end(); )
 	{
-		if (itr->second == action)
+		if (itr->second == input)
 			mKeyBinding.erase(itr++);
 		else
 			++itr;
 	}
 
 	// Insert new binding
-	mKeyBinding[key] = action;
+	mKeyBinding[key] = input;
 }
 
-sf::Keyboard::Key Player::getAssignedKey(Action action) const
+sf::Keyboard::Key Player::getAssignedKey(Input input) const
 {
 	for (auto pair : mKeyBinding)
 	{
-		if (pair.second == action)
+		if (pair.second == input)
 			return pair.first;
 	}
 
@@ -270,13 +262,13 @@ void Player::initializeActions()
 {
 	const float playerSpeed = 200.f;
 
-	mActionBinding[Action::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
-	mActionBinding[Action::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
+	//mActionBinding[Action::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
+	//mActionBinding[Action::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
 }
 
-bool Player::isRealtimeAction(Action action)
+bool Player::isRealtimeAction(Input input)
 {
-	switch (action)
+	switch (input)
 	{
 	case Up:
 	case Down:

@@ -12,11 +12,8 @@ public:
 								~GameState();
 
 	virtual void				draw();
-	virtual bool				update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
+	virtual bool				update();
 	virtual bool				handleEvent(const sf::Event& event);
-
-private:
-	void						updateInputBuffer(int player1Input, int player2Input);
 
 private:
 	World						mWorld;

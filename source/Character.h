@@ -4,7 +4,8 @@
 #include "ResourceIdentifiers.h"
 #include "Animation.h"
 #include "CommandQueue.h"
-#include "Action.h"
+#include "Input.h"
+#include "Player.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -20,8 +21,8 @@ public:
 
 	enum Facing
 	{
-		Left	= Action::Left,
-		Right	= Action::Right,
+		Left	= Input::Left,
+		Right	= Input::Right,
 	};
 
 	enum Posture
@@ -45,14 +46,15 @@ public:
 
 public:
 	explicit			Character(Type type, const TextureHolder& textures);
+
 	virtual void		drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual void		updateCurrent();
+	virtual void		takeInput(Player::TaggedInput input);
 
 	unsigned int		getCategory() const;
 
 	float				getHealth() const;
 	float				getMeter() const;
-	//sf::Vector2f		getPosition() const;
 	Facing				getFacing() const;
 	Posture				getPosture() const;
 	ActionState			getActionState() const;
@@ -63,8 +65,6 @@ public:
 	void				setMeter(float value);
 	void				addMeter(float value);
 	void				subtractMeter(float value);
-	//void				setPosition(sf::Vector2f position);
-	//void				setPosition(float x, float y);
 	void				setFacing(Facing facing);
 	void				setPosture(Posture posture);
 	void				setActionState(ActionState actionState);
@@ -75,7 +75,6 @@ private:
 
 	float				mHealth;
 	float				mMeter;
-	//sf::Vector2f		mPosition;
 	Facing				mFacing;
 	Posture				mPosture;
 	ActionState			mActionState;

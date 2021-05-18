@@ -32,7 +32,7 @@ public:
 	template <typename T>
 	void													registerState(States::ID stateID);
 															
-	void													update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
+	void													update();
 	void													draw();
 	void													handleEvent(const sf::Event& event);
 															

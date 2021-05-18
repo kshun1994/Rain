@@ -57,7 +57,7 @@ void MenuState::draw()
 	window.draw(mGUIContainer);
 }
 
-bool MenuState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
+bool MenuState::update()
 {
 	return true;
 }

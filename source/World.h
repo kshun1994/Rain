@@ -7,7 +7,6 @@
 #include "Character.h"
 #include "CommandQueue.h"
 #include "InputTrigger.h"
-#include "Player.h"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -23,10 +22,20 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
+	typedef std::pair<unsigned int, unsigned int> TaggedInput;
+
+public:
+	struct BattleData
+	{
+		Character*										P1Char;
+		Character*										P2Char;
+	};
+	
+public:
 	explicit											World(sf::RenderWindow& window);
 														~World();
 
-	void												update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
+	void												update(TaggedInput P1Input, TaggedInput P2Input);
 	void												draw();
 	CommandQueue&										getCommandQueue();
 
@@ -36,14 +45,15 @@ private:
 
 	void												adaptPlayerPosition();
 
-	Player::TaggedInput									translateToNumpadInput(Player::TaggedInput playerInput);
-	void												updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<unsigned int>> &inputBuffer);
-	
+	TaggedInput											translateToNumpadInput(TaggedInput playerRawInput);
+
 private:
 	enum Layer
 	{
 		Background,
-		Characters,
+		Player1,
+		Player2,
+		UI,
 		LayerCount,
 	};
 
@@ -61,9 +71,6 @@ private:
 
 	Character*											mP1Character;
 	Character*											mP2Character;
-
-	std::pair<Player::ID, std::deque<unsigned int>>		mP1InputBuffer;
-	std::pair<Player::ID, std::deque<unsigned int>>		mP2InputBuffer;
 
 	std::vector<int>									inputs;
 	unsigned int										mDebugPrevInput;

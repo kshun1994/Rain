@@ -11,7 +11,7 @@ class TitleState : public State
 public:
 								TitleState(StateStack& stack, Context context);
 	virtual void				draw();
-	virtual bool				update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
+	virtual bool				update();
 	virtual bool				handleEvent(const sf::Event& event);
 
 private:

@@ -1,7 +1,7 @@
 #include "rnpch.h"
 #include "World.h"
 
-#include "Action.h"
+#include "Input.h"
 
 
 const int StageWidth = 2400;
@@ -29,8 +29,8 @@ World::World(sf::RenderWindow& window)
 	// Prepare the view
 	mWorldView.setCenter(mSpawnPosition.x, mSpawnPosition.y - ViewYOffset);
 
-	mP1InputBuffer.first = Player::ID::Player1;
-	mP2InputBuffer.first = Player::ID::Player2;
+	//mP1InputBuffer.first = Player::ID::Player1;
+	//mP2InputBuffer.first = Player::ID::Player2;
 
 	// TEST STUFF
 	// Initialize input triggers
@@ -117,7 +117,7 @@ void World::buildScene()
 	std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, mTextures));
 	mP1Character = enkidu.get();
 	mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y - 25);
-	mSceneLayers[Characters]->attachChild(std::move(enkidu));
+	mSceneLayers[Player1]->attachChild(std::move(enkidu));
 
 	//std::unique_ptr<Character> shun(new Character(Character::Shun, mTextures));
 	//mP1Character = shun.get();
@@ -148,27 +148,27 @@ std::vector<std::string> inputString =
 	"delta super",
 };
 
-void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
+void World::update(TaggedInput P1Input, TaggedInput P2Input)
 {
 	// TODO: should character facings be updated before or after input buffers are updated?
 
 	// Read in accumulated player input for current update, translate to numpad notation, and add to input buffer
-	Player::TaggedInput mP1NumpadInput = translateToNumpadInput(player1Input);
-	Player::TaggedInput mP2NumpadInput = translateToNumpadInput(player2Input);
+	World::TaggedInput mP1NumpadInput = translateToNumpadInput(P1Input);
+	World::TaggedInput mP2NumpadInput = translateToNumpadInput(P2Input);
 
-	updateInputBuffer(mP1NumpadInput, mP1InputBuffer);
-	updateInputBuffer(mP2NumpadInput, mP2InputBuffer);
+	//updateInputBuffer(mP1NumpadInput, mP1InputBuffer);
+	//updateInputBuffer(mP2NumpadInput, mP2InputBuffer);
 
-	if ((mP1InputBuffer.second.back() & 15) != mDebugPrevInput)
+	if ((mP1NumpadInput.second & 15) != mDebugPrevInput)
 	{
-		RN_DEBUG("Player {} : Numpad Input -- {}", mP1InputBuffer.first, mP1InputBuffer.second.back() & 15);
-		mDebugPrevInput = mP1InputBuffer.second.back() & 15;
+		RN_DEBUG("Player {} : Numpad Input -- {}", mP1NumpadInput.first, mP1NumpadInput.second & 15);
+		mDebugPrevInput = mP1NumpadInput.second & 15;
 	}
 
 	// Testing triggers
 	for (int i = 0; i < mTriggerArray.size(); i++)
 	{
-		mTriggerArray[i]->update(mP1InputBuffer.second.back());
+		mTriggerArray[i]->update(mP1NumpadInput.second);
 		if (mTriggerArray[i]->isTriggered())
 		{
 			RN_DEBUG("Motion input detected -- {}", inputString[i]);
@@ -183,20 +183,13 @@ void World::update(Player::TaggedInput player1Input, Player::TaggedInput player2
 
 	if ((mP1NumpadInput.second & 15) == 6)
 	{
-		mP1Character->move(5.f, 0.f);
+		mSceneLayers[Player1]->move(5.f, 0.f);
 	}
 	if ((mP1NumpadInput.second & 15) == 4)
 	{
-		mP1Character->move(-5.f, 0.f);
+		mSceneLayers[Player1]->move(-5.f, 0.f);
 	}
-	//if ((mP1NumpadInput.second & 15) == 2)
-	//{
-	//	mP1Character->move(0.f, 5.f);
-	//}
-	//if ((mP1NumpadInput.second & 15) == 8)
-	//{
-	//	mP1Character->move(0.f, -5.f);
-	//}
+	
 
 
 
@@ -236,9 +229,7 @@ void World::adaptPlayerPosition()
 	mP1Character->setPosition(position);
 }
 
-// TODO: need a function to update character facings
-
-Player::TaggedInput World::translateToNumpadInput(Player::TaggedInput playerInput)
+World::TaggedInput World::translateToNumpadInput(World::TaggedInput playerRawInput)
 {
 	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
 	// notation doesn't go past 9, the entire numpad + buttons input can be stored as a single int.
@@ -246,35 +237,37 @@ Player::TaggedInput World::translateToNumpadInput(Player::TaggedInput playerInpu
 	unsigned int numpad = 5; // Neutral
 
 	// If x-axis input matches current character facing
-	if ((playerInput.second & (Action::Left | Action::Right)) == mP1Character->getFacing())
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == mP1Character->getFacing())
 	{
 		numpad += 1;
 	}
 	// If x-axis input is opposite of current character facing
-	if ((playerInput.second & (Action::Left | Action::Right)) == (mP1Character->getFacing() ^ Action::Left ^ Action::Right)) // Flip bits on character facing to get opposite
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == (mP1Character->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
 	{
 		numpad -= 1;
 	}
 	// If upward input
-	if (playerInput.second & Action::Up)
+	if (playerRawInput.second & Input::Up)
 	{
 		numpad += 3;
 	}
 	// If downward input
-	if (playerInput.second & Action::Down)
+	if (playerRawInput.second & Input::Down)
 	{
 		numpad -= 3;
 	}
 
-	// Convert the first four bits in playerInput.second to 0s; preserve bits pertaining to buttons (fifth onward)
-	return Player::TaggedInput(playerInput.first, numpad + (playerInput.second >> 4 << 4)); 
+	// Convert the first four bits in playerRawInput.second.second to 0s; preserve bits pertaining to buttons (fifth onward)
+	return { playerRawInput.first, numpad + (playerRawInput.second >> 4 << 4) };
 }
 
-void World::updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<unsigned int>> &inputBuffer)
-{
-	inputBuffer.second.push_back(numpadInput.second);
-	while (inputBuffer.second.size() > CONST_MAX_INPUT_BUFFER)
-	{
-		inputBuffer.second.pop_front();
-	}
-}
+// TODO: need a function to update character facings
+
+//void World::updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<unsigned int>> &inputBuffer)
+//{
+//	inputBuffer.second.push_back(numpadInput.second);
+//	while (inputBuffer.second.size() > CONST_MAX_INPUT_BUFFER)
+//	{
+//		inputBuffer.second.pop_front();
+//	}
+//}

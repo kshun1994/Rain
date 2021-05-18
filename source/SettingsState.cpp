@@ -16,16 +16,16 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	float windowHeight = context.window->getSize().y;
 
 	// Build key binding buttons and labels
-	addButtonLabel(Action::Left,   100.f, "Left",	context);
-	addButtonLabel(Action::Right,  150.f, "Right",	context);
-	addButtonLabel(Action::Up,     200.f, "Up",		context);
-	addButtonLabel(Action::Down,   250.f, "Down",   context);
-	addButtonLabel(Action::A,      300.f, "A",      context);
-	addButtonLabel(Action::B,	   350.f, "B",      context);
-	addButtonLabel(Action::C,      400.f, "C",      context);
-	addButtonLabel(Action::D,      450.f, "D",      context);
-	addButtonLabel(Action::Start,  500.f, "Start",  context);
-	addButtonLabel(Action::Select, 550.f, "Select", context);
+	addButtonLabel(Input::Left,   100.f, "Left",	context);
+	addButtonLabel(Input::Right,  150.f, "Right",	context);
+	addButtonLabel(Input::Up,     200.f, "Up",		context);
+	addButtonLabel(Input::Down,   250.f, "Down",   context);
+	addButtonLabel(Input::A,      300.f, "A",      context);
+	addButtonLabel(Input::B,	   350.f, "B",      context);
+	addButtonLabel(Input::C,      400.f, "C",      context);
+	addButtonLabel(Input::D,      450.f, "D",      context);
+	addButtonLabel(Input::Start,  500.f, "Start",  context);
+	addButtonLabel(Input::Select, 550.f, "Select", context);
 
 	updateLabels();
 
@@ -45,7 +45,7 @@ void SettingsState::draw()
 	window.draw(mGUIContainer);
 }
 
-bool SettingsState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
+bool SettingsState::update()
 {
 	return true;
 }
@@ -54,16 +54,16 @@ bool SettingsState::handleEvent(const sf::Event& event)
 {
 	bool isKeyBinding = false;
 
-	for (std::size_t i = 0; i < magic_enum::enum_count<Action>(); ++i)
+	for (std::size_t i = 0; i < magic_enum::enum_count<Input>(); ++i)
 	{
-		Action action = magic_enum::enum_value<Action>(i);
-		if (mBindingButtons[action]->isActive())
+		Input input = magic_enum::enum_value<Input>(i);
+		if (mBindingButtons[input]->isActive())
 		{
 			isKeyBinding = true;
 			if (event.type == sf::Event::KeyReleased)
 			{
-				getContext().player1->assignKey(static_cast<Action>(action), event.key.code);
-				mBindingButtons[action]->deactivate();
+				getContext().player1->assignKey(static_cast<Input>(input), event.key.code);
+				mBindingButtons[input]->deactivate();
 			}
 			break;
 		}
@@ -84,25 +84,25 @@ void SettingsState::updateLabels()
 {
 	Player& player1 = *getContext().player1;
 
-	for (std::size_t i = 0; i < magic_enum::enum_count<Action>(); ++i)
+	for (std::size_t i = 0; i < magic_enum::enum_count<Input>(); ++i)
 	{
-		Action action = magic_enum::enum_value<Action>(i);
-		sf::Keyboard::Key key = player1.getAssignedKey(static_cast<Action>(action));
-		mBindingLabels[action]->setText(keyToString(key));
+		Input input = magic_enum::enum_value<Input>(i);
+		sf::Keyboard::Key key = player1.getAssignedKey(static_cast<Input>(input));
+		mBindingLabels[input]->setText(keyToString(key));
 	}
 }
 
-void SettingsState::addButtonLabel(Action action, float y, const std::string& text, Context context)
+void SettingsState::addButtonLabel(Input input, float y, const std::string& text, Context context)
 {
-	//std::size_t ind = magic_enum::enum_value<Player::Action>
-	mBindingButtons[action] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	mBindingButtons[action]->setPosition(80.f, y);
-	mBindingButtons[action]->setText(text);
-	mBindingButtons[action]->setToggle(true);
+	//std::size_t ind = magic_enum::enum_value<Player::Input>
+	mBindingButtons[input] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	mBindingButtons[input]->setPosition(80.f, y);
+	mBindingButtons[input]->setText(text);
+	mBindingButtons[input]->setToggle(true);
 
-	mBindingLabels[action] = std::make_shared<GUI::Label>("", *context.fonts);
-	mBindingLabels[action]->setPosition(300.f, y + 15.f);
+	mBindingLabels[input] = std::make_shared<GUI::Label>("", *context.fonts);
+	mBindingLabels[input]->setPosition(300.f, y + 15.f);
 
-	mGUIContainer.pack(mBindingButtons[action]);
-	mGUIContainer.pack(mBindingLabels[action]);
+	mGUIContainer.pack(mBindingButtons[input]);
+	mGUIContainer.pack(mBindingLabels[input]);
 }

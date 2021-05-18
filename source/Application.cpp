@@ -17,8 +17,6 @@ Application::Application()
 	, mFonts()
 	, mPlayer1(Player::ID::Player1)
 	, mPlayer2(Player::ID::Player2)
-	, mPlayer1Input(Player::ID::Player1, 0)
-	, mPlayer2Input(Player::ID::Player2, 0)
 	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer1, mPlayer2))
 	, mCurrentSlice(0.f)
 	, mLastFT(0.f)
@@ -27,21 +25,15 @@ Application::Application()
 	, mUpdatesPerSec(0)
 	, mStatsTimer(0)
 {
+	// Window settings
 	mWindow.setKeyRepeatEnabled(false);
 	mWindow.setFramerateLimit(0);
 
-	// // Register connected joysticks (SFML supports up to 8)
-	// for (int ID = 0; ID < 7; ID++)
-	// {
-	// 	if (sf::Joystick::isConnected(ID))
-	// 	{
-	// 		// Assign joystick to InputDevice instance if connected
-	// 	}
-	// }
-
+	// Load fonts
 	mFonts.load(Fonts::ID::Main, "media/font/CarroisGothicSC-Regular.ttf");
 	RN_DEBUG("Font(s) loaded.");
 
+	// Load textures
 	mTextures.load(Textures::ID::TitleScreen,    "media/texture/state/Title.png");
 	mTextures.load(Textures::ID::MainMenu,		 "media/texture/state/MainMenu.png");
 	mTextures.load(Textures::ID::ButtonNormal,	 "media/texture/ui/ButtonNormal.png");
@@ -49,6 +41,7 @@ Application::Application()
 	mTextures.load(Textures::ID::ButtonPressed,	 "media/texture/ui/ButtonPressed.png");
 	RN_DEBUG("Textures(s) loaded.");
 
+	// Set FPS/update stats stuff
 	mStatsText.setFont(mFonts.get(Fonts::ID::Main));
 	mStatsText.setPosition(5.f, 5.f);
 	mStatsText.setCharacterSize(20u);
@@ -57,8 +50,8 @@ Application::Application()
 	RN_DEBUG("States registered.");
 	mStateStack.pushState(States::ID::Title);
 
-
-	update(mPlayer1Input, mPlayer2Input);
+	// Run update() once so TitleState actually gets pushed to StateStack
+	update();
 
 	for (int i = 0; i < 8; i++)
 	{
@@ -106,6 +99,7 @@ void Application::run()
 		//	}
 		//}
 
+		// Accumulate player inputs over time
 		processInput();
 
 		mCurrentSlice += mLastFT;
@@ -113,10 +107,7 @@ void Application::run()
 
 		for (; mCurrentSlice >= CONST_TICK_DURATION; mCurrentSlice -= CONST_TICK_DURATION)
 		{
-			mPlayer1Input = mPlayer1.getAccumulatedInput();
-			mPlayer2Input = mPlayer2.getAccumulatedInput();
-
-			update(mPlayer1Input, mPlayer2Input);
+			update();
 			mNumUpdates++;
 
 			// Clear latest update's input from next set of accumulations
@@ -153,9 +144,9 @@ void Application::processInput()
 	mPlayer2.accumulateInput(mPlayer2.getCurrentInputState());
 }
 
-void Application::update(Player::TaggedInput mPlayer1Input, Player::TaggedInput mPlayer2Input)
+void Application::update()
 {
-	mStateStack.update(mPlayer1Input, mPlayer2Input);
+	mStateStack.update();
 }
 
 void Application::render()

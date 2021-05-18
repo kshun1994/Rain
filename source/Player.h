@@ -2,12 +2,13 @@
 
 #include "Command.h"
 #include "InputWrapper.h"
-#include "Action.h"
+#include "Input.h"
 
 #include <SFML/Window/Event.hpp>
 
 
 class CommandQueue;
+class Character;
 
 class Player
 {
@@ -39,27 +40,29 @@ public:
 	void										setAnalogXAxis(sf::Joystick::Axis axis);
 	void										setAnalogYAxis(sf::Joystick::Axis axis);
 
-	void										assignKey(Action action, sf::Keyboard::Key key);
-	sf::Keyboard::Key							getAssignedKey(Action action) const;
+	void										assignKey(Input input, sf::Keyboard::Key key);
+	sf::Keyboard::Key							getAssignedKey(Input input) const;
 
-	void										handleEvent(const sf::Event& event, CommandQueue& commands);
 	void										handleRealtimeInput(CommandQueue& commands);
 	unsigned int								getCurrentInputState();
 	void										accumulateInput(unsigned int input);
-	std::pair<ID, unsigned int>					getAccumulatedInput() const;
 	void										clearAccumulatedInput();
 
+	TaggedInput									getInput() const;
+
 private:
-	static bool									isRealtimeAction(Action action);
+	static bool									isRealtimeAction(Input input);
 	void										initializeActions();
 
 	void										cleanInput();
+	unsigned int								translateToNumpadInput(unsigned int playerInput);
 
 private:
 	ID											mPlayerID;
+	Character*									mCharacter;
 
-	std::map<sf::Keyboard::Key, Action>			mKeyBinding;
-	std::map<Action, Command>					mActionBinding;
+	std::map<sf::Keyboard::Key, Input>			mKeyBinding;
+	std::map<Input, Command>					mActionBinding;
 
 	bool										mIsUsingKeyboard;
 	int											mJoystickID;
@@ -69,5 +72,5 @@ private:
 	sf::Joystick::Axis							mAnalogYAxis;
 
 	unsigned int								mInputState;
-	std::pair<ID, unsigned int>					mAccumulatedInput;
+	TaggedInput									mInput;
 };

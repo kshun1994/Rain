@@ -19,9 +19,12 @@ void GameState::draw()
 	mWorld.draw();
 }
 
-bool GameState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
+bool GameState::update()
 {
-	mWorld.update(player1Input, player2Input);
+	Player::TaggedInput P1Input = mPlayer1.getInput();
+	Player::TaggedInput P2Input = mPlayer2.getInput();
+
+	mWorld.update(P1Input, P2Input);
 
 	CommandQueue& commands = mWorld.getCommandQueue();
 	// mPlayer.handleRealtimeInput(commands);

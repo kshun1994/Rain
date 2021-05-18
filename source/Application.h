@@ -19,7 +19,7 @@ public:
 
 private:
 	void						processInput();
-	void						update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
+	void						update();
 	void						render();
 
 	void						updateStatistics(float ft, int numUpdates);
@@ -35,8 +35,6 @@ private:
 
 	Player						mPlayer1;
 	Player						mPlayer2;
-	Player::TaggedInput			mPlayer1Input;
-	Player::TaggedInput			mPlayer2Input;
 
 	StateStack					mStateStack;
 

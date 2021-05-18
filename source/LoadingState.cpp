@@ -43,7 +43,7 @@ void LoadingState::draw()
 	window.draw(mProgressBar);
 }
 
-bool LoadingState::update(Player::TaggedInput player1Input, Player::TaggedInput player2Input)
+bool LoadingState::update()
 {
 	// Update the progress bar from the remote task or finish it
 	if (mLoadingTask.isFinished())

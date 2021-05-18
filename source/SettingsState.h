@@ -15,16 +15,16 @@ class SettingsState : public State
 public:
 																				SettingsState(StateStack& stack, Context context);
 	virtual void																draw();
-	virtual bool																update(Player::TaggedInput player1Input, Player::TaggedInput player2Input);
+	virtual bool																update();
 	virtual bool																handleEvent(const sf::Event& event);
 
 private:
 	void																		updateLabels();
-	void																		addButtonLabel(Action action, float y, const std::string& text, Context context);
+	void																		addButtonLabel(Input input, float y, const std::string& text, Context context);
 
 private:
 	sf::Sprite																	mBackgroundSprite;
 	GUI::Container																mGUIContainer;
-	std::map<Action, GUI::Button::Ptr>									mBindingButtons;
-	std::map<Action, GUI::Label::Ptr>									mBindingLabels;
+	std::map<Input, GUI::Button::Ptr>									mBindingButtons;
+	std::map<Input, GUI::Label::Ptr>									mBindingLabels;
 };

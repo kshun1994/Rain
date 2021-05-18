@@ -183,13 +183,18 @@
     <ClInclude Include="source\Constants.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\Action.h" />
     <ClInclude Include="source\InputTrigger.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="WorldLogger.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="source\Input.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Action.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">
