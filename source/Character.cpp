@@ -153,7 +153,17 @@ void Character::subtractMeter(float value)
 
 void Character::setFacing(Facing facing)
 {
-	mFacing = facing;
+	if (mFacing != facing)
+	{
+		mFacing = facing;
+		mSprite.scale(-1, 1); // Flip sprite horizontally
+	}
+}
+
+void Character::flipFacing()
+{
+	mFacing != mFacing;
+	mSprite.scale(-1, 1);
 }
 
 void Character::setPosture(Posture posture)

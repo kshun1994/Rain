@@ -148,7 +148,7 @@ void World::buildScene()
 	std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, mTextures));
 	mP2Character = yuzuriha.get();
 	mP2Character->setPosition(mSpawnPosition.x + 400, mSpawnPosition.y - 64);
-	mP2Character->setFacing(Character::Facing::Left);
+	mP2Character->flipFacing();
 	mSceneLayers[Player2]->attachChild(std::move(yuzuriha));
 
 	//PlayerContext P1Context(mP1Character, mP1RawInput, mP1NumpadInput);
@@ -232,13 +232,6 @@ void World::update(TaggedInput P1Input, TaggedInput P2Input)
 		mSceneLayers[Player1]->move(-5.f, 0.f);
 	}
 	
-
-
-
-	sf::Vector2f position = mP1Character->getPosition();
-
-	mP1Character->setVelocity(0.f, 0.f);
-
 	// Forward commands to scene graph
 	while (!mCommandQueue.isEmpty())
 	{

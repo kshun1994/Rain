@@ -17,7 +17,6 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
-- [ ] Make it changing Character::Facing actually changes sprite direction
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log
 - [ ] Expand settings state to allow joystick button binding
@@ -34,6 +33,7 @@ Rainy days
 - [ ] Fix hardcoded pixel values
 	- Window resolution should be changeable and everything should scale to match
 ---------------------------------------------------------------------------------------------------------------------------------------------
+- [X] ~~Make it so changing Character::Facing actually changes sprite direction~~
 - [X] ~~Create a trigger class for charge inputs or expand InputTrigger to handle those too~~
 - [X] ~~Figure out where Enkidu's disappeared to~~
 - [X] ~~**BUG** When keybindings are changed, old keybindings appear to persist and simultaneously add inputs while in GameState~~

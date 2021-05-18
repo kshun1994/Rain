@@ -67,6 +67,7 @@ public:
 	void				addMeter(float value);
 	void				subtractMeter(float value);
 	void				setFacing(Facing facing);
+	void				flipFacing();
 	void				setPosture(Posture posture);
 	void				setActionState(ActionState actionState);
 
