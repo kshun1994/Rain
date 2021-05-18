@@ -19,6 +19,10 @@ struct CharacterMover
 	sf::Vector2f velocity;
 };
 
+struct PlayerContext
+{
+};
+
 Player::Player()
 : mPlayerID()
 , mCharacter(nullptr)

@@ -25,12 +25,28 @@ public:
 	typedef std::pair<unsigned int, unsigned int> TaggedInput;
 
 public:
-	struct BattleData
+	struct PlayerContext
 	{
-		Character*										P1Char;
-		Character*										P2Char;
+														PlayerContext() = default;
+														PlayerContext(Character* character, 
+																	  TaggedInput* rawInput, 
+																	  TaggedInput* numpadInput);
+														~PlayerContext();
+		Character*										Char;
+		TaggedInput*									RawInput;
+		TaggedInput*									NumpadInput;
 	};
-	
+
+	struct BattleContext
+	{
+														BattleContext() = default;
+														BattleContext(PlayerContext* P1, PlayerContext* P2, float* Timer);
+														~BattleContext();
+		PlayerContext*									P1;
+		PlayerContext*									P2;
+		float*											Timer;
+	};
+
 public:
 	explicit											World(sf::RenderWindow& window);
 														~World();
@@ -69,8 +85,15 @@ private:
 	sf::Vector2f										mSpawnPosition;
 	float												mScrollSpeed;
 
+	float												mTimer;
+
 	Character*											mP1Character;
 	Character*											mP2Character;
+
+	TaggedInput*										mP1RawInput;
+	TaggedInput*										mP2RawInput;
+	TaggedInput*										mP1NumpadInput;
+	TaggedInput*										mP2NumpadInput;
 
 	std::vector<int>									inputs;
 	unsigned int										mDebugPrevInput;

@@ -9,19 +9,45 @@ const int StageHeight = 1008;
 
 const float ViewYOffset = 400;
 
+World::PlayerContext::PlayerContext(Character* character, TaggedInput* rawInput, TaggedInput* numpadInput)
+: Char(character)
+, RawInput(rawInput)
+, NumpadInput(numpadInput)
+{
+}
+
+World::PlayerContext::~PlayerContext()
+{
+}
+
+World::BattleContext::BattleContext(PlayerContext* P1, PlayerContext* P2, float* Timer)
+: P1(P1)
+, P2(P2)
+, Timer(Timer)
+{
+}
+
+World::BattleContext::~BattleContext()
+{
+}
 
 World::World(sf::RenderWindow& window)
-	: mWindow(window)
-	, mWorldView(window.getDefaultView())
-	, mTextures()
-	, mSceneGraph()
-	, mSceneLayers()
-	, mWorldBounds(0.f, 0.f, StageWidth, StageHeight)
-	, mSpawnPosition(mWorldView.getSize().x / 2.f, mWorldBounds.height)
-	, mScrollSpeed(-50.f)
-	, mP1Character(nullptr)
-	, mP2Character(nullptr)
-	, mDebugPrevInput(0)
+: mWindow(window)
+, mWorldView(window.getDefaultView())
+, mTextures()
+, mSceneGraph()
+, mSceneLayers()
+, mWorldBounds(0.f, 0.f, StageWidth, StageHeight)
+, mSpawnPosition(mWorldView.getSize().x / 2.f, mWorldBounds.height)
+, mScrollSpeed(-50.f)
+, mP1Character(nullptr)
+, mP2Character(nullptr)
+, mP1RawInput(nullptr)
+, mP2RawInput(nullptr)
+, mP1NumpadInput(nullptr)
+, mP2NumpadInput(nullptr)
+, mTimer()
+, mDebugPrevInput(0)
 {
 	loadTextures();
 	buildScene();
@@ -86,7 +112,7 @@ World::~World()
 void World::loadTextures()
 {
 	mTextures.load(Textures::ID::Enkidu,		"media/texture/enkidu/Enkidu_idle.png");
-	mTextures.load(Textures::ID::Yuzuriha,		"media/texture/enkidu/aok0000.png");
+	mTextures.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/Yuzuriha_idle.png");
 	mTextures.load(Textures::ID::Shun,			"media/texture/enkidu/shun_design.png");
 	mTextures.load(Textures::ID::StageMomiji,	"media/texture/_stage/MomijiShrineScaledx3.png");
 }
@@ -119,6 +145,16 @@ void World::buildScene()
 	mP1Character->setPosition(mSpawnPosition.x, mSpawnPosition.y - 25);
 	mSceneLayers[Player1]->attachChild(std::move(enkidu));
 
+	std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, mTextures));
+	mP2Character = yuzuriha.get();
+	mP2Character->setPosition(mSpawnPosition.x + 400, mSpawnPosition.y - 64);
+	mP2Character->setFacing(Character::Facing::Left);
+	mSceneLayers[Player2]->attachChild(std::move(yuzuriha));
+
+	//PlayerContext P1Context(mP1Character, mP1RawInput, mP1NumpadInput);
+	//PlayerContext P2Context(mP2Character, mP2RawInput, mP2NumpadInput);
+	//BattleContext BattleContext(&P1Context, &P2Context, &mTimer);
+
 	//std::unique_ptr<Character> shun(new Character(Character::Shun, mTextures));
 	//mP1Character = shun.get();
 	//mP1Character->setScale(sf::Vector2f(5.0f, 5.0f));
@@ -150,25 +186,31 @@ std::vector<std::string> inputString =
 
 void World::update(TaggedInput P1Input, TaggedInput P2Input)
 {
-	// TODO: should character facings be updated before or after input buffers are updated?
+	// Resolve entity interactions (hitbox/hurtbox overlaps etc.)
+	
+	// Entity updates (states, action initiation/continuation, controllable entities read in player inputs)
+
+	// "Adapt" functions (collision, facing, etc.)
 
 	// Read in accumulated player input for current update, translate to numpad notation, and add to input buffer
-	World::TaggedInput mP1NumpadInput = translateToNumpadInput(P1Input);
-	World::TaggedInput mP2NumpadInput = translateToNumpadInput(P2Input);
+	mP1RawInput = &P1Input;
+	mP2RawInput = &P2Input;
+	mP1NumpadInput = &translateToNumpadInput(P1Input);
+	mP2NumpadInput = &translateToNumpadInput(P2Input);
 
-	//updateInputBuffer(mP1NumpadInput, mP1InputBuffer);
+	//updateInputBuffer(mP1NumpadInput-> mP1InputBuffer);
 	//updateInputBuffer(mP2NumpadInput, mP2InputBuffer);
 
-	if ((mP1NumpadInput.second & 15) != mDebugPrevInput)
+	if ((mP1NumpadInput->second & 15) != mDebugPrevInput)
 	{
-		RN_DEBUG("Player {} : Numpad Input -- {}", mP1NumpadInput.first, mP1NumpadInput.second & 15);
-		mDebugPrevInput = mP1NumpadInput.second & 15;
+		RN_DEBUG("Player {} : Numpad Input -- {}", mP1NumpadInput->first, mP1NumpadInput->second & 15);
+		mDebugPrevInput = mP1NumpadInput->second & 15;
 	}
 
 	// Testing triggers
 	for (int i = 0; i < mTriggerArray.size(); i++)
 	{
-		mTriggerArray[i]->update(mP1NumpadInput.second);
+		mTriggerArray[i]->update(mP1NumpadInput->second);
 		if (mTriggerArray[i]->isTriggered())
 		{
 			RN_DEBUG("Motion input detected -- {}", inputString[i]);
@@ -181,11 +223,11 @@ void World::update(TaggedInput P1Input, TaggedInput P2Input)
 
 		// If actionable, initiate action based on input buffer readout
 
-	if ((mP1NumpadInput.second & 15) == 6)
+	if ((mP1NumpadInput->second & 15) == 6)
 	{
 		mSceneLayers[Player1]->move(5.f, 0.f);
 	}
-	if ((mP1NumpadInput.second & 15) == 4)
+	if ((mP1NumpadInput->second & 15) == 4)
 	{
 		mSceneLayers[Player1]->move(-5.f, 0.f);
 	}
@@ -205,7 +247,7 @@ void World::update(TaggedInput P1Input, TaggedInput P2Input)
 
 	mSceneGraph.update();
 	adaptPlayerPosition();
-	mWorldView.setCenter(mP1Character->getPosition().x, 
+	mWorldView.setCenter(mP1Character->getPosition().x + (abs(mP1Character->getPosition().x - mP2Character->getPosition().x) / 2) - 50, 
 						 mP1Character->getPosition().y - ViewYOffset);
 
 	// RN_DEBUG("Current character coordinates are: ({0}, {1}).", 

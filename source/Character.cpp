@@ -29,21 +29,35 @@ Character::Character(Type type, const TextureHolder& textures)
 {
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
-	const sf::Vector2i EnkSpriteDims(1600, 768);
 
 	for (int i = 0; i != 16; i++)
 	{
 		frameIDs.push_back(i);
 		durations.push_back(7);
 	}
-	
-	mSprite.setFrames(frameIDs, durations, EnkSpriteDims);
+
+	sf::Vector2i SpriteDims(1600, 768);
+
+	if (mType == Type::Enkidu)
+	{
+		SpriteDims = sf::Vector2i(1600, 768);
+	}
+	else if (mType == Type::Yuzuriha)
+	{
+		SpriteDims = sf::Vector2i(864, 640);
+	}
+
+	mSprite.setFrames(frameIDs, durations, SpriteDims);
 	mSprite.setRepeating(true);
-	mSprite.setOrigin(EnkSpriteDims.x / 2.f, EnkSpriteDims.y);
+	mSprite.setOrigin(SpriteDims.x / 2.f, SpriteDims.y);
 
 	mHealth			= 1000.f;
 	mMeter			= 0.f;
 	//mPosition		= sf::Vector2f(0.f, 0.f);
+}
+
+Character::~Character()
+{
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const

@@ -17,6 +17,7 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Make it changing Character::Facing actually changes sprite direction
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log
 - [ ] Expand settings state to allow joystick button binding

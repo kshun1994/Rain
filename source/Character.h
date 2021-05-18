@@ -46,6 +46,7 @@ public:
 
 public:
 	explicit			Character(Type type, const TextureHolder& textures);
+						~Character();
 
 	virtual void		drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual void		updateCurrent();
@@ -79,3 +80,11 @@ private:
 	Posture				mPosture;
 	ActionState			mActionState;
 };
+
+#define COMMON_ACTION_IDLE				0
+#define COMMON_ACTION_WALK_FORWARD		1
+#define COMMON_ACTION_WALK_BACK			2
+#define COMMON_ACTION_CROUCH			3
+#define COMMON_ACTION_BLOCK_STANDING	4
+#define COMMON_ACTION_BLOCK_CROUCHING	5
+#define COMMON_ACTION_JUMP				6
