@@ -89,7 +89,7 @@ Player::Player(Player::ID PlayerID)
 	}
 }
 
-void Player::setPlayerID(Player::ID PlayerID)
+void Player::setPlayerID(const Player::ID& PlayerID)
 {
 	mPlayerID = PlayerID;
 }
@@ -99,7 +99,7 @@ Player::ID Player::getPlayerID() const
 	return mPlayerID;
 }
 
-void Player::setUsingKeyboard(bool flag)
+void Player::setUsingKeyboard(const bool& flag)
 {
 	mIsUsingKeyboard = flag;
 }
@@ -109,7 +109,7 @@ bool Player::isUsingKeyboard() const
 	return mIsUsingKeyboard;
 }
 
-void Player::setJoystickID(int joystickID)
+void Player::setJoystickID(const int& joystickID)
 {
 	mJoystickID = joystickID;
 }
@@ -124,22 +124,22 @@ bool Player::isUsingAnalogStick() const
 	return mIsUsingAnalogStick;
 }
 
-void Player::setAnalogThreshold(float threshold)
+void Player::setAnalogThreshold(const float& threshold)
 {
 	mAnalogThreshold = threshold;
 }
 
-void Player::setUsingAnalogStick(bool flag)
+void Player::setUsingAnalogStick(const bool& flag)
 {
 	mIsUsingAnalogStick = flag;
 }
 
-void Player::setAnalogXAxis(sf::Joystick::Axis axis)
+void Player::setAnalogXAxis(const sf::Joystick::Axis& axis)
 {
 	mAnalogXAxis = axis;
 }
 
-void Player::setAnalogYAxis(sf::Joystick::Axis axis)
+void Player::setAnalogYAxis(const sf::Joystick::Axis& axis)
 {
 	mAnalogYAxis = axis;
 }
@@ -205,7 +205,7 @@ unsigned int Player::getCurrentInputState()
 	return mInputState;
 }
 
-void Player::accumulateInput(unsigned int input)
+void Player::accumulateInput(const unsigned int& input)
 {
 	mInput.second |= mInputState; // Add controller state on current update into accumulated input
 	cleanInput(); // Clean accumulated update as according to SOCD

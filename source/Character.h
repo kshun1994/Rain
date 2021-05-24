@@ -44,6 +44,28 @@ public:
 		Knockdown		= NotActionable + 3,
 	};
 
+	enum class AnimationState
+	{
+		Idle,
+		WalkF, 
+		WalkB,
+	};
+
+	struct SpriteStruct
+	{
+		sf::Vector2i		spriteDims;
+		int					originX;
+
+		std::vector<int>	idleIDs;
+		std::vector<int>	idleDurs;
+
+		std::vector<int>	walkFIDs;
+		std::vector<int>	walkFDurs;
+
+		std::vector<int>	walkBIDs;
+		std::vector<int>	walkBDurs;
+	};
+
 public:
 	explicit			Character(Type type, const TextureHolder& textures);
 						~Character();
@@ -71,15 +93,26 @@ public:
 	void				setPosture(Posture posture);
 	void				setActionState(ActionState actionState);
 
+	void				walkForward(float speed);
+	void				walkBackward(float speed);
+
+private:
+	void				setSignFlip();
+
 private:
 	Type				mType;
 	Animation			mSprite;
+	SpriteStruct		mSpriteStruct;
+
+	AnimationState		mAnimationState;
+	AnimationState		mPrevAnimationState;
 
 	float				mHealth;
 	float				mMeter;
 	Facing				mFacing;
 	Posture				mPosture;
 	ActionState			mActionState;
+	int					mFacingSignFlip;
 };
 
 #define COMMON_ACTION_IDLE				0

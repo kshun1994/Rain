@@ -4,9 +4,7 @@
 
 GameState::GameState(StateStack& stack, Context context)
 	: State(stack, context)
-	, mWorld(*context.window)
-	, mPlayer1(*context.player1)
-	, mPlayer2(*context.player2)
+	, mWorld(*context.window, *context.player1, *context.player2)
 {
 }
 
@@ -21,21 +19,15 @@ void GameState::draw()
 
 bool GameState::update()
 {
-	Player::TaggedInput P1Input = mPlayer1.getInput();
-	Player::TaggedInput P2Input = mPlayer2.getInput();
+	mWorld.update();
 
-	mWorld.update(P1Input, P2Input);
-
-	CommandQueue& commands = mWorld.getCommandQueue();
-	// mPlayer.handleRealtimeInput(commands);
-	
 	return true;
 }
 
 bool GameState::handleEvent(const sf::Event& event)
 {
 	// Game input handling
-	CommandQueue& commands = mWorld.getCommandQueue();
+	//CommandQueue& commands = mWorld.getCommandQueue();
 	// mPlayer.handleEvent(event, commands);
 
 	// Escape pressed, trigger the pause screen

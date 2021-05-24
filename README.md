@@ -19,6 +19,7 @@ Rainy days
 # TODO
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log
+- [ ] Fix charge input trigger so the charge has to be continuous
 - [ ] Expand settings state to allow joystick button binding
 	- Analog stick threshold/axis binding
 	- Make sure dpad inputs override analog stick inputs

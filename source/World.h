@@ -7,6 +7,7 @@
 #include "Character.h"
 #include "CommandQueue.h"
 #include "InputTrigger.h"
+#include "Player.h"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -25,43 +26,36 @@ public:
 	typedef std::pair<unsigned int, unsigned int> TaggedInput;
 
 public:
-	struct PlayerContext
+	struct PlayerObjects
 	{
-														PlayerContext() = default;
-														PlayerContext(Character* character, 
-																	  TaggedInput* rawInput, 
-																	  TaggedInput* numpadInput);
-														~PlayerContext();
-		Character*										Char;
-		TaggedInput*									RawInput;
-		TaggedInput*									NumpadInput;
+														PlayerObjects() = default;
+
+		Player&											mPlayer;
+		Character										mCharacter;
 	};
 
 	struct BattleContext
 	{
 														BattleContext() = default;
-														BattleContext(PlayerContext* P1, PlayerContext* P2, float* Timer);
 														~BattleContext();
-		PlayerContext*									P1;
-		PlayerContext*									P2;
 		float*											Timer;
 	};
 
 public:
-	explicit											World(sf::RenderWindow& window);
+	explicit											World(sf::RenderWindow& window, Player& P1, Player& P2);
 														~World();
 
-	void												update(TaggedInput P1Input, TaggedInput P2Input);
+	void												update();
 	void												draw();
-	CommandQueue&										getCommandQueue();
 
 private:
 	void												loadTextures();
 	void												buildScene();
 
 	void												adaptPlayerPosition();
+	void												adaptPlayerFacing();
 
-	TaggedInput											translateToNumpadInput(TaggedInput playerRawInput);
+	TaggedInput											translateToNumpadInput(const TaggedInput& playerRawInput);
 
 private:
 	enum Layer
@@ -79,21 +73,18 @@ private:
 	TextureHolder										mTextures;
 	SceneNode											mSceneGraph;
 	std::array<SceneNode*, LayerCount>					mSceneLayers;
-	CommandQueue										mCommandQueue;
 
 	sf::FloatRect										mWorldBounds;
 	sf::Vector2f										mSpawnPosition;
-	float												mScrollSpeed;
 
 	float												mTimer;
 
-	Character*											mP1Character;
-	Character*											mP2Character;
+	Player&												mP1;
+	Player&												mP2;
 
-	TaggedInput*										mP1RawInput;
-	TaggedInput*										mP2RawInput;
-	TaggedInput*										mP1NumpadInput;
-	TaggedInput*										mP2NumpadInput;
+	std::shared_ptr<Character>							mP1Char;
+	std::shared_ptr<Character>							mP2Char;
+	std::array<std::shared_ptr<Character>, 2>			mCharArray;
 
 	std::vector<int>									inputs;
 	unsigned int										mDebugPrevInput;

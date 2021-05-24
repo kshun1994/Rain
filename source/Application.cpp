@@ -12,7 +12,7 @@
 
 
 Application::Application()
-	: mWindow(sf::VideoMode(1280, 720), "Window", sf::Style::Titlebar | sf::Style::Close)
+	: mWindow(sf::VideoMode(constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT), "Window", sf::Style::Titlebar | sf::Style::Close)
 	, mTextures()
 	, mFonts()
 	, mPlayer1(Player::ID::Player1)
@@ -68,44 +68,13 @@ void Application::run()
 	{
 		auto timePoint1(std::chrono::high_resolution_clock::now());
 
-		//for (int i = 0; i < 8; i++)
-		//{
-		//	for (int button = 0; button < sf::Joystick::getButtonCount(i); button++)
-		//	{
-		//		if (sf::Joystick::isButtonPressed(i, button))
-		//		{
-		//			RN_DEBUG("Joystick {0} -- Button {1} is pressed.", i, button);
-		//		}
-
-		//		if (sf::Joystick::hasAxis(i, sf::Joystick::Z))
-		//		{
-		//			RN_DEBUG("Joystick {0} -- Z Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::Z));
-		//		}
-
-		//		if (sf::Joystick::hasAxis(i, sf::Joystick::R))
-		//		{
-		//			RN_DEBUG("Joystick {0} -- R Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::R));
-		//		}
-
-		//		if (sf::Joystick::hasAxis(i, sf::Joystick::U))
-		//		{
-		//			RN_DEBUG("Joystick {0} -- U Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::U));
-		//		}
-
-		//		if (sf::Joystick::hasAxis(i, sf::Joystick::V))
-		//		{
-		//			RN_DEBUG("Joystick {0} -- V Axis position {1}.", i, sf::Joystick::getAxisPosition(i, sf::Joystick::V));
-		//		}
-		//	}
-		//}
-
 		// Accumulate player inputs over time
 		processInput();
 
 		mCurrentSlice += mLastFT;
 		int mNumUpdates = 0;
 
-		for (; mCurrentSlice >= CONST_TICK_DURATION; mCurrentSlice -= CONST_TICK_DURATION)
+		for (; mCurrentSlice >= constants::TICK_DURATION; mCurrentSlice -= constants::TICK_DURATION)
 		{
 			update();
 			mNumUpdates++;

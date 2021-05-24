@@ -14,7 +14,8 @@ class SceneNode :	public		sf::Transformable,
 					private		sf::NonCopyable
 {
 public: 
-	typedef std::unique_ptr<SceneNode> Ptr;
+	typedef std::shared_ptr<SceneNode> Ptr;
+	//typedef SceneNode* Ptr;
 
 public:
 									SceneNode();

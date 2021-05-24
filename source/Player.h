@@ -15,8 +15,8 @@ class Player
 public:
 	enum ID
 	{
-		Player1 = 1,
-		Player2 = 2,
+		Player1 = 0,
+		Player2 = 1,
 	};
 
 public:
@@ -26,26 +26,26 @@ public:
 												Player();
 												Player(ID PlayerID);
 
-	void										setPlayerID(ID PlayerID);
+	void										setPlayerID(const ID& PlayerID);
 	ID											getPlayerID() const;
 
-	void										setUsingKeyboard(bool flag);
+	void										setUsingKeyboard(const bool& flag);
 	bool										isUsingKeyboard() const;
 
-	void										setJoystickID(int joystickID);
+	void										setJoystickID(const int& joystickID);
 	int											getJoystickID() const;
 	bool										isUsingAnalogStick() const;
-	void										setAnalogThreshold(float threshold);
-	void										setUsingAnalogStick(bool flag);
-	void										setAnalogXAxis(sf::Joystick::Axis axis);
-	void										setAnalogYAxis(sf::Joystick::Axis axis);
+	void										setAnalogThreshold(const float& threshold);
+	void										setUsingAnalogStick(const bool& flag);
+	void										setAnalogXAxis(const sf::Joystick::Axis& axis);
+	void										setAnalogYAxis(const sf::Joystick::Axis& axis);
 
 	void										assignKey(Input input, sf::Keyboard::Key key);
 	sf::Keyboard::Key							getAssignedKey(Input input) const;
 
 	void										handleRealtimeInput(CommandQueue& commands);
 	unsigned int								getCurrentInputState();
-	void										accumulateInput(unsigned int input);
+	void										accumulateInput(const unsigned int& input);
 	void										clearAccumulatedInput();
 
 	TaggedInput									getInput() const;
@@ -55,7 +55,6 @@ private:
 	void										initializeActions();
 
 	void										cleanInput();
-	unsigned int								translateToNumpadInput(unsigned int playerInput);
 
 private:
 	ID											mPlayerID;
