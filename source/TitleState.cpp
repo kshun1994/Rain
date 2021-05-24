@@ -8,37 +8,37 @@
 
 TitleState::TitleState(StateStack& stack, Context context)
 	: State(stack, context)
-	, mText()
-	, mShowText(true)
-	, mTextEffectTime(sf::Time::Zero)
+	, text_()
+	, showText_(true)
+	, textEffectTime_(sf::Time::Zero)
 {
-	mBackgroundSprite.setTexture(context.textures->get(Textures::ID::TitleScreen));
-	centerOrigin(mBackgroundSprite);
-	mBackgroundSprite.setPosition(context.window->getView().getSize() / 2.f);
+	backgroundSprite_.setTexture(context.textures->get(Textures::ID::TitleScreen));
+	centerOrigin(backgroundSprite_);
+	backgroundSprite_.setPosition(context.window->getView().getSize() / 2.f);
 
-	mText.setFont(context.fonts->get(Fonts::ID::Main));
-	mText.setString("Press any key to start");
-	centerOrigin(mText);
-	mText.setPosition(context.window->getView().getSize().x / 2.f, context.window->getView().getSize().y - 50);
+	text_.setFont(context.fonts->get(Fonts::ID::Main));
+	text_.setString("Press any key to start");
+	centerOrigin(text_);
+	text_.setPosition(context.window->getView().getSize().x / 2.f, context.window->getView().getSize().y - 50);
 }
 
 void TitleState::draw()
 {
 	sf::RenderWindow& window = *getContext().window;
-	window.draw(mBackgroundSprite);
+	window.draw(backgroundSprite_);
 
-	if (mShowText)
-		window.draw(mText);
+	if (showText_)
+		window.draw(text_);
 }
 
 bool TitleState::update()
 {
-	// mTextEffectTime += dt;
+	// textEffectTime_ += dt;
 
-	//if (mTextEffectTime >= sf::seconds(0.5f))
+	//if (textEffectTime_ >= sf::seconds(0.5f))
 	//{
-	//	mShowText = !mShowText; // toggle text visibility every half second
-	//	mTextEffectTime = sf::Time::Zero;
+	//	showText_ = !showText_; // toggle text visibility every half second
+	//	textEffectTime_ = sf::Time::Zero;
 	//}
 
 	return true;

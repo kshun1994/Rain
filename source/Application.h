@@ -29,20 +29,20 @@ private:
 private:
 	static const sf::Time		TimePerFrame;
 
-	sf::RenderWindow			mWindow;
-	TextureHolder				mTextures;
-	FontHolder					mFonts;
+	sf::RenderWindow			window_;
+	TextureHolder				textures_;
+	FontHolder					fonts_;
 
-	Player						mPlayer1;
-	Player						mPlayer2;
+	Player						player1_;
+	Player						player2_;
 
-	StateStack					mStateStack;
+	StateStack					stateStack_;
 
-	float						mCurrentSlice;
-	float						mLastFT;
+	float						currentSlice_;
+	float						lastFT_;
 
-	float						mStatsTimer;
-	int							mTotalUpdates;
-	int							mUpdatesPerSec;
-	sf::Text					mStatsText;
+	float						statsTimer_;
+	int							totalUpdates_;
+	int							updatesPerSec_;
+	sf::Text					statsText_;
 };

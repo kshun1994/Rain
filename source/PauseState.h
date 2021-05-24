@@ -17,7 +17,7 @@ class PauseState : public State
 
 
 	private:
-		sf::Sprite			mBackgroundSprite;
-		sf::Text			mPausedText;
-		sf::Text			mInstructionText;
+		sf::Sprite			backgroundSprite_;
+		sf::Text			pausedText_;
+		sf::Text			instructionText_;
 };

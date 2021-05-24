@@ -2,99 +2,99 @@
 #include "InputTrigger.h"
 
 InputTrigger::InputTrigger()
-	: mTrigger(false)
-	, mBuffer(0)
-	, mTimer(0)
-	, mMotion()
-	, mProgressIndex(0)
-	, mFuzzyInputFlags(false)
-	, mFuzzyMapping()
+	: trigger_(false)
+	, buffer_(0)
+	, timer_(0)
+	, motion_()
+	, progressIndex_(0)
+	, fuzzyInputFlags_(false)
+	, fuzzyMapping_()
 {
 }
 
 InputTrigger::InputTrigger(std::vector<unsigned int> motion, unsigned int buffer)
-	: mTrigger(false)
-	, mBuffer(buffer)
-	, mTimer(0)
-	, mMotion(motion)
-	, mProgressIndex(0)
-	, mFuzzyInputFlags(motion.size(), false)
-	, mFuzzyMapping{{0, false}}
+	: trigger_(false)
+	, buffer_(buffer)
+	, timer_(0)
+	, motion_(motion)
+	, progressIndex_(0)
+	, fuzzyInputFlags_(motion.size(), false)
+	, fuzzyMapping_{{0, false}}
 {
 }
 
 bool InputTrigger::isTriggered()
 {
-	return mTrigger;
+	return trigger_;
 }
 
 void InputTrigger::setBuffer(unsigned int buffer)
 {
-	mBuffer = buffer;
+	buffer_ = buffer;
 }
 
 void InputTrigger::setMotion(std::vector<unsigned int> motion)
 {
-	mMotion = motion;
+	motion_ = motion;
 
 	// All inputs are non-fuzzy by default
-	mFuzzyInputFlags.resize(motion.size());
-	std::fill(mFuzzyInputFlags.begin(), mFuzzyInputFlags.end(), false);
+	fuzzyInputFlags_.resize(motion.size());
+	std::fill(fuzzyInputFlags_.begin(), fuzzyInputFlags_.end(), false);
 }
 
 void InputTrigger::setCharge(unsigned int chargeDuration)
 {
 	// Duplicate held input for as many frames as charge duration requires
-	std::vector charge(chargeDuration - 1, mMotion.front()); // - 1 because the motion should already include one instance of the held input
-	mMotion.insert(mMotion.begin() + 1, charge.begin(), charge.end());
+	std::vector charge(chargeDuration - 1, motion_.front()); // - 1 because the motion should already include one instance of the held input
+	motion_.insert(motion_.begin() + 1, charge.begin(), charge.end());
 
 	// Current format allows for indefinite resetting of buffer timer as long as the initial charge has been done
 
 	// Add charge duration to buffer for sake of timer
-	mBuffer += chargeDuration;
+	buffer_ += chargeDuration;
 }
 
 void InputTrigger::setCharge(unsigned int chargeDuration, std::vector<bool> fuzzyFlags)
 {
-	assert(mMotion.size() != 0); // If this assertion pops you tried to set a charge before specifying the motion input
-	assert(fuzzyFlags.size() == mMotion.size()); // fuzzyFlags should be a vector the same length as the original motion input (e.g. {true, false} for sonic boom {4, 6} motion)
+	assert(motion_.size() != 0); // If this assertion pops you tried to set a charge before specifying the motion input
+	assert(fuzzyFlags.size() == motion_.size()); // fuzzyFlags should be a vector the same length as the original motion input (e.g. {true, false} for sonic boom {4, 6} motion)
 
-	std::transform(mMotion.begin(), mMotion.end(), fuzzyFlags.begin(), std::inserter(mFuzzyMapping, mFuzzyMapping.end()), std::make_pair<unsigned int const&, bool const&>);
+	std::transform(motion_.begin(), motion_.end(), fuzzyFlags.begin(), std::inserter(fuzzyMapping_, fuzzyMapping_.end()), std::make_pair<unsigned int const&, bool const&>);
 
 	// Duplicate held input for as many frames as charge duration requires
 	// For now InputTrigger only supports charge inputs where the first input is the one that is held
-	std::vector charge(chargeDuration - 1, mMotion.front()); // - 1 because the motion should already include one instance of the held input
-	mMotion.insert(mMotion.begin() + 1, charge.begin(), charge.end());
+	std::vector charge(chargeDuration - 1, motion_.front()); // - 1 because the motion should already include one instance of the held input
+	motion_.insert(motion_.begin() + 1, charge.begin(), charge.end());
 
 	// Add charge duration to buffer for sake of timer
-	mBuffer += chargeDuration;
+	buffer_ += chargeDuration;
 
-	mFuzzyInputFlags = fuzzyFlags;
+	fuzzyInputFlags_ = fuzzyFlags;
 	std::vector chargeFuzzyFlags(chargeDuration - 1, fuzzyFlags.front());
-	mFuzzyInputFlags.insert(mFuzzyInputFlags.begin() + 1, chargeFuzzyFlags.begin(), chargeFuzzyFlags.end());
+	fuzzyInputFlags_.insert(fuzzyInputFlags_.begin() + 1, chargeFuzzyFlags.begin(), chargeFuzzyFlags.end());
 }
 
 unsigned int InputTrigger::getBuffer()
 {
-	return mBuffer;
+	return buffer_;
 }
 
 unsigned int InputTrigger::getTimer()
 {
-	return mTimer;
+	return timer_;
 }
 
 std::vector<unsigned int> InputTrigger::getMotion()
 {
-	return mMotion;
+	return motion_;
 }
 
 void InputTrigger::update(unsigned int playerInput)
 {
 	// If input was triggered last update, reset
-	if (mTrigger)
+	if (trigger_)
 	{
-		mTrigger = false;
+		trigger_ = false;
 	}
 
 	// (input & 15) is a bitmask to filter player input to first four bits; i.e., the directional input [in numpad notation]
@@ -102,7 +102,7 @@ void InputTrigger::update(unsigned int playerInput)
 
 	// If there's a fuzzy mapping, convert relevant diagonal inputs to cardinals for input reading
 	// Note: current implementation means there's no way to make an input "unfuzzy" once registered in the mapping
-	for (auto it = mFuzzyMapping.begin(); it != mFuzzyMapping.end(); it++)
+	for (auto it = fuzzyMapping_.begin(); it != fuzzyMapping_.end(); it++)
 	{
 		switch (it->first)
 		{
@@ -126,37 +126,37 @@ void InputTrigger::update(unsigned int playerInput)
 
 	// If the first input in the motion is detected and timer hasn't already been started
 	// The timer check ensures motions can repeat the first input and the timer won't be restarted midway through the input
-	if ((mTimer == 0) && (input == mMotion[0])) // ((input.first == mMotion[0]) | (input.second == mMotion[0])))
+	if ((timer_ == 0) && (input == motion_[0])) // ((input.first == motion_[0]) | (input.second == motion_[0])))
 	{
 		// Start and set timer to be input's buffer duration, minus one to account for current update
-		mTimer = mBuffer;
+		timer_ = buffer_;
 	}
 
-	if ((mTimer > 0) && (input == mMotion[mProgressIndex])) // ((input.first == mMotion[mProgressIndex]) | (input.second == mMotion[mProgressIndex])))
+	if ((timer_ > 0) && (input == motion_[progressIndex_])) // ((input.first == motion_[progressIndex_]) | (input.second == motion_[progressIndex_])))
 	{
 		// Let InputTrigger know to wait for the next input
-		mProgressIndex++;
+		progressIndex_++;
 	}
-	else if (mTimer == 0)
+	else if (timer_ == 0)
 	{
 		// If time runs out before the input completes, reset progress
-		mProgressIndex = 0;
+		progressIndex_ = 0;
 	}
 
 	// If full input has been read
-	if (mProgressIndex == mMotion.size())
+	if (progressIndex_ == motion_.size())
 	{
 		// Signal that input has been triggered
-		mTrigger = true;
+		trigger_ = true;
 
 		// Reset variables
-		mProgressIndex = 0;
-		mTimer = 0;
+		progressIndex_ = 0;
+		timer_ = 0;
 	}
 		 
 	// Decrement timer
-	if (mTimer > 0)
+	if (timer_ > 0)
 	{
-		mTimer--;
+		timer_--;
 	}
 }

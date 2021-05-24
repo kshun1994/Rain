@@ -30,8 +30,8 @@ public:
 	{
 														PlayerObjects() = default;
 
-		Player&											mPlayer;
-		Character										mCharacter;
+		Player&											player_;
+		Character										character_;
 	};
 
 	struct BattleContext
@@ -68,26 +68,26 @@ private:
 	};
 
 private:
-	sf::RenderWindow&									mWindow;
-	sf::View											mWorldView;
-	TextureHolder										mTextures;
-	SceneNode											mSceneGraph;
-	std::array<SceneNode*, LayerCount>					mSceneLayers;
+	sf::RenderWindow&									window_;
+	sf::View											worldView_;
+	TextureHolder										textures_;
+	SceneNode											sceneGraph_;
+	std::array<SceneNode*, LayerCount>					sceneLayers_;
 
-	sf::FloatRect										mWorldBounds;
-	sf::Vector2f										mSpawnPosition;
+	sf::FloatRect										worldBounds_;
+	sf::Vector2f										spawnPosition_;
 
-	float												mTimer;
+	float												timer_;
 
-	Player&												mP1;
-	Player&												mP2;
+	Player&												p1_;
+	Player&												p2_;
 
-	std::shared_ptr<Character>							mP1Char;
-	std::shared_ptr<Character>							mP2Char;
-	std::array<std::shared_ptr<Character>, 2>			mCharArray;
+	std::shared_ptr<Character>							p1Char_;
+	std::shared_ptr<Character>							p2Char_;
+	std::array<std::shared_ptr<Character>, 2>			charArray_;
 
 	std::vector<int>									inputs;
-	unsigned int										mDebugPrevInput;
+	unsigned int										debugPrevInput_;
 
-	std::vector<std::unique_ptr<InputTrigger>>			mTriggerArray;
+	std::vector<std::unique_ptr<InputTrigger>>			triggerArray_;
 };

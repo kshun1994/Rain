@@ -3,30 +3,30 @@
 
 
 ParallelTask::ParallelTask()
-: mThread(&ParallelTask::runTask, this)
-, mFinished(false)
+: thread_(&ParallelTask::runTask, this)
+, finished_(false)
 {
 }
 
 void ParallelTask::execute()
 {
-	mFinished = false;
-	mElapsedTime.restart();
-	mThread.launch();
+	finished_ = false;
+	elapsedTime_.restart();
+	thread_.launch();
 }
 
 bool ParallelTask::isFinished()
 {
-	sf::Lock lock(mMutex);
-	return mFinished;
+	sf::Lock lock(mutex_);
+	return finished_;
 }
 
 float ParallelTask::getCompletion()
 {
-	sf::Lock lock(mMutex);
+	sf::Lock lock(mutex_);
 
 	// 100% at 10 seconds of elapsed time
-	return mElapsedTime.getElapsedTime().asSeconds() / 10.f;
+	return elapsedTime_.getElapsedTime().asSeconds() / 10.f;
 }
 
 void ParallelTask::runTask()
@@ -35,13 +35,13 @@ void ParallelTask::runTask()
 	bool ended = false;
 	while (!ended)
 	{
-		sf::Lock lock(mMutex); // Protect the clock 
-		if (mElapsedTime.getElapsedTime().asSeconds() >= 10.f)
+		sf::Lock lock(mutex_); // Protect the clock 
+		if (elapsedTime_.getElapsedTime().asSeconds() >= 10.f)
 			ended = true;
 	}
 
-	{ // mFinished may be accessed from multiple threads, protect it
-		sf::Lock lock(mMutex);
-		mFinished = true;
+	{ // finished_ may be accessed from multiple threads, protect it
+		sf::Lock lock(mutex_);
+		finished_ = true;
 	}	
 }

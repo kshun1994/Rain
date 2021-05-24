@@ -9,17 +9,17 @@
 namespace GUI
 {
 	Container::Container()
-	: mChildren()
-	, mSelectedChild(-1)
+	: children_()
+	, selectedChild_(-1)
 	{
 	}
 
 	void Container::pack(Component::Ptr component)
 	{
-		mChildren.push_back(component); // append incoming container to children
+		children_.push_back(component); // append incoming container to children
 		if (!hasSelection() && component->isSelectable()) // check if there's a currently selected child and if not check if appended component is selectable
 		{
-			select(mChildren.size() - 1); // select appended component
+			select(children_.size() - 1); // select appended component
 		}
 	}
 
@@ -30,9 +30,9 @@ namespace GUI
 
 	void Container::handleEvent(const sf::Event& event)
 	{
-		if (hasSelection() && mChildren[mSelectedChild]->isActive()) // check if valid selection and whether selected component is active
+		if (hasSelection() && children_[selectedChild_]->isActive()) // check if valid selection and whether selected component is active
 		{
-			mChildren[mSelectedChild]->handleEvent(event); // if so then pass events to component instead of container
+			children_[selectedChild_]->handleEvent(event); // if so then pass events to component instead of container
 		}
 		else if (event.type == sf::Event::KeyReleased)
 		{
@@ -51,7 +51,7 @@ namespace GUI
 			{
 				if (hasSelection())
 				{
-					mChildren[mSelectedChild]->activate();
+					children_[selectedChild_]->activate();
 				}
 			}
 		}
@@ -61,7 +61,7 @@ namespace GUI
 	{
 		states.transform *= getTransform();
 
-		for (const Component::Ptr& child : mChildren)
+		for (const Component::Ptr& child : children_)
 		{
 			target.draw(*child, states);
 		}
@@ -69,20 +69,20 @@ namespace GUI
 
 	bool Container::hasSelection() const
 	{
-		return mSelectedChild >= 0;
+		return selectedChild_ >= 0;
 	}
 
 	void Container::select(std::size_t index)
 	{
-		if (mChildren[index]->isSelectable())
+		if (children_[index]->isSelectable())
 		{
 			if (hasSelection())
 			{
-				mChildren[mSelectedChild]->deselect();
+				children_[selectedChild_]->deselect();
 			}
 
-			mChildren[index]->select();
-			mSelectedChild = index;
+			children_[index]->select();
+			selectedChild_ = index;
 		}
 	}
 
@@ -94,10 +94,10 @@ namespace GUI
 		}
 
 		// Search next selectable component
-		int next = mSelectedChild;
+		int next = selectedChild_;
 		do
-			next = (next + 1) % mChildren.size();
-		while (!mChildren[next]->isSelectable());
+			next = (next + 1) % children_.size();
+		while (!children_[next]->isSelectable());
 
 		// Select that component
 		select(next);
@@ -111,10 +111,10 @@ namespace GUI
 		}
 
 		// Search previous selectable component
-		int prev = mSelectedChild;
+		int prev = selectedChild_;
 		do 
-			prev = (prev + mChildren.size() - 1) % mChildren.size();
-		while (!mChildren[prev]->isSelectable());
+			prev = (prev + children_.size() - 1) % children_.size();
+		while (!children_[prev]->isSelectable());
 
 		// Select that component
 		select(prev);

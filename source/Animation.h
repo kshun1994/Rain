@@ -47,13 +47,13 @@ public:
 	void								draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-	sf::Sprite							mSprite;
-	sf::Vector2i						mFrameSize; // size of one frame rect
-	std::size_t							mNumFrames;
-	std::size_t							mCurrentFrame;
-	std::vector<Frame>					mFrameVector;
-	sf::Time							mDuration;
-	sf::Time							mElapsedTime;
-	int									mElapsedTicks;
-	bool								mRepeat;
+	sf::Sprite							sprite_;
+	sf::Vector2i						frameSize_; // size of one frame rect
+	std::size_t							numFrames_;
+	std::size_t							currentFrame_;
+	std::vector<Frame>					frameVector_;
+	sf::Time							duration_;
+	sf::Time							elapsedTime_;
+	int									elapsedTicks_;
+	bool								repeat_;
 };

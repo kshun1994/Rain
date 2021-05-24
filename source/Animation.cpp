@@ -8,26 +8,26 @@
 int nSpritesheetCol = 5;
 
 Animation::Animation()
-: mSprite()
-, mFrameSize()
-, mNumFrames(0)
-, mCurrentFrame(0)
-, mDuration(sf::Time::Zero)
-, mElapsedTime(sf::Time::Zero)
-, mElapsedTicks(0)
-, mRepeat(false)
+: sprite_()
+, frameSize_()
+, numFrames_(0)
+, currentFrame_(0)
+, duration_(sf::Time::Zero)
+, elapsedTime_(sf::Time::Zero)
+, elapsedTicks_(0)
+, repeat_(false)
 {
 }
 
 Animation::Animation(const sf::Texture& texture)
-: mSprite(texture)
-, mFrameSize()
-, mNumFrames(0)
-, mCurrentFrame(0)
-, mDuration(sf::Time::Zero)
-, mElapsedTime(sf::Time::Zero)
-, mElapsedTicks(0)
-, mRepeat(false)
+: sprite_(texture)
+, frameSize_()
+, numFrames_(0)
+, currentFrame_(0)
+, duration_(sf::Time::Zero)
+, elapsedTime_(sf::Time::Zero)
+, elapsedTicks_(0)
+, repeat_(false)
 {
 }
 
@@ -35,15 +35,15 @@ Animation::Animation(const sf::Texture& texture,
 					 const std::vector<int>& frameIDs, 
 					 const std::vector<int>& durations, 
 					 const sf::Vector2i& rect)
-: mSprite(texture)
-, mFrameSize()
-, mCurrentFrame(0)
-, mDuration(sf::Time::Zero)
-, mElapsedTime(sf::Time::Zero)
-, mElapsedTicks(0)
-, mRepeat(false)
+: sprite_(texture)
+, frameSize_()
+, currentFrame_(0)
+, duration_(sf::Time::Zero)
+, elapsedTime_(sf::Time::Zero)
+, elapsedTicks_(0)
+, repeat_(false)
 {
-	mNumFrames = durations.size();
+	numFrames_ = durations.size();
 	assert(frameIDs.size() == durations.size()); // make sure the two vectors are the same size
 
 	sf::IntRect currentRect;
@@ -57,50 +57,50 @@ Animation::Animation(const sf::Texture& texture,
 		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
 
 		Frame frame = { currentRect, durations[i] };
-		mFrameVector.push_back(std::move(frame));
+		frameVector_.push_back(std::move(frame));
 	}
 }
 
 Animation::Animation(const sf::Texture& texture,
 					 const std::vector<sf::IntRect>& frameRects,
 					 const std::vector<int>& durations)
-: mSprite(texture)
-, mFrameSize()
-, mCurrentFrame(0)
-, mDuration(sf::Time::Zero)
-, mElapsedTime(sf::Time::Zero)
-, mElapsedTicks(0)
-, mRepeat(false)
+: sprite_(texture)
+, frameSize_()
+, currentFrame_(0)
+, duration_(sf::Time::Zero)
+, elapsedTime_(sf::Time::Zero)
+, elapsedTicks_(0)
+, repeat_(false)
 {
-	mNumFrames = durations.size();
+	numFrames_ = durations.size();
 
 	for (int i = 0; i != durations.size(); i++)
 	{
 		Frame frame = { frameRects[i], durations[i] };
-		mFrameVector.push_back(std::move(frame));
+		frameVector_.push_back(std::move(frame));
 	}
 }
 
 void Animation::setTexture(const sf::Texture& texture)
 {
-	mSprite.setTexture(texture);
+	sprite_.setTexture(texture);
 }
 
 void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, // sprite sheet bounding boxes
 						  const std::vector<int>& durations)		  // corresponding durations in frames
 {
 	// Clear any stuff from previous animation
-	mCurrentFrame = 0;
-	mElapsedTicks = 0;
-	mFrameVector.clear();
+	currentFrame_ = 0;
+	elapsedTicks_ = 0;
+	frameVector_.clear();
 
-	mNumFrames = durations.size();
+	numFrames_ = durations.size();
 	assert(frameRects.size() == durations.size()); // make sure the two vectors are the same size
 
 	for (int i = 0; i != durations.size(); i++)
 	{
 		Frame frame = { frameRects[i], durations[i] };
-		mFrameVector.push_back(std::move(frame));
+		frameVector_.push_back(std::move(frame));
 	}
 }
 
@@ -109,11 +109,11 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 						  const sf::Vector2i& rect)			 // bounding box width/height
 {
 	// Clear any stuff from previous animation
-	mCurrentFrame = 0;
-	mElapsedTicks = 0;
-	mFrameVector.clear();
+	currentFrame_ = 0;
+	elapsedTicks_ = 0;
+	frameVector_.clear();
 
-	mNumFrames = durations.size();
+	numFrames_ = durations.size();
 	assert(frameIDs.size() == durations.size()); // make sure the two vectors are the same size
 
 	for (int i = 0; i != durations.size(); i++)
@@ -127,44 +127,44 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
 
 		Frame frame = { currentRect, durations[i] };
-		mFrameVector.push_back(std::move(frame));
+		frameVector_.push_back(std::move(frame));
 	}
 }
 
 
 const sf::Texture* Animation::getTexture() const
 {
-	return mSprite.getTexture();
+	return sprite_.getTexture();
 }
 
 void Animation::setFrameSize(sf::Vector2i frameSize)
 {
-	mFrameSize = frameSize;
+	frameSize_ = frameSize;
 }
 
 sf::Vector2i Animation::getFrameSize() const
 {
-	return mFrameSize;
+	return frameSize_;
 }
 
 void Animation::setNumFrames(std::size_t numFrames)
 {
-	mNumFrames = numFrames;
+	numFrames_ = numFrames;
 }
 
 std::size_t Animation::getNumFrames() const
 {
-	return mNumFrames;
+	return numFrames_;
 }
 
 void Animation::setRepeating(bool flag)
 {
-	mRepeat = flag;
+	repeat_ = flag;
 }
 
 bool Animation::isRepeating() const
 {
-	return mRepeat;
+	return repeat_;
 }
 
 sf::FloatRect Animation::getLocalBounds() const
@@ -179,27 +179,27 @@ sf::FloatRect Animation::getGlobalBounds() const
 
 void Animation::update()
 {
-	mElapsedTicks++;
+	elapsedTicks_++;
 
-	while (mElapsedTicks >= mFrameVector[mCurrentFrame].duration && (mCurrentFrame != mFrameVector.size() || mRepeat))
+	while (elapsedTicks_ >= frameVector_[currentFrame_].duration && (currentFrame_ != frameVector_.size() || repeat_))
 	{
-		mSprite.setTextureRect(mFrameVector[mCurrentFrame].rect);
+		sprite_.setTextureRect(frameVector_[currentFrame_].rect);
 
-		if (mRepeat && (mCurrentFrame == mFrameVector.size() - 1))
+		if (repeat_ && (currentFrame_ == frameVector_.size() - 1))
 		{
-			mCurrentFrame = 0;
+			currentFrame_ = 0;
 		}
 		else
 		{
-			mCurrentFrame++;
+			currentFrame_++;
 		}
 
-		mElapsedTicks = 0;
+		elapsedTicks_ = 0;
 	}
 }
 
 void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
-	target.draw(mSprite, states);
+	target.draw(sprite_, states);
 }

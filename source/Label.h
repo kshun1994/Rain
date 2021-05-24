@@ -29,6 +29,6 @@ namespace GUI
     
     
         private:
-            sf::Text			            mText;
+            sf::Text			            text_;
     };
 }

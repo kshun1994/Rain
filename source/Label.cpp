@@ -10,7 +10,7 @@ namespace GUI
 {
 
 	Label::Label(const std::string& text, const FontHolder& fonts)
-	:mText(text, fonts.get(Fonts::ID::Main), 16)
+	:text_(text, fonts.get(Fonts::ID::Main), 16)
 	{
 	}
 
@@ -27,11 +27,11 @@ namespace GUI
 	void Label::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
-		target.draw(mText, states);
+		target.draw(text_, states);
 	}
 
 	void Label::setText(const std::string& text)
 	{
-		mText.setString(text);
+		text_.setString(text);
 	}
 }

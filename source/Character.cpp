@@ -18,17 +18,17 @@ Textures::ID toTextureID(Character::Type type)
 }
 
 Character::Character(Type type, const TextureHolder& textures)
-: mType(type)
-, mSprite(textures.get(toTextureID(type)))
-, mHealth(0.f)
-, mMeter(0.f)
-, mFacing(Facing::Right)
-, mPosture(Posture::Standing)
-, mActionState(ActionState::None)
-, mAnimationState(AnimationState::Idle)
-, mPrevAnimationState(AnimationState::Idle)
-, mFacingSignFlip(1)
-, mSpriteStruct()
+: type_(type)
+, sprite_(textures.get(toTextureID(type)))
+, health_(0.f)
+, meter_(0.f)
+, facing_(Facing::Right)
+, posture_(Posture::Standing)
+, actionState_(ActionState::None)
+, animationState_(AnimationState::Idle)
+, prevAnimationState_(AnimationState::Idle)
+, facingSignFlip_(1)
+, spriteStruct_()
 {
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
@@ -89,22 +89,22 @@ Character::Character(Type type, const TextureHolder& textures)
 	//}
 
 
-	if (mType == Type::Enkidu)
+	if (type_ == Type::Enkidu)
 	{
-		mSpriteStruct = EnkSprite;
+		spriteStruct_ = EnkSprite;
 	}
-	else if (mType == Type::Yuzuriha)
+	else if (type_ == Type::Yuzuriha)
 	{
-		mSpriteStruct = YuzuSprite;
+		spriteStruct_ = YuzuSprite;
 	}
 
-	mSprite.setFrames(mSpriteStruct.idleIDs, mSpriteStruct.idleDurs, mSpriteStruct.spriteDims);
-	mSprite.setOrigin(mSpriteStruct.originX, mSpriteStruct.spriteDims.y);
-	mSprite.setRepeating(true);
+	sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
+	sprite_.setOrigin(spriteStruct_.originX, spriteStruct_.spriteDims.y);
+	sprite_.setRepeating(true);
 
-	mHealth			= 1000.f;
-	mMeter			= 0.f;
-	//mPosition		= sf::Vector2f(0.f, 0.f);
+	health_			= 1000.f;
+	meter_			= 0.f;
+	//position_		= sf::Vector2f(0.f, 0.f);
 }
 
 Character::~Character()
@@ -113,38 +113,38 @@ Character::~Character()
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	target.draw(mSprite, states);
+	target.draw(sprite_, states);
 }
 
 void Character::updateCurrent()
 {
 	// 
-	if (mAnimationState != mPrevAnimationState)
+	if (animationState_ != prevAnimationState_)
 	{
-		if (mAnimationState == AnimationState::Idle)
+		if (animationState_ == AnimationState::Idle)
 		{
 			RN_DEBUG("Idle");
-			mSprite.setFrames(mSpriteStruct.idleIDs, mSpriteStruct.idleDurs, mSpriteStruct.spriteDims);
-			mSprite.setRepeating(true);
+			sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
+			sprite_.setRepeating(true);
 		}
-		else if (mAnimationState == AnimationState::WalkF)
+		else if (animationState_ == AnimationState::WalkF)
 		{
 			RN_DEBUG("WalkF");
-			mSprite.setFrames(mSpriteStruct.walkFIDs, mSpriteStruct.walkFDurs, mSpriteStruct.spriteDims);
-			mSprite.setRepeating(true);
+			sprite_.setFrames(spriteStruct_.walkFIDs, spriteStruct_.walkFDurs, spriteStruct_.spriteDims);
+			sprite_.setRepeating(true);
 		}
-		else if (mAnimationState == AnimationState::WalkB)
+		else if (animationState_ == AnimationState::WalkB)
 		{
 			RN_DEBUG("WalkB");
-			mSprite.setFrames(mSpriteStruct.walkBIDs, mSpriteStruct.walkBDurs, mSpriteStruct.spriteDims);
-			mSprite.setRepeating(true);
+			sprite_.setFrames(spriteStruct_.walkBIDs, spriteStruct_.walkBDurs, spriteStruct_.spriteDims);
+			sprite_.setRepeating(true);
 		}
 	}
 
-	mPrevAnimationState = mAnimationState;
+	prevAnimationState_ = animationState_;
 
-	mSprite.update();
-	mAnimationState = AnimationState::Idle;
+	sprite_.update();
+	animationState_ = AnimationState::Idle;
 }
 
 unsigned int Character::getCategory() const
@@ -158,124 +158,124 @@ void Character::takeInput(Player::TaggedInput input)
 
 float Character::getHealth() const
 {
-	return mHealth;
+	return health_;
 }
 
 float Character::getMeter() const
 {
-	return mMeter;
+	return meter_;
 }
 
 Character::Facing Character::getFacing() const
 {
-	return mFacing;
+	return facing_;
 }
 
 Character::Posture Character::getPosture() const
 {
-	return mPosture;
+	return posture_;
 }
 
 Character::ActionState Character::getActionState() const
 {
-	return mActionState;
+	return actionState_;
 }
 
 bool Character::isActionable() const
 {
-	return !mActionState;
+	return !actionState_;
 }
 
 void Character::setHealth(float value)
 {
-	mHealth = value;
+	health_ = value;
 }
 
 void Character::subtractHealth(float value)
 {
-	mHealth -= value;
-	if (mHealth < 0.f)
+	health_ -= value;
+	if (health_ < 0.f)
 	{
-		mHealth = 0.f;
+		health_ = 0.f;
 	}
 }
 
 void Character::setMeter(float value)
 {
-	mMeter = value;
+	meter_ = value;
 }
 
 void Character::addMeter(float value)
 {
-	mMeter += value;
-	if (mMeter > constants::METER_MAX)
+	meter_ += value;
+	if (meter_ > constants::METER_MAX)
 	{
-		mMeter = constants::METER_MAX;
+		meter_ = constants::METER_MAX;
 	}
 }
 
 void Character::subtractMeter(float value)
 {
-	mMeter -= value;
-	if (mMeter < 0.f)
+	meter_ -= value;
+	if (meter_ < 0.f)
 	{
-		mMeter = 0.f;
+		meter_ = 0.f;
 	}
 }
 
 void Character::setFacing(Facing facing)
 {
-	if (mFacing != facing)
+	if (facing_ != facing)
 	{
-		mFacing = facing;
-		mSprite.scale(-1, 1); // Flip sprite horizontally
+		facing_ = facing;
+		sprite_.scale(-1, 1); // Flip sprite horizontally
 	}
 	setSignFlip();
 }
 
 void Character::flipFacing()
 {
-	mFacing != mFacing;
-	mSprite.scale(-1, 1);
+	facing_ != facing_;
+	sprite_.scale(-1, 1);
 	setSignFlip();
 }
 
 void Character::setSignFlip()
 {
 	// If Character faces Right, all forward movement vectors etc. should be positive and backward should be negative
-	if (mFacing == Facing::Right)
+	if (facing_ == Facing::Right)
 	{
-		mFacingSignFlip = 1;
+		facingSignFlip_ = 1;
 	}
-	else if (mFacing == Facing::Left)
+	else if (facing_ == Facing::Left)
 	{
-		mFacingSignFlip = -1;
+		facingSignFlip_ = -1;
 	}
 }
 
 void Character::setPosture(Posture posture)
 {
-	mPosture = posture;
+	posture_ = posture;
 }
 
 void Character::setActionState(ActionState actionState)
 {
-	mActionState = actionState;
+	actionState_ = actionState;
 }
 
 void Character::walkForward(float speed)
 {
-	mAnimationState = AnimationState::WalkF;
+	animationState_ = AnimationState::WalkF;
 
 	// Walk in the direction the Character is Facing
-	this->move(speed * mFacingSignFlip, 0.f);
+	this->move(speed * facingSignFlip_, 0.f);
 	
 	// Change the animation frames for as long as the Player holds forward 
 }
 
 void Character::walkBackward(float speed)
 {
-	mAnimationState = AnimationState::WalkB;
+	animationState_ = AnimationState::WalkB;
 
-	this->move(-speed * mFacingSignFlip, 0.f);
+	this->move(-speed * facingSignFlip_, 0.f);
 }

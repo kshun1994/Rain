@@ -10,12 +10,12 @@
 
 MenuState::MenuState(StateStack& stack, Context context)
 	: State(stack, context)
-	, mGUIContainer()
+	, gUIContainer_()
 {
 	sf::Texture& texture = context.textures->get(Textures::ID::MainMenu);
-	mBackgroundSprite.setTexture(texture);
-	centerOrigin(mBackgroundSprite);
-	mBackgroundSprite.setPosition(context.window->getView().getSize() / 2.f);
+	backgroundSprite_.setTexture(texture);
+	centerOrigin(backgroundSprite_);
+	backgroundSprite_.setPosition(context.window->getView().getSize() / 2.f);
 
 	auto playButton = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
 	playButton->setPosition(100, 250);
@@ -42,9 +42,9 @@ MenuState::MenuState(StateStack& stack, Context context)
 		requestStackPop();
 	});
 
-	mGUIContainer.pack(playButton);
-	mGUIContainer.pack(settingsButton);
-	mGUIContainer.pack(exitButton);
+	gUIContainer_.pack(playButton);
+	gUIContainer_.pack(settingsButton);
+	gUIContainer_.pack(exitButton);
 }
 
 void MenuState::draw()
@@ -53,8 +53,8 @@ void MenuState::draw()
 
 	window.setView(window.getDefaultView());
 
-	window.draw(mBackgroundSprite);
-	window.draw(mGUIContainer);
+	window.draw(backgroundSprite_);
+	window.draw(gUIContainer_);
 }
 
 bool MenuState::update()
@@ -64,6 +64,6 @@ bool MenuState::update()
 
 bool MenuState::handleEvent(const sf::Event& event)
 {
-	mGUIContainer.handleEvent(event);
+	gUIContainer_.handleEvent(event);
 	return false;
 }

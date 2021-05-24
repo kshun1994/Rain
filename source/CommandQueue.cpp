@@ -5,21 +5,21 @@
 
 void CommandQueue::push(const Command& command)
 {
-	mQueue.push(command);
+	queue_.push(command);
 }
 
 Command CommandQueue::pop()
 {
-	Command command = mQueue.front();
-	mQueue.pop();
+	Command command = queue_.front();
+	queue_.pop();
 	return command;
 }
 
 bool CommandQueue::isEmpty() const
 {
-	return mQueue.empty();
+	return queue_.empty();
 }
 int CommandQueue::getQueueSize() const
 {
-	return mQueue.size();
+	return queue_.size();
 }

@@ -15,9 +15,9 @@ public:
 	virtual bool				handleEvent(const sf::Event& event);
 
 private:
-	sf::Sprite					mBackgroundSprite;
-	sf::Text					mText;
+	sf::Sprite					backgroundSprite_;
+	sf::Text					text_;
 
-	bool						mShowText;
-	sf::Time					mTextEffectTime;
+	bool						showText_;
+	sf::Time					textEffectTime_;
 };

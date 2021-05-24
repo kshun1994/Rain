@@ -100,19 +100,19 @@ private:
 	void				setSignFlip();
 
 private:
-	Type				mType;
-	Animation			mSprite;
-	SpriteStruct		mSpriteStruct;
+	Type				type_;
+	Animation			sprite_;
+	SpriteStruct		spriteStruct_;
 
-	AnimationState		mAnimationState;
-	AnimationState		mPrevAnimationState;
+	AnimationState		animationState_;
+	AnimationState		prevAnimationState_;
 
-	float				mHealth;
-	float				mMeter;
-	Facing				mFacing;
-	Posture				mPosture;
-	ActionState			mActionState;
-	int					mFacingSignFlip;
+	float				health_;
+	float				meter_;
+	Facing				facing_;
+	Posture				posture_;
+	ActionState			actionState_;
+	int					facingSignFlip_;
 };
 
 #define COMMON_ACTION_IDLE				0

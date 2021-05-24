@@ -3,26 +3,26 @@
 
 void Entity::setVelocity(sf::Vector2f velocity)
 {
-	mVelocity = velocity;
+	velocity_ = velocity;
 }
 
 void Entity::setVelocity(float vx, float vy)
 {
-	mVelocity.x = vx;
-	mVelocity.y = vy;
+	velocity_.x = vx;
+	velocity_.y = vy;
 }
 
 sf::Vector2f Entity::getVelocity() const
 {
-	return mVelocity;
+	return velocity_;
 }
 
 void Entity::updateCurrent()
 {
-	move(mVelocity);
+	move(velocity_);
 }
 
 void Entity::accelerate(sf::Vector2f velocity)
 {
-	mVelocity += velocity;
+	velocity_ += velocity;
 }

@@ -60,19 +60,19 @@ private:
 
 
 private:
-	std::vector<State::Ptr>									mStack;
-	std::vector<PendingChange>								mPendingList;
+	std::vector<State::Ptr>									stack_;
+	std::vector<PendingChange>								pendingList_;
 
-	State::Context											mContext;
-	std::map<States::ID, std::function<State::Ptr()>>		mFactories;
+	State::Context											context_;
+	std::map<States::ID, std::function<State::Ptr()>>		factories_;
 };
 
 
 template <typename T>
 void StateStack::registerState(States::ID stateID)
 {
-	mFactories[stateID] = [this]()
+	factories_[stateID] = [this]()
 	{
-		return State::Ptr(new T(*this, mContext));
+		return State::Ptr(new T(*this, context_));
 	};
 }

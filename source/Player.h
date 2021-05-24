@@ -57,19 +57,19 @@ private:
 	void										cleanInput();
 
 private:
-	ID											mPlayerID;
-	Character*									mCharacter;
+	ID											playerID_;
+	Character*									character_;
 
-	std::map<sf::Keyboard::Key, Input>			mKeyBinding;
-	std::map<Input, Command>					mActionBinding;
+	std::map<sf::Keyboard::Key, Input>			keyBinding_;
+	std::map<Input, Command>					actionBinding_;
 
-	bool										mIsUsingKeyboard;
-	int											mJoystickID;
-	int											mIsUsingAnalogStick;
-	float										mAnalogThreshold;
-	sf::Joystick::Axis							mAnalogXAxis;
-	sf::Joystick::Axis							mAnalogYAxis;
+	bool										isUsingKeyboard_;
+	int											joystickID_;
+	int											isUsingAnalogStick_;
+	float										analogThreshold_;
+	sf::Joystick::Axis							analogXAxis_;
+	sf::Joystick::Axis							analogYAxis_;
 
-	unsigned int								mInputState;
-	TaggedInput									mInput;
+	unsigned int								inputState_;
+	TaggedInput									input_;
 };

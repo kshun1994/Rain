@@ -21,6 +21,6 @@ private:
 	virtual void			updateCurrent();
 
 private:
-	int						mHealth;
-	sf::Vector2f			mVelocity;
+	int						health_;
+	sf::Vector2f			velocity_;
 };

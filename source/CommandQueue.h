@@ -11,5 +11,5 @@ public:
 	int												getQueueSize() const;
 
 private:
-	std::queue<Command>								mQueue;
+	std::queue<Command>								queue_;
 };

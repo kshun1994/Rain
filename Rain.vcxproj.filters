@@ -82,11 +82,12 @@
     <ClCompile Include="source\Player.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\InputWrapper.cpp" />
     <ClCompile Include="source\InputTrigger.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="WorldLogger.cpp" />
+    <ClCompile Include="source\WorldLogger.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -179,20 +180,22 @@
     <ClInclude Include="source\Player.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\InputWrapper.h" />
     <ClInclude Include="source\Constants.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\InputTrigger.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="WorldLogger.h" />
-    <ClInclude Include="Observer.h" />
-    <ClInclude Include="Event.h" />
     <ClInclude Include="source\Input.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Action.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WorldLogger.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Event.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>

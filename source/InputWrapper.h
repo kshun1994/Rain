@@ -30,10 +30,10 @@ private:
 	void								initializeInputs();
 
 private:
-	bool								mIsUsingKeyboard;
-	sf::Joystick						mJoystick;
-	sf::Keyboard						mKeyboard;
-	int									mInput;
+	bool								isUsingKeyboard_;
+	sf::Joystick						joystick_;
+	sf::Keyboard						keyboard_;
+	int									input_;
 
 };
 

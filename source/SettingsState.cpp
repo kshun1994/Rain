@@ -6,11 +6,11 @@
 
 SettingsState::SettingsState(StateStack& stack, Context context)
 : State(stack, context)
-, mGUIContainer()
+, gUIContainer_()
 {
-	mBackgroundSprite.setTexture(context.textures->get(Textures::ID::MainMenu));
-	centerOrigin(mBackgroundSprite);
-	mBackgroundSprite.setPosition(context.window->getView().getSize() / 2.f);
+	backgroundSprite_.setTexture(context.textures->get(Textures::ID::MainMenu));
+	centerOrigin(backgroundSprite_);
+	backgroundSprite_.setPosition(context.window->getView().getSize() / 2.f);
 
 	float windowWidth = context.window->getSize().x;
 	float windowHeight = context.window->getSize().y;
@@ -34,15 +34,15 @@ SettingsState::SettingsState(StateStack& stack, Context context)
 	backButton->setText("Back");
 	backButton->setCallback(std::bind(&SettingsState::requestStackPop, this));
 
-	mGUIContainer.pack(backButton);
+	gUIContainer_.pack(backButton);
 }
 
 void SettingsState::draw()
 {
 	sf::RenderWindow& window = *getContext().window;
 
-	window.draw(mBackgroundSprite);
-	window.draw(mGUIContainer);
+	window.draw(backgroundSprite_);
+	window.draw(gUIContainer_);
 }
 
 bool SettingsState::update()
@@ -57,13 +57,13 @@ bool SettingsState::handleEvent(const sf::Event& event)
 	for (std::size_t i = 0; i < magic_enum::enum_count<Input>(); ++i)
 	{
 		Input input = magic_enum::enum_value<Input>(i);
-		if (mBindingButtons[input]->isActive())
+		if (bindingButtons_[input]->isActive())
 		{
 			isKeyBinding = true;
 			if (event.type == sf::Event::KeyReleased)
 			{
 				getContext().player1->assignKey(static_cast<Input>(input), event.key.code);
-				mBindingButtons[input]->deactivate();
+				bindingButtons_[input]->deactivate();
 			}
 			break;
 		}
@@ -75,7 +75,7 @@ bool SettingsState::handleEvent(const sf::Event& event)
 	}
 	else
 	{
-		mGUIContainer.handleEvent(event);
+		gUIContainer_.handleEvent(event);
 	}
 	return false;
 }
@@ -88,21 +88,21 @@ void SettingsState::updateLabels()
 	{
 		Input input = magic_enum::enum_value<Input>(i);
 		sf::Keyboard::Key key = player1.getAssignedKey(static_cast<Input>(input));
-		mBindingLabels[input]->setText(keyToString(key));
+		bindingLabels_[input]->setText(keyToString(key));
 	}
 }
 
 void SettingsState::addButtonLabel(Input input, float y, const std::string& text, Context context)
 {
 	//std::size_t ind = magic_enum::enum_value<Player::Input>
-	mBindingButtons[input] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
-	mBindingButtons[input]->setPosition(80.f, y);
-	mBindingButtons[input]->setText(text);
-	mBindingButtons[input]->setToggle(true);
+	bindingButtons_[input] = std::make_shared<GUI::Button>(*context.fonts, *context.textures);
+	bindingButtons_[input]->setPosition(80.f, y);
+	bindingButtons_[input]->setText(text);
+	bindingButtons_[input]->setToggle(true);
 
-	mBindingLabels[input] = std::make_shared<GUI::Label>("", *context.fonts);
-	mBindingLabels[input]->setPosition(300.f, y + 15.f);
+	bindingLabels_[input] = std::make_shared<GUI::Label>("", *context.fonts);
+	bindingLabels_[input]->setPosition(300.f, y + 15.f);
 
-	mGUIContainer.pack(mBindingButtons[input]);
-	mGUIContainer.pack(mBindingLabels[input]);
+	gUIContainer_.pack(bindingButtons_[input]);
+	gUIContainer_.pack(bindingLabels_[input]);
 }

@@ -12,43 +12,43 @@
 
 
 Application::Application()
-	: mWindow(sf::VideoMode(constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT), "Window", sf::Style::Titlebar | sf::Style::Close)
-	, mTextures()
-	, mFonts()
-	, mPlayer1(Player::ID::Player1)
-	, mPlayer2(Player::ID::Player2)
-	, mStateStack(State::Context(mWindow, mTextures, mFonts, mPlayer1, mPlayer2))
-	, mCurrentSlice(0.f)
-	, mLastFT(0.f)
-	, mStatsText()
-	, mTotalUpdates(0)
-	, mUpdatesPerSec(0)
-	, mStatsTimer(0)
+	: window_(sf::VideoMode(constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT), "Window", sf::Style::Titlebar | sf::Style::Close)
+	, textures_()
+	, fonts_()
+	, player1_(Player::ID::Player1)
+	, player2_(Player::ID::Player2)
+	, stateStack_(State::Context(window_, textures_, fonts_, player1_, player2_))
+	, currentSlice_(0.f)
+	, lastFT_(0.f)
+	, statsText_()
+	, totalUpdates_(0)
+	, updatesPerSec_(0)
+	, statsTimer_(0)
 {
 	// Window settings
-	mWindow.setKeyRepeatEnabled(false);
-	mWindow.setFramerateLimit(0);
+	window_.setKeyRepeatEnabled(false);
+	window_.setFramerateLimit(0);
 
 	// Load fonts
-	mFonts.load(Fonts::ID::Main, "media/font/CarroisGothicSC-Regular.ttf");
+	fonts_.load(Fonts::ID::Main, "media/font/CarroisGothicSC-Regular.ttf");
 	RN_DEBUG("Font(s) loaded.");
 
 	// Load textures
-	mTextures.load(Textures::ID::TitleScreen,    "media/texture/state/Title.png");
-	mTextures.load(Textures::ID::MainMenu,		 "media/texture/state/MainMenu.png");
-	mTextures.load(Textures::ID::ButtonNormal,	 "media/texture/ui/ButtonNormal.png");
-	mTextures.load(Textures::ID::ButtonSelected, "media/texture/ui/ButtonSelected.png");
-	mTextures.load(Textures::ID::ButtonPressed,	 "media/texture/ui/ButtonPressed.png");
+	textures_.load(Textures::ID::TitleScreen,    "media/texture/state/Title.png");
+	textures_.load(Textures::ID::MainMenu,		 "media/texture/state/MainMenu.png");
+	textures_.load(Textures::ID::ButtonNormal,	 "media/texture/ui/ButtonNormal.png");
+	textures_.load(Textures::ID::ButtonSelected, "media/texture/ui/ButtonSelected.png");
+	textures_.load(Textures::ID::ButtonPressed,	 "media/texture/ui/ButtonPressed.png");
 	RN_DEBUG("Textures(s) loaded.");
 
 	// Set FPS/update stats stuff
-	mStatsText.setFont(mFonts.get(Fonts::ID::Main));
-	mStatsText.setPosition(5.f, 5.f);
-	mStatsText.setCharacterSize(20u);
+	statsText_.setFont(fonts_.get(Fonts::ID::Main));
+	statsText_.setPosition(5.f, 5.f);
+	statsText_.setCharacterSize(20u);
 
 	registerStates();
 	RN_DEBUG("States registered.");
-	mStateStack.pushState(States::ID::Title);
+	stateStack_.pushState(States::ID::Title);
 
 	// Run update() once so TitleState actually gets pushed to StateStack
 	update();
@@ -64,73 +64,73 @@ Application::Application()
 
 void Application::run()
 {
-	while (mWindow.isOpen())
+	while (window_.isOpen())
 	{
 		auto timePoint1(std::chrono::high_resolution_clock::now());
 
 		// Accumulate player inputs over time
 		processInput();
 
-		mCurrentSlice += mLastFT;
-		int mNumUpdates = 0;
+		currentSlice_ += lastFT_;
+		int numUpdates_ = 0;
 
-		for (; mCurrentSlice >= constants::TICK_DURATION; mCurrentSlice -= constants::TICK_DURATION)
+		for (; currentSlice_ >= constants::TICK_DURATION; currentSlice_ -= constants::TICK_DURATION)
 		{
 			update();
-			mNumUpdates++;
+			numUpdates_++;
 
 			// Clear latest update's input from next set of accumulations
-			mPlayer1.clearAccumulatedInput();
-			mPlayer2.clearAccumulatedInput();
+			player1_.clearAccumulatedInput();
+			player2_.clearAccumulatedInput();
 		}
 
-		if (mStateStack.isEmpty())
-			mWindow.close();
+		if (stateStack_.isEmpty())
+			window_.close();
 
 		render();
 
 		auto timePoint2(std::chrono::high_resolution_clock::now());
 		auto elapsedTime(timePoint2 - timePoint1);
-		mLastFT = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(elapsedTime).count();
+		lastFT_ = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(elapsedTime).count();
 
-		updateStatistics(mLastFT, mNumUpdates);
+		updateStatistics(lastFT_, numUpdates_);
 	}
 }
 
 void Application::processInput()
 {
 	sf::Event event;
-	while (mWindow.pollEvent(event))
+	while (window_.pollEvent(event))
 	{
-		mStateStack.handleEvent(event);
+		stateStack_.handleEvent(event);
 
 		if (event.type == sf::Event::Closed)
-			mWindow.close();
+			window_.close();
 	}
 
 	// Get current input state every slice and then accumulate into a single input
-	mPlayer1.accumulateInput(mPlayer1.getCurrentInputState());
-	mPlayer2.accumulateInput(mPlayer2.getCurrentInputState());
+	player1_.accumulateInput(player1_.getCurrentInputState());
+	player2_.accumulateInput(player2_.getCurrentInputState());
 }
 
 void Application::update()
 {
-	mStateStack.update();
+	stateStack_.update();
 }
 
 void Application::render()
 {
-	mWindow.clear();
+	window_.clear();
 
-	mStateStack.draw();
+	stateStack_.draw();
 
-	mWindow.setView(mWindow.getDefaultView());
+	window_.setView(window_.getDefaultView());
 
 	#ifdef RN_DEBUG
-		mWindow.draw(mStatsText);
+		window_.draw(statsText_);
 	#endif // RN_DEBUG
 
-	mWindow.display();
+	window_.display();
 }
 
 void Application::updateStatistics(float ft, int numUpdates)
@@ -138,25 +138,25 @@ void Application::updateStatistics(float ft, int numUpdates)
 	auto ftSeconds = ft / 1000.f;
 	auto fps = 1.f / ftSeconds;
 
-	mTotalUpdates += numUpdates;
-	mStatsTimer += ft;
-	while (mStatsTimer > 1000.f)
+	totalUpdates_ += numUpdates;
+	statsTimer_ += ft;
+	while (statsTimer_ > 1000.f)
 	{
-		mUpdatesPerSec = mTotalUpdates;
-		mTotalUpdates = 0;
-		mStatsTimer -= 1000.f;
+		updatesPerSec_ = totalUpdates_;
+		totalUpdates_ = 0;
+		statsTimer_ -= 1000.f;
 	}
 
-	mStatsText.setString("Frame duration: " + std::to_string(ft) 
+	statsText_.setString("Frame duration: " + std::to_string(ft) 
 				        + "\nFrames/sec.: " + std::to_string(fps) 
-					   + "\nUpdates/sec.: " + std::to_string(mUpdatesPerSec));
+					   + "\nUpdates/sec.: " + std::to_string(updatesPerSec_));
 }
 
 void Application::registerStates()
 {
-	mStateStack.registerState<TitleState   >(States::ID::Title);
-	mStateStack.registerState<MenuState    >(States::ID::Menu);
-	mStateStack.registerState<GameState    >(States::ID::Game);
-	mStateStack.registerState<PauseState   >(States::ID::Pause);
-	mStateStack.registerState<SettingsState>(States::ID::Settings);
+	stateStack_.registerState<TitleState   >(States::ID::Title);
+	stateStack_.registerState<MenuState    >(States::ID::Menu);
+	stateStack_.registerState<GameState    >(States::ID::Game);
+	stateStack_.registerState<PauseState   >(States::ID::Pause);
+	stateStack_.registerState<SettingsState>(States::ID::Settings);
 }

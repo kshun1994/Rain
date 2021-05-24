@@ -40,6 +40,6 @@ private:
 	void							drawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-	std::vector<Ptr>				mChildren;
-	SceneNode*						mParent;
+	std::vector<Ptr>				children_;
+	SceneNode*						parent_;
 };

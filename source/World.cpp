@@ -10,17 +10,17 @@ const int StageHeight = 1008;
 const float ViewYOffset = 400;
 
 World::World(sf::RenderWindow& window, Player& P1, Player& P2)
-: mWindow(window)
-, mWorldView(window.getDefaultView())
-, mTextures()
-, mSceneGraph()
-, mSceneLayers()
-, mWorldBounds(0.f, 0.f, StageWidth, StageHeight)
-, mSpawnPosition(mWorldView.getSize().x / 2.f, mWorldBounds.height)
-, mP1(P1)
-, mP2(P2)
-, mTimer()
-, mDebugPrevInput(0)
+: window_(window)
+, worldView_(window.getDefaultView())
+, textures_()
+, sceneGraph_()
+, sceneLayers_()
+, worldBounds_(0.f, 0.f, StageWidth, StageHeight)
+, spawnPosition_(worldView_.getSize().x / 2.f, worldBounds_.height)
+, p1_(P1)
+, p2_(P2)
+, timer_()
+, debugPrevInput_(0)
 {
 	// Need some step where input devices assigned in preceding Device Select State are assigned to players
 
@@ -28,7 +28,7 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 	buildScene();
 
 	// Prepare the view
-	mWorldView.setCenter(mSpawnPosition.x, mSpawnPosition.y - ViewYOffset);
+	worldView_.setCenter(spawnPosition_.x, spawnPosition_.y - ViewYOffset);
 
 	// TEST STUFF
 	// Initialize input triggers
@@ -66,15 +66,15 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 
 	for (int i = 0; i < inputs.size(); i++)
 	{
-		mTriggerArray.push_back(std::make_unique<InputTrigger>());
-		mTriggerArray[i]->setMotion(inputs[i]);
-		mTriggerArray[i]->setBuffer(buffers[i]);
+		triggerArray_.push_back(std::make_unique<InputTrigger>());
+		triggerArray_[i]->setMotion(inputs[i]);
+		triggerArray_[i]->setBuffer(buffers[i]);
 	}
 
-	mTriggerArray[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
-	mTriggerArray[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
-	mTriggerArray[10]->setCharge(40, std::vector<bool>{true, true, true, true}); // double-charge super
-	mTriggerArray[11]->setCharge(40, std::vector<bool>{false, false, false, true}); // delta super
+	triggerArray_[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
+	triggerArray_[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
+	triggerArray_[10]->setCharge(40, std::vector<bool>{true, true, true, true}); // double-charge super
+	triggerArray_[11]->setCharge(40, std::vector<bool>{false, false, false, true}); // delta super
 }
 
 World::~World()
@@ -83,9 +83,9 @@ World::~World()
 
 void World::loadTextures()
 {
-	mTextures.load(Textures::ID::Enkidu,		"media/texture/enkidu/Enkidu.png");
-	mTextures.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/Yuzuriha_idle.png");
-	mTextures.load(Textures::ID::StageMomiji,	"media/texture/_stage/MomijiShrineScaledx3.png");
+	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/Enkidu.png");
+	textures_.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/Yuzuriha_idle.png");
+	textures_.load(Textures::ID::StageMomiji,	"media/texture/_stage/MomijiShrineScaledx3.png");
 }
 
 void World::buildScene()
@@ -93,53 +93,53 @@ void World::buildScene()
 	for (std::size_t i = 0; i < LayerCount; ++i) // iterate through layer node pointers
 	{
 		SceneNode::Ptr layer(new SceneNode()); // declare new SceneNode for current element
-		mSceneLayers[i] = layer.get(); // std::unique_ptr::get() returns pointer to stored object, no ownership transferred to array
+		sceneLayers_[i] = layer.get(); // std::unique_ptr::get() returns pointer to stored object, no ownership transferred to array
 
-		mSceneGraph.attachChild(std::move(layer)); // attach the newest node to scene graph's root node
+		sceneGraph_.attachChild(std::move(layer)); // attach the newest node to scene graph's root node
 	}
 
-	sf::Texture& texture = mTextures.get(Textures::ID::StageMomiji);
-	sf::IntRect textureRect(mWorldBounds);
+	sf::Texture& texture = textures_.get(Textures::ID::StageMomiji);
+	sf::IntRect textureRect(worldBounds_);
 
 	std::unique_ptr<SpriteNode> backgroundSprite(new SpriteNode(texture, textureRect));
-	backgroundSprite->setPosition(mWorldBounds.left, mWorldBounds.top);
-	mSceneLayers[Background]->attachChild(std::move(backgroundSprite));
+	backgroundSprite->setPosition(worldBounds_.left, worldBounds_.top);
+	sceneLayers_[Background]->attachChild(std::move(backgroundSprite));
 
-	//std::unique_ptr<Character> aokoTest(new Character(Character::Yuzuriha, mTextures));
-	//mP1Char = aokoTest.get();
-	//mP1Char->setScale(sf::Vector2f(3.7f, 3.7f));
-	//mP1Char->setPosition(mSpawnPosition.x, mSpawnPosition.y + 50);
-	//mSceneLayers[Characters]->attachChild(std::move(aokoTest));
+	//std::unique_ptr<Character> aokoTest(new Character(Character::Yuzuriha, textures_));
+	//p1Char_ = aokoTest.get();
+	//p1Char_->setScale(sf::Vector2f(3.7f, 3.7f));
+	//p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y + 50);
+	//sceneLayers_[Characters]->attachChild(std::move(aokoTest));
 
-	//std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, mTextures));
-	mP1Char = std::make_shared<Character>(Character::Enkidu, mTextures);
-	mP1Char->setPosition(mSpawnPosition.x, mSpawnPosition.y - 25);
-	mSceneLayers[Player1]->attachChild(mP1Char);
+	//std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, textures_));
+	p1Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
+	p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y - 25);
+	sceneLayers_[Player1]->attachChild(p1Char_);
 
-	//std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, mTextures));
-	//std::shared_ptr<Character> yuzuriha = std::make_shared<Character>(Character::Yuzuriha, mTextures);
-	mP2Char = std::make_shared<Character>(Character::Yuzuriha, mTextures);
-	mP2Char->setPosition(mSpawnPosition.x + 500, mSpawnPosition.y - 64);
-	mP2Char->flipFacing();
-	mSceneLayers[Player2]->attachChild(mP2Char);
+	//std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, textures_));
+	//std::shared_ptr<Character> yuzuriha = std::make_shared<Character>(Character::Yuzuriha, textures_);
+	p2Char_ = std::make_shared<Character>(Character::Yuzuriha, textures_);
+	p2Char_->setPosition(spawnPosition_.x + 500, spawnPosition_.y - 64);
+	p2Char_->flipFacing();
+	sceneLayers_[Player2]->attachChild(p2Char_);
 
-	mCharArray = { mP1Char, mP2Char };
+	charArray_ = { p1Char_, p2Char_ };
 
-	//PlayerContext P1Context(mP1Char, mP1RawInput, mP1NumpadInput);
-	//PlayerContext P2Context(mP2Char, mP2RawInput, mP2NumpadInput);
-	//BattleContext BattleContext(&P1Context, &P2Context, &mTimer);
+	//PlayerContext P1Context(p1Char_, p1RawInput_, p1NumpadInput_);
+	//PlayerContext P2Context(p2Char_, p2RawInput_, p2NumpadInput_);
+	//BattleContext BattleContext(&P1Context, &P2Context, &timer_);
 
-	//std::unique_ptr<Character> shun(new Character(Character::Shun, mTextures));
-	//mP1Char = shun.get();
-	//mP1Char->setScale(sf::Vector2f(5.0f, 5.0f));
-	//mP1Char->setPosition(mSpawnPosition.x, mSpawnPosition.y);
-	//mSceneLayers[Characters]->attachChild(std::move(shun));
+	//std::unique_ptr<Character> shun(new Character(Character::Shun, textures_));
+	//p1Char_ = shun.get();
+	//p1Char_->setScale(sf::Vector2f(5.0f, 5.0f));
+	//p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y);
+	//sceneLayers_[Characters]->attachChild(std::move(shun));
 }
 
 void World::draw()
 {
-	mWindow.setView(mWorldView);
-	mWindow.draw(mSceneGraph);
+	window_.setView(worldView_);
+	window_.draw(sceneGraph_);
 }
 
 std::vector<std::string> inputString =
@@ -167,20 +167,20 @@ void World::update()
 	// "Adapt" functions (collision, facing, etc.)
 
 	// Read in accumulated player input for current update, translate to numpad notation, and add to input buffer
-	TaggedInput mP1RawInput = mP1.getInput();
-	TaggedInput mP1NumpadInput = translateToNumpadInput(mP1.getInput());
+	TaggedInput p1RawInput_ = p1_.getInput();
+	TaggedInput p1NumpadInput_ = translateToNumpadInput(p1_.getInput());
 
-	if ((mP1NumpadInput.second & 15) != mDebugPrevInput)
+	if ((p1NumpadInput_.second & 15) != debugPrevInput_)
 	{
-		RN_DEBUG("Player {} : Numpad Input -- {}", mP1NumpadInput.first, mP1NumpadInput.second & 15);
-		mDebugPrevInput = mP1NumpadInput.second & 15;
+		RN_DEBUG("Player {} : Numpad Input -- {}", p1NumpadInput_.first, p1NumpadInput_.second & 15);
+		debugPrevInput_ = p1NumpadInput_.second & 15;
 	}
 
 	// Testing triggers
-	for (int i = 0; i < mTriggerArray.size(); i++)
+	for (int i = 0; i < triggerArray_.size(); i++)
 	{
-		mTriggerArray[i]->update(mP1NumpadInput.second);
-		if (mTriggerArray[i]->isTriggered())
+		triggerArray_[i]->update(p1NumpadInput_.second);
+		if (triggerArray_[i]->isTriggered())
 		{
 			RN_DEBUG("Motion input detected -- {}", inputString[i]);
 		}
@@ -192,64 +192,64 @@ void World::update()
 
 		// If actionable, initiate action based on input buffer readout
 
-	if ((mP1NumpadInput.second & 15) == 6)
+	if ((p1NumpadInput_.second & 15) == 6)
 	{
-		mP1Char->walkForward(5.f);
+		p1Char_->walkForward(5.f);
 	}
-	if ((mP1NumpadInput.second & 15) == 4)
+	if ((p1NumpadInput_.second & 15) == 4)
 	{
-		mP1Char->walkBackward(5.f);
+		p1Char_->walkBackward(5.f);
 	}
 	
 	// Forward commands to scene graph
-	//while (!mCommandQueue.isEmpty())
+	//while (!commandQueue_.isEmpty())
 	//{
-	//	mSceneGraph.onCommand(mCommandQueue.pop());
+	//	sceneGraph_.onCommand(commandQueue_.pop());
 	//}
 
-	mSceneGraph.update();
+	sceneGraph_.update();
 	adaptPlayerPosition();
 	adaptPlayerFacing();
 	// Get center between players
-	float CenterX = std::min(mP1Char->getPosition().x, mP2Char->getPosition().x) + abs((mP1Char->getPosition().x - mP2Char->getPosition().x) / 2);
-	mWorldView.setCenter(CenterX, mP1Char->getPosition().y - ViewYOffset);
+	float CenterX = std::min(p1Char_->getPosition().x, p2Char_->getPosition().x) + abs((p1Char_->getPosition().x - p2Char_->getPosition().x) / 2);
+	worldView_.setCenter(CenterX, p1Char_->getPosition().y - ViewYOffset);
 
 	// RN_DEBUG("Current character coordinates are: ({0}, {1}).", 
-	// 	mP1Char->getPosition().x, mP1Char->getPosition().y);
+	// 	p1Char_->getPosition().x, p1Char_->getPosition().y);
 }
 
 void World::adaptPlayerPosition()
 {
 	// Keep player's position inside the screen bounds, at least borderDistance units from the border
-	sf::FloatRect viewBounds(mWorldView.getCenter() - mWorldView.getSize() / 2.f, mWorldView.getSize());
+	sf::FloatRect viewBounds(worldView_.getCenter() - worldView_.getSize() / 2.f, worldView_.getSize());
 	const float borderDistance = 40.f;
 
-	sf::Vector2f position = mP1Char->getPosition();
-	position.x = std::max(position.x, mWorldBounds.left + borderDistance);
-	position.x = std::min(position.x, mWorldBounds.left + mWorldBounds.width - borderDistance);
-	mP1Char->setPosition(position);
+	sf::Vector2f position = p1Char_->getPosition();
+	position.x = std::max(position.x, worldBounds_.left + borderDistance);
+	position.x = std::min(position.x, worldBounds_.left + worldBounds_.width - borderDistance);
+	p1Char_->setPosition(position);
 }
 
 void World::adaptPlayerFacing()
 {
 	for (int i = 0; i < 2; i++) // Iterate through characters
 	{
-		float xPosition = mCharArray[i]->getPosition().x; // Only x-axis matters
-		float xPositionOpp = mCharArray[abs(1 - i)]->getPosition().x; // Get opponent x-axis position
+		float xPosition = charArray_[i]->getPosition().x; // Only x-axis matters
+		float xPositionOpp = charArray_[abs(1 - i)]->getPosition().x; // Get opponent x-axis position
 
 		// In UNI at least, if you jump over an opponent they change facing as you cross over them. 
 		// If hit by an attack after the cross-over, the hit animation reflects your facing and any attack that does not change
 		// your facing will flip the opponent's facing BACK to the way they were originally facing.
 
-		if ((mCharArray[i]->getPosture() != Character::Posture::Airborne) & (mCharArray[i]->isActionable()))
+		if ((charArray_[i]->getPosture() != Character::Posture::Airborne) & (charArray_[i]->isActionable()))
 		{
 			if (xPosition <= xPositionOpp) // if other character is to the right (REMOVE THE = AFTER COLLISION ADAPT IS FINISHED)
 			{
-				mCharArray[i]->setFacing(Character::Facing::Right);
+				charArray_[i]->setFacing(Character::Facing::Right);
 			}
 			else if (xPosition > xPositionOpp) // if other character is to the left
 			{
-				mCharArray[i]->setFacing(Character::Facing::Left);
+				charArray_[i]->setFacing(Character::Facing::Left);
 			}
 		}
 	}
@@ -263,12 +263,12 @@ World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playe
 	unsigned int numpad = 5; // Neutral
 
 	// If x-axis input matches current character facing
-	if ((playerRawInput.second & (Input::Left | Input::Right)) == mP1Char->getFacing())
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == p1Char_->getFacing())
 	{
 		numpad += 1;
 	}
 	// If x-axis input is opposite of current character facing
-	if ((playerRawInput.second & (Input::Left | Input::Right)) == (mP1Char->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == (p1Char_->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
 	{
 		numpad -= 1;
 	}

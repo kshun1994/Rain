@@ -14,22 +14,22 @@ LoadingState::LoadingState(StateStack& stack, Context context)
 	sf::Font& font = context.fonts->get(Fonts::ID::Main);
 	sf::Vector2f viewSize = window.getView().getSize();
 
-	mLoadingText.setFont(font);
-	mLoadingText.setString("Loading Resources");
-	centerOrigin(mLoadingText);
-	mLoadingText.setPosition(viewSize.x / 2.f, viewSize.y / 2.f + 50.f);
+	loadingText_.setFont(font);
+	loadingText_.setString("Loading Resources");
+	centerOrigin(loadingText_);
+	loadingText_.setPosition(viewSize.x / 2.f, viewSize.y / 2.f + 50.f);
 
-	mProgressBarBackground.setFillColor(sf::Color::White);
-	mProgressBarBackground.setSize(sf::Vector2f(viewSize.x - 20, 10));
-	mProgressBarBackground.setPosition(10, mLoadingText.getPosition().y + 40);
+	progressBarBackground_.setFillColor(sf::Color::White);
+	progressBarBackground_.setSize(sf::Vector2f(viewSize.x - 20, 10));
+	progressBarBackground_.setPosition(10, loadingText_.getPosition().y + 40);
 
-	mProgressBar.setFillColor(sf::Color(100,100,100));
-	mProgressBar.setSize(sf::Vector2f(200, 10));
-	mProgressBar.setPosition(10, mLoadingText.getPosition().y + 40);
+	progressBar_.setFillColor(sf::Color(100,100,100));
+	progressBar_.setSize(sf::Vector2f(200, 10));
+	progressBar_.setPosition(10, loadingText_.getPosition().y + 40);
 
 	setCompletion(0.f);
 
-	mLoadingTask.execute();
+	loadingTask_.execute();
 }
 
 void LoadingState::draw()
@@ -38,22 +38,22 @@ void LoadingState::draw()
 
 	window.setView(window.getDefaultView());
 
-	window.draw(mLoadingText);
-	window.draw(mProgressBarBackground);
-	window.draw(mProgressBar);
+	window.draw(loadingText_);
+	window.draw(progressBarBackground_);
+	window.draw(progressBar_);
 }
 
 bool LoadingState::update()
 {
 	// Update the progress bar from the remote task or finish it
-	if (mLoadingTask.isFinished())
+	if (loadingTask_.isFinished())
 	{
 		requestStackPop();
 		requestStackPush(States::ID::Game);
 	}
 	else
 	{
-		setCompletion(mLoadingTask.getCompletion());
+		setCompletion(loadingTask_.getCompletion());
 	}
 	return true;
 }
@@ -68,5 +68,5 @@ void LoadingState::setCompletion(float percent)
 	if (percent > 1.f) // clamp
 		percent = 1.f;
 
-	mProgressBar.setSize(sf::Vector2f(mProgressBarBackground.getSize().x * percent, mProgressBar.getSize().y));
+	progressBar_.setSize(sf::Vector2f(progressBarBackground_.getSize().x * percent, progressBar_.getSize().y));
 }

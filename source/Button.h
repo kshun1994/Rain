@@ -36,12 +36,12 @@ namespace GUI
 		virtual void								draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	private:
-		Callback									mCallback;
-		const sf::Texture&							mNormalTexture;
-		const sf::Texture&							mSelectedTexture;
-		const sf::Texture&							mPressedTexture;
-		sf::Sprite									mSprite;
-		sf::Text									mText;
-		bool										mIsToggle;
+		Callback									callback_;
+		const sf::Texture&							normalTexture_;
+		const sf::Texture&							selectedTexture_;
+		const sf::Texture&							pressedTexture_;
+		sf::Sprite									sprite_;
+		sf::Text									text_;
+		bool										isToggle_;
 	};
 }

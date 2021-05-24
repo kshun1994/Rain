@@ -4,7 +4,7 @@
 
 GameState::GameState(StateStack& stack, Context context)
 	: State(stack, context)
-	, mWorld(*context.window, *context.player1, *context.player2)
+	, world_(*context.window, *context.player1, *context.player2)
 {
 }
 
@@ -14,12 +14,12 @@ GameState::~GameState()
 
 void GameState::draw()
 {
-	mWorld.draw();
+	world_.draw();
 }
 
 bool GameState::update()
 {
-	mWorld.update();
+	world_.update();
 
 	return true;
 }
@@ -27,8 +27,8 @@ bool GameState::update()
 bool GameState::handleEvent(const sf::Event& event)
 {
 	// Game input handling
-	//CommandQueue& commands = mWorld.getCommandQueue();
-	// mPlayer.handleEvent(event, commands);
+	//CommandQueue& commands = world_.getCommandQueue();
+	// player_.handleEvent(event, commands);
 
 	// Escape pressed, trigger the pause screen
 	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)

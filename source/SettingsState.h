@@ -23,8 +23,8 @@ private:
 	void																		addButtonLabel(Input input, float y, const std::string& text, Context context);
 
 private:
-	sf::Sprite																	mBackgroundSprite;
-	GUI::Container																mGUIContainer;
-	std::map<Input, GUI::Button::Ptr>									mBindingButtons;
-	std::map<Input, GUI::Label::Ptr>									mBindingLabels;
+	sf::Sprite																	backgroundSprite_;
+	GUI::Container																gUIContainer_;
+	std::map<Input, GUI::Button::Ptr>									bindingButtons_;
+	std::map<Input, GUI::Label::Ptr>									bindingLabels_;
 };

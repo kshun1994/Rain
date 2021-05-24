@@ -18,8 +18,8 @@ class ParallelTask
 		void				runTask();
 
 	private:
-		sf::Thread			mThread;
-		bool				mFinished;
-		sf::Clock			mElapsedTime;
-		sf::Mutex			mMutex;
+		sf::Thread			thread_;
+		bool				finished_;
+		sf::Clock			elapsedTime_;
+		sf::Mutex			mutex_;
 };

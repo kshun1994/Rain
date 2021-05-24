@@ -30,8 +30,8 @@ void ResourceHolder<Resource, Identifier>::load(Identifier id, const std::string
 template <typename Resource, typename Identifier>
 Resource& ResourceHolder<Resource, Identifier>::get(Identifier id)
 {
-	auto found = mResourceMap.find(id);
-	assert(found != mResourceMap.end()); // trigger breakpoint if requested texture not found in map; e.g. if texture was not loaded before accessed
+	auto found = resourceMap_.find(id);
+	assert(found != resourceMap_.end()); // trigger breakpoint if requested texture not found in map; e.g. if texture was not loaded before accessed
 
 	return *found->second;
 }
@@ -39,13 +39,13 @@ Resource& ResourceHolder<Resource, Identifier>::get(Identifier id)
 template <typename Resource, typename Identifier>
 const Resource& ResourceHolder<Resource, Identifier>::get(Identifier id) const
 {
-	auto found = mResourceMap.find(id);
+	auto found = resourceMap_.find(id);
 	return *found->second;
 }
 
 template <typename Resource, typename Identifier>
 void ResourceHolder<Resource, Identifier>::insertResource(Identifier id, std::unique_ptr<Resource> resource)
 {
-	auto inserted = mResourceMap.insert(std::make_pair(id, std::move(resource)));
+	auto inserted = resourceMap_.insert(std::make_pair(id, std::move(resource)));
 	assert(inserted.second); // will trigger a breakpoint during runtime if false; i.e. if texture is not successfully inserted
 }

@@ -52,6 +52,6 @@ protected:
 	Context										getContext() const;
 
 private:
-	StateStack*									mStack;
-	Context										mContext;
+	StateStack*									stack_;
+	Context										context_;
 };

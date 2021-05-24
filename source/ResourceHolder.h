@@ -17,7 +17,7 @@ class ResourceHolder
 		void													insertResource(Identifier id, std::unique_ptr<Resource> resource);
 
 	private:
-		std::map<Identifier, std::unique_ptr<Resource>>			mResourceMap; // mapping of enums to a unique pointer to a Resource object
+		std::map<Identifier, std::unique_ptr<Resource>>			resourceMap_; // mapping of enums to a unique pointer to a Resource object
 };
 
 #include "ResourceHolder.inl"

@@ -24,66 +24,66 @@ struct PlayerContext
 };
 
 Player::Player()
-: mPlayerID()
-, mCharacter(nullptr)
-, mIsUsingKeyboard(true)
-, mJoystickID()
-, mIsUsingAnalogStick(false)
-, mAnalogThreshold(25)
-, mAnalogXAxis(sf::Joystick::X)
-, mAnalogYAxis(sf::Joystick::Y)
-, mInputState()
-, mInput{Player::ID::Player1, 0}
+: playerID_()
+, character_(nullptr)
+, isUsingKeyboard_(true)
+, joystickID_()
+, isUsingAnalogStick_(false)
+, analogThreshold_(25)
+, analogXAxis_(sf::Joystick::X)
+, analogYAxis_(sf::Joystick::Y)
+, inputState_()
+, input_{Player::ID::Player1, 0}
 {
 	// Set default key bindings
-	mKeyBinding[sf::Keyboard::W]		 = Up;
-	mKeyBinding[sf::Keyboard::S]		 = Down;
-	mKeyBinding[sf::Keyboard::A]		 = Left;
-	mKeyBinding[sf::Keyboard::D]		 = Right;
-	mKeyBinding[sf::Keyboard::J]		 = A;
-	mKeyBinding[sf::Keyboard::K]		 = B;
-	mKeyBinding[sf::Keyboard::L]		 = C;
-	mKeyBinding[sf::Keyboard::SemiColon] = D;
-	mKeyBinding[sf::Keyboard::Enter]	 = Start;
-	mKeyBinding[sf::Keyboard::Backspace] = Select;
+	keyBinding_[sf::Keyboard::W]		 = Up;
+	keyBinding_[sf::Keyboard::S]		 = Down;
+	keyBinding_[sf::Keyboard::A]		 = Left;
+	keyBinding_[sf::Keyboard::D]		 = Right;
+	keyBinding_[sf::Keyboard::J]		 = A;
+	keyBinding_[sf::Keyboard::K]		 = B;
+	keyBinding_[sf::Keyboard::L]		 = C;
+	keyBinding_[sf::Keyboard::SemiColon] = D;
+	keyBinding_[sf::Keyboard::Enter]	 = Start;
+	keyBinding_[sf::Keyboard::Backspace] = Select;
 
 	// Set initial action bindings
 	initializeActions();
 
-	for (auto& pair : mActionBinding)
+	for (auto& pair : actionBinding_)
 	{
 		pair.second.category = Category::Character;
 	}
 }
 
 Player::Player(Player::ID PlayerID)
-: mPlayerID(PlayerID)
-, mCharacter(nullptr)
-, mIsUsingKeyboard(true)
-, mJoystickID()
-, mIsUsingAnalogStick(false)
-, mAnalogThreshold(50)
-, mAnalogXAxis(sf::Joystick::X)
-, mAnalogYAxis(sf::Joystick::Y)
-, mInputState()
-, mInput{PlayerID, 0}
+: playerID_(PlayerID)
+, character_(nullptr)
+, isUsingKeyboard_(true)
+, joystickID_()
+, isUsingAnalogStick_(false)
+, analogThreshold_(50)
+, analogXAxis_(sf::Joystick::X)
+, analogYAxis_(sf::Joystick::Y)
+, inputState_()
+, input_{PlayerID, 0}
 {
 	// Set default key bindings
-	mKeyBinding[sf::Keyboard::W]		 = Up;
-	mKeyBinding[sf::Keyboard::S]		 = Down;
-	mKeyBinding[sf::Keyboard::A]		 = Left;
-	mKeyBinding[sf::Keyboard::D]		 = Right;
-	mKeyBinding[sf::Keyboard::J]		 = A;
-	mKeyBinding[sf::Keyboard::K]		 = B;
-	mKeyBinding[sf::Keyboard::L]		 = C;
-	mKeyBinding[sf::Keyboard::SemiColon] = D;
-	mKeyBinding[sf::Keyboard::Enter]	 = Start;
-	mKeyBinding[sf::Keyboard::Backspace] = Select;
+	keyBinding_[sf::Keyboard::W]		 = Up;
+	keyBinding_[sf::Keyboard::S]		 = Down;
+	keyBinding_[sf::Keyboard::A]		 = Left;
+	keyBinding_[sf::Keyboard::D]		 = Right;
+	keyBinding_[sf::Keyboard::J]		 = A;
+	keyBinding_[sf::Keyboard::K]		 = B;
+	keyBinding_[sf::Keyboard::L]		 = C;
+	keyBinding_[sf::Keyboard::SemiColon] = D;
+	keyBinding_[sf::Keyboard::Enter]	 = Start;
+	keyBinding_[sf::Keyboard::Backspace] = Select;
 
 	// Set initial action bindings
 	initializeActions();
 
-	for (auto& pair : mActionBinding)
+	for (auto& pair : actionBinding_)
 	{
 		pair.second.category = Category::Character;
 	}
@@ -91,169 +91,169 @@ Player::Player(Player::ID PlayerID)
 
 void Player::setPlayerID(const Player::ID& PlayerID)
 {
-	mPlayerID = PlayerID;
+	playerID_ = PlayerID;
 }
 
 Player::ID Player::getPlayerID() const
 {
-	return mPlayerID;
+	return playerID_;
 }
 
 void Player::setUsingKeyboard(const bool& flag)
 {
-	mIsUsingKeyboard = flag;
+	isUsingKeyboard_ = flag;
 }
 
 bool Player::isUsingKeyboard() const
 {
-	return mIsUsingKeyboard;
+	return isUsingKeyboard_;
 }
 
 void Player::setJoystickID(const int& joystickID)
 {
-	mJoystickID = joystickID;
+	joystickID_ = joystickID;
 }
 
 int Player::getJoystickID() const
 {
-	return mJoystickID;
+	return joystickID_;
 }
 
 bool Player::isUsingAnalogStick() const
 {
-	return mIsUsingAnalogStick;
+	return isUsingAnalogStick_;
 }
 
 void Player::setAnalogThreshold(const float& threshold)
 {
-	mAnalogThreshold = threshold;
+	analogThreshold_ = threshold;
 }
 
 void Player::setUsingAnalogStick(const bool& flag)
 {
-	mIsUsingAnalogStick = flag;
+	isUsingAnalogStick_ = flag;
 }
 
 void Player::setAnalogXAxis(const sf::Joystick::Axis& axis)
 {
-	mAnalogXAxis = axis;
+	analogXAxis_ = axis;
 }
 
 void Player::setAnalogYAxis(const sf::Joystick::Axis& axis)
 {
-	mAnalogYAxis = axis;
+	analogYAxis_ = axis;
 }
 
 void Player::handleRealtimeInput(CommandQueue& commands)
 {
-	for (auto pair : mKeyBinding)
+	for (auto pair : keyBinding_)
 	{
 		if (sf::Keyboard::isKeyPressed(pair.first) && isRealtimeAction(pair.second))
 		{
-			commands.push(mActionBinding[pair.second]);
+			commands.push(actionBinding_[pair.second]);
 		}
 	}
 }
 
 unsigned int Player::getCurrentInputState()
 {
-	mInputState = 0;
+	inputState_ = 0;
 
-	if (mIsUsingKeyboard)
+	if (isUsingKeyboard_)
 	{
-		for (auto pair : mKeyBinding)
+		for (auto pair : keyBinding_)
 		{
 			if (sf::Keyboard::isKeyPressed(pair.first))
 			{
-				mInputState |= pair.second;
+				inputState_ |= pair.second;
 			}
 		}
 	}
 	else // If using a joystick
 	{
-		if (mIsUsingAnalogStick)
+		if (isUsingAnalogStick_)
 		{
-			if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) > mAnalogThreshold)
+			if (sf::Joystick::getAxisPosition(joystickID_, analogYAxis_) > analogThreshold_)
 			{
-				mInputState |= Input::Up;
+				inputState_ |= Input::Up;
 			}
-			else if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogYAxis) < -mAnalogThreshold)
+			else if (sf::Joystick::getAxisPosition(joystickID_, analogYAxis_) < -analogThreshold_)
 			{
-				mInputState |= Input::Down;
+				inputState_ |= Input::Down;
 			}
 
-			if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) > mAnalogThreshold)
+			if (sf::Joystick::getAxisPosition(joystickID_, analogXAxis_) > analogThreshold_)
 			{
-				mInputState |= Input::Right;
+				inputState_ |= Input::Right;
 			}
-			else if (sf::Joystick::getAxisPosition(mJoystickID, mAnalogXAxis) < -mAnalogThreshold)
+			else if (sf::Joystick::getAxisPosition(joystickID_, analogXAxis_) < -analogThreshold_)
 			{
-				mInputState |= Input::Left;
+				inputState_ |= Input::Left;
 			}
 
 		}
 
-		for (auto pair : mKeyBinding)
+		for (auto pair : keyBinding_)
 		{
-			if (sf::Joystick::isButtonPressed(mJoystickID, pair.first))
+			if (sf::Joystick::isButtonPressed(joystickID_, pair.first))
 			{
-				mInputState |= pair.second;
+				inputState_ |= pair.second;
 			}
 		}
 	}
 
-	return mInputState;
+	return inputState_;
 }
 
 void Player::accumulateInput(const unsigned int& input)
 {
-	mInput.second |= mInputState; // Add controller state on current update into accumulated input
+	input_.second |= inputState_; // Add controller state on current update into accumulated input
 	cleanInput(); // Clean accumulated update as according to SOCD
 }
 
 Player::TaggedInput Player::getInput() const
 {
-	return mInput;
+	return input_;
 }
 
 void Player::cleanInput()
 {
 	// Clean inputs according to SOCD
-	if ((mInput.second & Left) && (mInput.second & Right))
+	if ((input_.second & Left) && (input_.second & Right))
 	{
-		mInput.second &= ~(Left | Right); // Left + Right = Neutral
+		input_.second &= ~(Left | Right); // Left + Right = Neutral
 	}
 
-	if ((mInput.second & Up) && (mInput.second & Down))
+	if ((input_.second & Up) && (input_.second & Down))
 	{
-		mInput.second &= ~Down; // Up + Down = Up
+		input_.second &= ~Down; // Up + Down = Up
 	}
 }
 
 void Player::clearAccumulatedInput()
 {
-	mInput.second = 0;
+	input_.second = 0;
 }
 
 
 void Player::assignKey(Input input, sf::Keyboard::Key key)
 {
 	// Remove all keys that already map to action
-	for (auto itr = mKeyBinding.begin(); itr != mKeyBinding.end(); )
+	for (auto itr = keyBinding_.begin(); itr != keyBinding_.end(); )
 	{
 		if (itr->second == input)
-			mKeyBinding.erase(itr++);
+			keyBinding_.erase(itr++);
 		else
 			++itr;
 	}
 
 	// Insert new binding
-	mKeyBinding[key] = input;
+	keyBinding_[key] = input;
 }
 
 sf::Keyboard::Key Player::getAssignedKey(Input input) const
 {
-	for (auto pair : mKeyBinding)
+	for (auto pair : keyBinding_)
 	{
 		if (pair.second == input)
 			return pair.first;
@@ -266,8 +266,8 @@ void Player::initializeActions()
 {
 	const float playerSpeed = 200.f;
 
-	//mActionBinding[Action::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
-	//mActionBinding[Action::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
+	//actionBinding_[Action::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
+	//actionBinding_[Action::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
 }
 
 bool Player::isRealtimeAction(Input input)

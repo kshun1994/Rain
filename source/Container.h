@@ -30,8 +30,8 @@ namespace GUI
 
 
     private:
-        std::vector<Component::Ptr>		            mChildren;
-        int								            mSelectedChild;
+        std::vector<Component::Ptr>		            children_;
+        int								            selectedChild_;
 	};
 }
 

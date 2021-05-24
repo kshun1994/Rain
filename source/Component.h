@@ -32,7 +32,7 @@ namespace GUI
 		virtual void							handleEvent(const sf::Event& event) = 0;
 
 	private:
-		bool									mIsSelected;
-		bool									mIsActive;
+		bool									isSelected_;
+		bool									isActive_;
 	};
 }

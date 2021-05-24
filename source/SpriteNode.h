@@ -15,5 +15,5 @@ private:
 	virtual void				drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-	sf::Sprite					mSprite;
+	sf::Sprite					sprite_;
 };

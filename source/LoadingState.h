@@ -20,9 +20,9 @@ public:
 	void					setCompletion(float percent);
 
 private:
-	sf::Text				mLoadingText;
-	sf::RectangleShape		mProgressBarBackground;
-	sf::RectangleShape		mProgressBar;
+	sf::Text				loadingText_;
+	sf::RectangleShape		progressBarBackground_;
+	sf::RectangleShape		progressBar_;
 
-	ParallelTask			mLoadingTask;
+	ParallelTask			loadingTask_;
 };
