@@ -17,6 +17,7 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Add jumping - State-based system
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log
 - [ ] Fix charge input trigger so the charge has to be continuous
