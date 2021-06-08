@@ -53,31 +53,31 @@
       <Filter>source\entity</Filter>
     </ClCompile>
     <ClCompile Include="source\GameState.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\LoadingState.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\MenuState.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\ParallelTask.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\PauseState.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\SettingsState.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\State.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\StateStack.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\TitleState.cpp">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClCompile>
     <ClCompile Include="source\Player.cpp">
       <Filter>source</Filter>
@@ -88,6 +88,11 @@
     <ClCompile Include="source\WorldLogger.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="Action.cpp">
+      <Filter>source\charstate</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CharState.cpp" />
+    <ClCompile Include="source\Input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -148,34 +153,34 @@
       <Filter>source\entity</Filter>
     </ClInclude>
     <ClInclude Include="source\GameState.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\LoadingState.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\MenuState.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\ParallelTask.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\PauseState.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\SettingsState.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\State.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\StateIdentifiers.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\StateStack.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\TitleState.h">
-      <Filter>source\state</Filter>
+      <Filter>source\menu</Filter>
     </ClInclude>
     <ClInclude Include="source\Player.h">
       <Filter>source</Filter>
@@ -189,14 +194,17 @@
     <ClInclude Include="source\Input.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\Action.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="source\WorldLogger.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Event.h">
       <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CharState.h">
+      <Filter>source\charstate</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.h">
+      <Filter>source\charstate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -206,8 +214,11 @@
     <Filter Include="source\entity">
       <UniqueIdentifier>{02aa2b53-5841-4d3c-bedb-5eb11cc2156d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\state">
+    <Filter Include="source\menu">
       <UniqueIdentifier>{b90f2c20-ffbb-4c4d-baa1-734a7d75ad79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\charstate">
+      <UniqueIdentifier>{9227944c-f8d3-492b-aab8-ec2e3c5423a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

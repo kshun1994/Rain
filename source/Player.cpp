@@ -33,19 +33,19 @@ Player::Player()
 , analogXAxis_(sf::Joystick::X)
 , analogYAxis_(sf::Joystick::Y)
 , inputState_()
-, input_{Player::ID::Player1, 0}
+, input_{0}
 {
 	// Set default key bindings
-	keyBinding_[sf::Keyboard::W]		 = Up;
-	keyBinding_[sf::Keyboard::S]		 = Down;
-	keyBinding_[sf::Keyboard::A]		 = Left;
-	keyBinding_[sf::Keyboard::D]		 = Right;
-	keyBinding_[sf::Keyboard::J]		 = A;
-	keyBinding_[sf::Keyboard::K]		 = B;
-	keyBinding_[sf::Keyboard::L]		 = C;
-	keyBinding_[sf::Keyboard::SemiColon] = D;
-	keyBinding_[sf::Keyboard::Enter]	 = Start;
-	keyBinding_[sf::Keyboard::Backspace] = Select;
+	keyBinding_[sf::Keyboard::W]		 = Input::Up;
+	keyBinding_[sf::Keyboard::S]		 = Input::Down;
+	keyBinding_[sf::Keyboard::A]		 = Input::Left;
+	keyBinding_[sf::Keyboard::D]		 = Input::Right;
+	keyBinding_[sf::Keyboard::J]		 = Input::A;
+	keyBinding_[sf::Keyboard::K]		 = Input::B;
+	keyBinding_[sf::Keyboard::L]		 = Input::C;
+	keyBinding_[sf::Keyboard::SemiColon] = Input::D;
+	keyBinding_[sf::Keyboard::Enter]	 = Input::Start;
+	keyBinding_[sf::Keyboard::Backspace] = Input::Select;
 
 	// Set initial action bindings
 	initializeActions();
@@ -66,19 +66,19 @@ Player::Player(Player::ID PlayerID)
 , analogXAxis_(sf::Joystick::X)
 , analogYAxis_(sf::Joystick::Y)
 , inputState_()
-, input_{PlayerID, 0}
+, input_{0}
 {
 	// Set default key bindings
-	keyBinding_[sf::Keyboard::W]		 = Up;
-	keyBinding_[sf::Keyboard::S]		 = Down;
-	keyBinding_[sf::Keyboard::A]		 = Left;
-	keyBinding_[sf::Keyboard::D]		 = Right;
-	keyBinding_[sf::Keyboard::J]		 = A;
-	keyBinding_[sf::Keyboard::K]		 = B;
-	keyBinding_[sf::Keyboard::L]		 = C;
-	keyBinding_[sf::Keyboard::SemiColon] = D;
-	keyBinding_[sf::Keyboard::Enter]	 = Start;
-	keyBinding_[sf::Keyboard::Backspace] = Select;
+	keyBinding_[sf::Keyboard::W]		 = Input::Up;
+	keyBinding_[sf::Keyboard::S]		 = Input::Down;
+	keyBinding_[sf::Keyboard::A]		 = Input::Left;
+	keyBinding_[sf::Keyboard::D]		 = Input::Right;
+	keyBinding_[sf::Keyboard::J]		 = Input::A;
+	keyBinding_[sf::Keyboard::K]		 = Input::B;
+	keyBinding_[sf::Keyboard::L]		 = Input::C;
+	keyBinding_[sf::Keyboard::SemiColon] = Input::D;
+	keyBinding_[sf::Keyboard::Enter]	 = Input::Start;
+	keyBinding_[sf::Keyboard::Backspace] = Input::Select;
 
 	// Set initial action bindings
 	initializeActions();
@@ -155,7 +155,7 @@ void Player::handleRealtimeInput(CommandQueue& commands)
 	}
 }
 
-unsigned int Player::getCurrentInputState()
+int Player::getCurrentInputState()
 {
 	inputState_ = 0;
 
@@ -205,13 +205,13 @@ unsigned int Player::getCurrentInputState()
 	return inputState_;
 }
 
-void Player::accumulateInput(const unsigned int& input)
+void Player::accumulateInput(const int& input)
 {
-	input_.second |= inputState_; // Add controller state on current update into accumulated input
+	input_ |= inputState_; // Add controller state on current update into accumulated input
 	cleanInput(); // Clean accumulated update as according to SOCD
 }
 
-Player::TaggedInput Player::getInput() const
+int Player::getInput() const
 {
 	return input_;
 }
@@ -219,20 +219,20 @@ Player::TaggedInput Player::getInput() const
 void Player::cleanInput()
 {
 	// Clean inputs according to SOCD
-	if ((input_.second & Left) && (input_.second & Right))
+	if ((input_ & Input::Left) && (input_ & Input::Right))
 	{
-		input_.second &= ~(Left | Right); // Left + Right = Neutral
+		input_ &= ~(Input::Left | Input::Right); // Left + Right = Neutral
 	}
 
-	if ((input_.second & Up) && (input_.second & Down))
+	if ((input_ & Input::Up) && (input_ & Input::Down))
 	{
-		input_.second &= ~Down; // Up + Down = Up
+		input_ &= ~Input::Down; // Up + Down = Up
 	}
 }
 
 void Player::clearAccumulatedInput()
 {
-	input_.second = 0;
+	input_ = 0;
 }
 
 
@@ -266,18 +266,18 @@ void Player::initializeActions()
 {
 	const float playerSpeed = 200.f;
 
-	//actionBinding_[Action::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
-	//actionBinding_[Action::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
+	//actionBinding_[Action::Input::Left].action = derivedAction<Character>(CharacterMover(-playerSpeed, 0.f));
+	//actionBinding_[Action::Input::Right].action = derivedAction<Character>(CharacterMover(+playerSpeed, 0.f));
 }
 
 bool Player::isRealtimeAction(Input input)
 {
 	switch (input)
 	{
-	case Up:
-	case Down:
-	case Left:
-	case Right:
+	case Input::Up:
+	case Input::Down:
+	case Input::Left:
+	case Input::Right:
 		return true;
 
 	default:

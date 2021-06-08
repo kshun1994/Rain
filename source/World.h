@@ -23,9 +23,6 @@ namespace sf
 class World : private sf::NonCopyable
 {
 public:
-	typedef std::pair<unsigned int, unsigned int> TaggedInput;
-
-public:
 	struct PlayerObjects
 	{
 														PlayerObjects() = default;
@@ -55,7 +52,7 @@ private:
 	void												adaptPlayerPosition();
 	void												adaptPlayerFacing();
 
-	TaggedInput											translateToNumpadInput(const TaggedInput& playerRawInput);
+	int										translateToNumpadInput(const int& playerRawInput);
 
 private:
 	enum Layer
@@ -87,7 +84,7 @@ private:
 	std::array<std::shared_ptr<Character>, 2>			charArray_;
 
 	std::vector<int>									inputs;
-	unsigned int										debugPrevInput_;
+	int										debugPrevInput_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			triggerArray_;
 };

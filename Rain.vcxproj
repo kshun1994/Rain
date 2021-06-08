@@ -93,7 +93,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\Action.h" />
+    <ClInclude Include="Action.h" />
+    <ClInclude Include="source\CharState.h" />
     <ClInclude Include="source\Event.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\Animation.h" />
@@ -131,16 +132,19 @@
     <ClInclude Include="source\WorldLogger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Action.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\Application.cpp" />
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\Character.cpp" />
+    <ClCompile Include="source\CharState.cpp" />
     <ClCompile Include="source\Command.cpp" />
     <ClCompile Include="source\CommandQueue.cpp" />
     <ClCompile Include="source\Component.cpp" />
     <ClCompile Include="source\Container.cpp" />
     <ClCompile Include="source\Entity.cpp" />
     <ClCompile Include="source\GameState.cpp" />
+    <ClCompile Include="source\Input.cpp" />
     <ClCompile Include="source\InputTrigger.cpp" />
     <ClCompile Include="source\Label.cpp" />
     <ClCompile Include="source\LoadingState.cpp" />

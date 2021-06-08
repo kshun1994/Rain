@@ -65,6 +65,45 @@ Rainy days
 	- ~~Game logic updates at 60 fps~~
 	- ~~Rendering takes snapshots of game logic; if a user drops frames then rendering will skip game logic that has already been done~~
 
+# Character structure
+- Setup: a Player sends input every update to World, which is then sent to the Character they are controlling
+- A Character has a set of InputTriggers 
+- A Character has a StateStack
+- A Character has a set of Actions
+	- Actions are a set of heap-allocated States
+		- Each state can have its own animation (i.e. a state can set Character animation frames)
+	- Actions are called when the corresponding InputTrigger has been triggered
+	- When called, an Action pushes its component States to the Character's StateStack
+	- Each component State will pop itself off the StateStack once it has finished
+	- E.g. an Action comprising of startup, active, and recovery States will be pushed to the StateStack in recovery -> active -> startup order
+	- An Action may be continuous (e.g. walking)
+	- If an action is continuous, it will check Player input every update to see if it should remain on the StateStack
+- States place properties/flags on Characters when they are at the top of the StateStack
+	- For instance a State representing an attack's startup will place a Counterhittable property on the Character
+- During a match, all InputTriggers owned by a Character update according to Player input, but the Character only monitors a subset of them
+	- The subset of InputTriggers monitored is determined by the character's current state
+	- E.g. if a Character is in an airborne state, then only InputTriggers pertaining to airborne Actions are monitored
+	- Or if a Character is in a state that can be cancelled into specific other Actions, then only the relevant InputTriggers are monitored
+	- If an InputTrigger within the currently monitored set is triggered, then call the relevant Action immediately
+
+# Character loading
+- Load textures audio etc.
+- Set Character parameters
+	- Max health
+	- Any special gauges
+	- Flow gauge characteristics
+- Populate ActionMap
+	- Mapping from InputTrigger to Action
+	- For each Action:
+		- Create a std::unique_ptr<InputTrigger>
+		- Create a std::unique_ptr<CharState> for each component State and set:
+			- Animation frames
+			- Boxes
+			- Properties
+			- Movement if any
+			- After setting parameters, std::move() each component State into the Action
+		- After an Action has been fully created, std::move() it into ActionMap
+
 # Notes from Skullgirls
 ## Menus and options
 - Button config

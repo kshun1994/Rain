@@ -10,7 +10,7 @@ struct Command
 {
 																Command();
 	std::function<void(SceneNode&)>								action;
-	unsigned int												category;
+	int												category;
 };
 
 template <typename GameObject, typename Function>
