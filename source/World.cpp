@@ -83,7 +83,7 @@ World::~World()
 
 void World::loadTextures()
 {
-	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/Enkidu.png");
+	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/enk_sheet.png");
 	textures_.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/Yuzuriha_idle.png");
 	textures_.load(Textures::ID::StageMomiji,	"media/texture/_stage/MomijiShrineScaledx3.png");
 }

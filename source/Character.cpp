@@ -60,7 +60,6 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.walkBDurs.resize(11);
 	std::fill(EnkSprite.walkBDurs.begin(), EnkSprite.walkBDurs.end(), 5);
 
-
 	EnkSprite.originX = 655;
 
 	SpriteStruct YuzuSprite;
@@ -74,24 +73,17 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	if (type_ == Type::Enkidu)
 	{
-		//// State testing
-		//// Idle state
-		//std::unique_ptr<AnimatedState> IdleState = std::make_unique<AnimatedState>();
-		//IdleState->setAnimationParameters(EnkSprite.idleIDs, EnkSprite.idleDurs, EnkSprite.spriteDims);
-		//IdleState->setRepeating(true);
-		//IdleState->setStateDuration(std::accumulate(EnkSprite.idleDurs.begin(), EnkSprite.idleDurs.end(), 0));
-
-		//setCharState(std::move(IdleState));
 		spriteStruct_ = EnkSprite;
+
 	}
 	else if (type_ == Type::Yuzuriha)
 	{
 		spriteStruct_ = YuzuSprite;
 	}
 
-	//sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
+	sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 	sprite_.setOrigin(spriteStruct_.originX, spriteStruct_.spriteDims.y);
-	//sprite_.setRepeating(true);
+	sprite_.setRepeating(true);
 
 	health_			= 1000.f;
 	meter_			= 0.f;
@@ -131,14 +123,11 @@ void Character::updateCurrent()
 	}
 
 	prevAnimationState_ = animationState_;
-	//if (type_ == Type::Enkidu)
-	//{
-	//	state_->update(*this);
-	//}
 
 	sprite_.update();
 	animationState_ = AnimationState::Idle;
 
+	//state_->update(*this);
 }
 
 int Character::getCategory() const
@@ -308,18 +297,6 @@ void Character::calculateCharInput(int input)
 	{
 		charInput_ |= CharInput::CharBack;
 	}
-}
-
-void Character::exitCharState()
-{
-	state_ = nullptr;
-}
-
-void Character::setCharState(std::unique_ptr<CharState> charState)
-{
-	state_ = std::move(charState);
-
-	state_->enter(*this);
 }
 
 void Character::setAnimation(const std::vector<sf::IntRect>& frameRects,
