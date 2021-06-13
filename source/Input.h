@@ -1,6 +1,6 @@
 #pragma once
 
-enum Input : unsigned int
+enum Input
 {
 	Left			= 1 << 0,
 	Right			= 1 << 1,
@@ -13,3 +13,20 @@ enum Input : unsigned int
 	Start			= 1 << 8,
 	Select			= 1 << 9,
 };
+
+enum CharInput
+{
+	CharForward			= 1 << 0,
+	CharBack			= 1 << 1,
+	CharUp				= 1 << 2,
+	CharDown			= 1 << 3,
+	CharA				= 1 << 4,
+	CharB				= 1 << 5,
+	CharC				= 1 << 6,
+	CharD				= 1 << 7,
+	CharStart			= 1 << 8,
+	CharSelect			= 1 << 9,
+	CharRelease			= 1 << 10,
+};
+
+int numpadToCharInput(char numpadInput);

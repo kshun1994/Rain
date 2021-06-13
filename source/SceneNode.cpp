@@ -42,7 +42,7 @@ sf::Vector2f SceneNode::getWorldPosition() const
 	return getWorldTransform() * sf::Vector2f();
 }
 
-unsigned int SceneNode::getCategory() const // return unsigned int instead of Category::Type allows for multiple categories via | operator
+int SceneNode::getCategory() const // return int instead of Category::Type allows for multiple categories via | operator
 {
 	return Category::Scene;
 }
