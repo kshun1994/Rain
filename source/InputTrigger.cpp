@@ -1,74 +1,52 @@
 #include "rnpch.h"
 #include "InputTrigger.h"
-#include "Input.h"
 
 InputTrigger::InputTrigger()
 	: trigger_(false)
 	, buffer_(0)
 	, timer_(0)
-	, input_()
+	, motion_()
 	, progressIndex_(0)
-	, isButtonInput_()
 	, fuzzyInputFlags_(false)
 	, fuzzyMapping_()
 {
 }
 
-//InputTrigger::InputTrigger(std::string input, int buffer)
-//	: trigger_(false)
-//	, buffer_(buffer)
-//	, timer_(0)
-//	, input_(input)
-//	, progressIndex_(0)
-//	, isButtonInput_(input.size(), false)
-//	, fuzzyInputFlags_(input.size(), false)
-//	, fuzzyMapping_{{0, false}}
-//{
-//}
+InputTrigger::InputTrigger(std::vector<unsigned int> motion, unsigned int buffer)
+	: trigger_(false)
+	, buffer_(buffer)
+	, timer_(0)
+	, motion_(motion)
+	, progressIndex_(0)
+	, fuzzyInputFlags_(motion.size(), false)
+	, fuzzyMapping_{{0, false}}
+{
+}
 
 bool InputTrigger::isTriggered()
 {
 	return trigger_;
 }
 
-void InputTrigger::setBuffer(int buffer)
+void InputTrigger::setBuffer(unsigned int buffer)
 {
 	buffer_ = buffer;
 }
 
-void InputTrigger::setInput(std::string input)
+void InputTrigger::setMotion(std::vector<unsigned int> motion)
 {
-	input_.resize(input.size());
-	isButtonInput_.resize(input.size());
-
-	// The beginning of an InputTrigger cannot be the release of a previous button (though that sounds interestingly cursed)
-	assert(input[0] != 'X'); 
-
-	for (int i = 0; i < input.size(); i++)
-	{
-		assert(isdigit(input[i]) | isalpha(input[i])); // If this assert triggers it means a non-alphanumeric character was passed as an input
-		char inputChar = input[i];
-
-		if (isalpha(input[i]))
-		{
-			isButtonInput_[i] = true;
-		}
-		
-		// Making this pass inputChar instead of input[i] avoids complications in the event of a repeated button input
-		input_[i] = numpadToCharInput(inputChar); 
-	}
+	motion_ = motion;
 
 	// All inputs are non-fuzzy by default
-	fuzzyInputFlags_.resize(input.size());
+	fuzzyInputFlags_.resize(motion.size());
 	std::fill(fuzzyInputFlags_.begin(), fuzzyInputFlags_.end(), false);
 }
 
-void InputTrigger::setCharge(int chargeDuration)
+void InputTrigger::setCharge(unsigned int chargeDuration)
 {
-	chargeDuration -= 1; // - 1 because the input should already include one instance of the held input
 	// Duplicate held input for as many frames as charge duration requires
-	std::vector charge(chargeDuration, input_.front());
-	input_.insert(input_.begin() + 1, charge.begin(), charge.end());
+	std::vector charge(chargeDuration - 1, motion_.front()); // - 1 because the motion should already include one instance of the held input
+	motion_.insert(motion_.begin() + 1, charge.begin(), charge.end());
 
 	// Current format allows for indefinite resetting of buffer timer as long as the initial charge has been done
 
@@ -76,44 +54,42 @@ void InputTrigger::setCharge(int chargeDuration)
 	buffer_ += chargeDuration;
 }
 
-void InputTrigger::setCharge(int chargeDuration, std::vector<bool> fuzzyFlags)
+void InputTrigger::setCharge(unsigned int chargeDuration, std::vector<bool> fuzzyFlags)
 {
-	assert(input_.size() != 0); // If this assertion pops you tried to set a charge before specifying the input input
-	assert(fuzzyFlags.size() == input_.size()); // fuzzyFlags should be a vector the same length as the original input input (e.g. {true, false} for sonic boom {4, 6} input)
+	assert(motion_.size() != 0); // If this assertion pops you tried to set a charge before specifying the motion input
+	assert(fuzzyFlags.size() == motion_.size()); // fuzzyFlags should be a vector the same length as the original motion input (e.g. {true, false} for sonic boom {4, 6} motion)
 
-	std::transform(input_.begin(), input_.end(), fuzzyFlags.begin(), std::inserter(fuzzyMapping_, fuzzyMapping_.end()), std::make_pair<int const&, bool const&>);
-
-	chargeDuration -= 1; // - 1 because the input should already include one instance of the held input
+	std::transform(motion_.begin(), motion_.end(), fuzzyFlags.begin(), std::inserter(fuzzyMapping_, fuzzyMapping_.end()), std::make_pair<unsigned int const&, bool const&>);
 
 	// Duplicate held input for as many frames as charge duration requires
 	// For now InputTrigger only supports charge inputs where the first input is the one that is held
-	std::vector charge(chargeDuration, input_.front());
-	input_.insert(input_.begin() + 1, charge.begin(), charge.end());
+	std::vector charge(chargeDuration - 1, motion_.front()); // - 1 because the motion should already include one instance of the held input
+	motion_.insert(motion_.begin() + 1, charge.begin(), charge.end());
 
 	// Add charge duration to buffer for sake of timer
 	buffer_ += chargeDuration;
 
 	fuzzyInputFlags_ = fuzzyFlags;
-	std::vector chargeFuzzyFlags(chargeDuration, fuzzyFlags.front());
+	std::vector chargeFuzzyFlags(chargeDuration - 1, fuzzyFlags.front());
 	fuzzyInputFlags_.insert(fuzzyInputFlags_.begin() + 1, chargeFuzzyFlags.begin(), chargeFuzzyFlags.end());
 }
 
-int InputTrigger::getBuffer()
+unsigned int InputTrigger::getBuffer()
 {
 	return buffer_;
 }
 
-int InputTrigger::getTimer()
+unsigned int InputTrigger::getTimer()
 {
 	return timer_;
 }
 
-std::vector<int> InputTrigger::getInput()
+std::vector<unsigned int> InputTrigger::getMotion()
 {
-	return input_;
+	return motion_;
 }
 
-void InputTrigger::update(int playerInput)
+void InputTrigger::update(unsigned int playerInput)
 {
 	// If input was triggered last update, reset
 	if (trigger_)
@@ -121,94 +97,54 @@ void InputTrigger::update(int playerInput)
 		trigger_ = false;
 	}
 
+	// (input & 15) is a bitmask to filter player input to first four bits; i.e., the directional input [in numpad notation]
+	unsigned int input = playerInput & 15;
+
 	// If there's a fuzzy mapping, convert relevant diagonal inputs to cardinals for input reading
 	// Note: current implementation means there's no way to make an input "unfuzzy" once registered in the mapping
-	//for (auto it = fuzzyMapping_.begin(); it != fuzzyMapping_.end(); it++)
-	//{
-	//	switch (it->first)
-	//	{
-	//	case 4:
-	//		input = ((input == 1) | (input == 7)) ? 4 : input;
-	//		break;
-
-	//	case 6:
-	//		input = ((input == 3) | (input == 9)) ? 6 : input;
-	//		break;
-
-	//	case 2:
-	//		input = ((input == 1) | (input == 3)) ? 2 : input;
-	//		break;
-
-	//	case 8:
-	//		input = ((input == 7) | (input == 9)) ? 8 : input;
-	//		break;
-	//	}
-	//}
-
-	if (input_[progressIndex_] == CharInput::CharRelease)
+	for (auto it = fuzzyMapping_.begin(); it != fuzzyMapping_.end(); it++)
 	{
-		// Make sure button from previous input has been released before progressing further in input
-		if (!(playerInput & input_[progressIndex_ - 1]))
+		switch (it->first)
 		{
-			progressIndex_++;
+		case 4:
+			input = ((input == 1) | (input == 7)) ? 4 : input;
+			break;
+
+		case 6:
+			input = ((input == 3) | (input == 9)) ? 6 : input;
+			break;
+
+		case 2:
+			input = ((input == 1) | (input == 3)) ? 2 : input;
+			break;
+
+		case 8:
+			input = ((input == 7) | (input == 9)) ? 8 : input;
+			break;
 		}
 	}
 
-	// If the current part of the input is neither a button input nor a fuzzy direction input, check for exact matches in direction input
-	if (!isButtonInput_[progressIndex_] & !fuzzyInputFlags_[progressIndex_])
+	// If the first input in the motion is detected and timer hasn't already been started
+	// The timer check ensures motions can repeat the first input and the timer won't be restarted midway through the input
+	if ((timer_ == 0) && (input == motion_[0])) // ((input.first == motion_[0]) | (input.second == motion_[0])))
 	{
-		// If the first input in the input is detected and timer hasn't already been started
-		// The timer check ensures inputs can repeat the first input without restarting the timer midway through the input
-		if ((timer_ == 0) && ((playerInput & 15) == (input_[0] & 15))) 
-		{
-			// Start and set timer to be input's buffer duration, minus one to account for current update
-			timer_ = buffer_ - 1;
-
-			// There's no need to increment progressIndex_ here because as soon as the timer is started we move into the next if
-		}
-
-		if ((timer_ > 0) && ((playerInput & 15) == (input_[progressIndex_] & 15))) 
-		{
-			// Let InputTrigger know to wait for the next input
-			progressIndex_++;
-		}
-		else if (timer_ == 0)
-		{
-			// If time runs out before the input completes, reset progress
-			progressIndex_ = 0;
-		}
+		// Start and set timer to be input's buffer duration, minus one to account for current update
+		timer_ = buffer_;
 	}
 
-	// Making this an if instead of if else allows button portions of inputs to be done on the exact same frame as a preceding directional
-	if (progressIndex_ != input_.size())
+	if ((timer_ > 0) && (input == motion_[progressIndex_])) // ((input.first == motion_[progressIndex_]) | (input.second == motion_[progressIndex_])))
 	{
-		if (isButtonInput_[progressIndex_] | fuzzyInputFlags_[progressIndex_]) //Technically this also lets you skip the last motion input if it's fuzzy
-		{
-			// If the first input in the input is detected and timer hasn't already been started
-			// The timer check ensures inputs can repeat the first input without restarting the timer midway through the input
-			if ((timer_ == 0) && (playerInput & input_[0])) 
-			{
-				// Start and set timer to be input's buffer duration, minus one to account for current update
-				timer_ = buffer_ - 1;
-
-				// There's no need to increment progressIndex_ here because as soon as the timer is started we move into the next if
-			}
-
-			if ((timer_ > 0) && (playerInput & input_[progressIndex_])) 
-			{
-				// Let InputTrigger know to wait for the next input
-				progressIndex_++;
-			}
-			else if (timer_ == 0)
-			{
-				// If time runs out before the input completes, reset progress
-				progressIndex_ = 0;
-			}
-		}
+		// Let InputTrigger know to wait for the next input
+		progressIndex_++;
+	}
+	else if (timer_ == 0)
+	{
+		// If time runs out before the input completes, reset progress
+		progressIndex_ = 0;
 	}
 
 	// If full input has been read
-	if (progressIndex_ == input_.size())
+	if (progressIndex_ == motion_.size())
 	{
 		// Signal that input has been triggered
 		trigger_ = true;

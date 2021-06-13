@@ -20,57 +20,56 @@ public:
 	};
 
 public:
-	typedef std::pair<Player::ID, int> TaggedInput;
+	typedef std::pair<Player::ID, unsigned int> TaggedInput;
 
 public:
-										Player();
-										Player(ID PlayerID);
+												Player();
+												Player(ID PlayerID);
 
-	void								setPlayerID(const ID& PlayerID);
-	ID									getPlayerID() const;
+	void										setPlayerID(const ID& PlayerID);
+	ID											getPlayerID() const;
 
-	void								setUsingKeyboard(const bool& flag);
-	bool								isUsingKeyboard() const;
+	void										setUsingKeyboard(const bool& flag);
+	bool										isUsingKeyboard() const;
 
-	void								setJoystickID(const int& joystickID);
-	int									getJoystickID() const;
+	void										setJoystickID(const int& joystickID);
+	int											getJoystickID() const;
+	bool										isUsingAnalogStick() const;
+	void										setAnalogThreshold(const float& threshold);
+	void										setUsingAnalogStick(const bool& flag);
+	void										setAnalogXAxis(const sf::Joystick::Axis& axis);
+	void										setAnalogYAxis(const sf::Joystick::Axis& axis);
 
-	bool								isUsingAnalogStick() const;
-	void								setUsingAnalogStick(const bool& flag);
-	void								setAnalogThreshold(const float& threshold);
-	void								setAnalogXAxis(const sf::Joystick::Axis& axis);
-	void								setAnalogYAxis(const sf::Joystick::Axis& axis);
+	void										assignKey(Input input, sf::Keyboard::Key key);
+	sf::Keyboard::Key							getAssignedKey(Input input) const;
 
-	void								assignKey(Input input, sf::Keyboard::Key key);
-	sf::Keyboard::Key					getAssignedKey(Input input) const;
+	void										handleRealtimeInput(CommandQueue& commands);
+	unsigned int								getCurrentInputState();
+	void										accumulateInput(const unsigned int& input);
+	void										clearAccumulatedInput();
 
-	void								handleRealtimeInput(CommandQueue& commands);
-	int									getCurrentInputState();
-	void								accumulateInput(const int& input);
-	void								clearAccumulatedInput();
-
-	int									getInput() const;
-
-private:
-	static bool							isRealtimeAction(Input input);
-	void								initializeActions();
-
-	void								cleanInput();
+	TaggedInput									getInput() const;
 
 private:
-	ID									playerID_;
-	Character*							character_;
+	static bool									isRealtimeAction(Input input);
+	void										initializeActions();
 
-	std::map<sf::Keyboard::Key, Input>	keyBinding_;
-	std::map<Input, Command>			actionBinding_;
+	void										cleanInput();
 
-	bool								isUsingKeyboard_;
-	int									joystickID_;
-	int									isUsingAnalogStick_;
-	float								analogThreshold_;
-	sf::Joystick::Axis					analogXAxis_;
-	sf::Joystick::Axis					analogYAxis_;
+private:
+	ID											playerID_;
+	Character*									character_;
 
-	int									inputState_;
-	int									input_;
+	std::map<sf::Keyboard::Key, Input>			keyBinding_;
+	std::map<Input, Command>					actionBinding_;
+
+	bool										isUsingKeyboard_;
+	int											joystickID_;
+	int											isUsingAnalogStick_;
+	float										analogThreshold_;
+	sf::Joystick::Axis							analogXAxis_;
+	sf::Joystick::Axis							analogYAxis_;
+
+	unsigned int								inputState_;
+	TaggedInput									input_;
 };
