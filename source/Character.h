@@ -113,6 +113,9 @@ public:
 																 const bool& isRepeating = false);
 	int												getCharInput() const;
 
+	void											setCharState(std::unique_ptr<CharState> state);
+	void											exitCharState();
+
 private:
 	void											setSignFlip();
 	void											calculateCharInput(int input);
@@ -122,7 +125,7 @@ private:
 	Animation										sprite_;
 	SpriteStruct									spriteStruct_;
 
-	StateStack										charStateStack_;
+	std::unique_ptr<CharState>						state_;
 
 	AnimationState									animationState_;
 	AnimationState									prevAnimationState_;
