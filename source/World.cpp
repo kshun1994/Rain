@@ -32,23 +32,23 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 
 	// TEST STUFF
 	// Initialize input triggers
-	std::vector<std::string> inputs =
+	std::vector<std::vector<unsigned int>> inputs =
 	{
-		"236",			// qcf
-		"623",			// dp
-		"214",			// qcb
-		"421",			// reverse dp
-		"41236",		// hcf
-		"63214",		// hcb
-		"252",			// down down
-		"236236",		// double qcf
-		"28",			// flash kick (charge)
-		"46",			// sonic boom (charge)
-		"4646",			// back-charge super
-		"1319",			// delta super (charge)
+		{ 2, 3, 6 },					// qcf
+		{ 6, 2, 3 },					// dp
+		{ 2, 1, 4 },					// qcb
+		{ 4, 2, 1 },					// reverse dp
+		{ 4, 1, 2, 3, 6},				// hcf
+		{ 6, 3, 2, 1, 4},				// hcb
+		{ 2, 5, 2 },					// down down
+		{ 2, 3, 6, 2, 3, 6 },			// double qcf
+		{ 2, 8 },						// flash kick (charge)
+		{ 4, 6 },						// sonic boom (charge)
+		{ 4, 6, 4, 6 },					// back-charge super
+		{ 1, 3, 1, 7 },					// delta super (charge)
 	};
 
-	std::vector<int> buffers =
+	std::vector<unsigned int> buffers =
 	{
 		constants::INPUT_BUFFER_236,
 		constants::INPUT_BUFFER_623,
@@ -64,17 +64,17 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 		20,
 	};
 
-	//for (int i = 0; i < inputs.size(); i++)
-	//{
-	//	triggerArray_.push_back(std::make_unique<InputTrigger>());
-	//	triggerArray_[i]->setInput(inputs[i]);
-	//	triggerArray_[i]->setBuffer(buffers[i]);
-	//}
+	for (int i = 0; i < inputs.size(); i++)
+	{
+		triggerArray_.push_back(std::make_unique<InputTrigger>());
+		triggerArray_[i]->setMotion(inputs[i]);
+		triggerArray_[i]->setBuffer(buffers[i]);
+	}
 
-	//triggerArray_[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
-	//triggerArray_[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
-	//triggerArray_[10]->setCharge(40, std::vector<bool>{true, true, true, true}); // double-charge super
-	//triggerArray_[11]->setCharge(40, std::vector<bool>{false, false, false, true}); // delta super
+	triggerArray_[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
+	triggerArray_[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
+	triggerArray_[10]->setCharge(40, std::vector<bool>{true, true, true, true}); // double-charge super
+	triggerArray_[11]->setCharge(40, std::vector<bool>{false, false, false, true}); // delta super
 }
 
 World::~World()
@@ -83,7 +83,7 @@ World::~World()
 
 void World::loadTextures()
 {
-	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/enk_sheet.png");
+	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/Enkidu.png");
 	textures_.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/Yuzuriha_idle.png");
 	textures_.load(Textures::ID::StageMomiji,	"media/texture/_stage/MomijiShrineScaledx3.png");
 }
@@ -167,21 +167,19 @@ void World::update()
 	// "Adapt" functions (collision, facing, etc.)
 
 	// Read in accumulated player input for current update, translate to numpad notation, and add to input buffer
-	int p1RawInput_ = p1_.getInput();
-	int p1NumpadInput_ = translateToNumpadInput(p1_.getInput());
+	TaggedInput p1RawInput_ = p1_.getInput();
+	TaggedInput p1NumpadInput_ = translateToNumpadInput(p1_.getInput());
 
-	p1Char_->handleInput(p1RawInput_);
-
-	if ((p1NumpadInput_ & 15) != debugPrevInput_)
+	if ((p1NumpadInput_.second & 15) != debugPrevInput_)
 	{
-		RN_DEBUG("Player 1 : Numpad Input -- {}", p1NumpadInput_ & 15);
-		debugPrevInput_ = p1NumpadInput_ & 15;
+		RN_DEBUG("Player {} : Numpad Input -- {}", p1NumpadInput_.first, p1NumpadInput_.second & 15);
+		debugPrevInput_ = p1NumpadInput_.second & 15;
 	}
 
 	// Testing triggers
 	for (int i = 0; i < triggerArray_.size(); i++)
 	{
-		triggerArray_[i]->update(p1Char_->getCharInput());
+		triggerArray_[i]->update(p1NumpadInput_.second);
 		if (triggerArray_[i]->isTriggered())
 		{
 			RN_DEBUG("Motion input detected -- {}", inputString[i]);
@@ -194,15 +192,14 @@ void World::update()
 
 		// If actionable, initiate action based on input buffer readout
 
-	if ((p1NumpadInput_ & 15) == 6)
+	if ((p1NumpadInput_.second & 15) == 6)
 	{
 		p1Char_->walkForward(5.f);
 	}
-	if ((p1NumpadInput_ & 15) == 4)
+	if ((p1NumpadInput_.second & 15) == 4)
 	{
 		p1Char_->walkBackward(5.f);
 	}
-
 	
 	// Forward commands to scene graph
 	//while (!commandQueue_.isEmpty())
@@ -258,43 +255,43 @@ void World::adaptPlayerFacing()
 	}
 }
 
-int World::translateToNumpadInput(const int& playerRawInput)
+World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playerRawInput)
 {
 	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
 	// notation doesn't go past 9, the entire numpad + buttons input can be stored as a single int.
 
-	int numpad = 5; // Neutral
+	unsigned int numpad = 5; // Neutral
 
 	// If x-axis input matches current character facing
-	if ((playerRawInput & (Input::Left | Input::Right)) == p1Char_->getFacing())
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == p1Char_->getFacing())
 	{
 		numpad += 1;
 	}
 	// If x-axis input is opposite of current character facing
-	if ((playerRawInput & (Input::Left | Input::Right)) == (p1Char_->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == (p1Char_->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
 	{
 		numpad -= 1;
 	}
 	// If upward input
-	if (playerRawInput & Input::Up)
+	if (playerRawInput.second & Input::Up)
 	{
 		numpad += 3;
 	}
 	// If downward input
-	if (playerRawInput & Input::Down)
+	if (playerRawInput.second & Input::Down)
 	{
 		numpad -= 3;
 	}
 
-	// Convert the first four bits in playerRawInput.second to 0s; preserve bits pertaining to buttons (fifth onward)
-	return  numpad + (playerRawInput >> 4 << 4);
+	// Convert the first four bits in playerRawInput.second.second to 0s; preserve bits pertaining to buttons (fifth onward)
+	return { playerRawInput.first, numpad + (playerRawInput.second >> 4 << 4) };
 }
 
 // TODO: need a function to update character facings
 
-//void World::updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<int>> &inputBuffer)
+//void World::updateInputBuffer(Player::TaggedInput numpadInput, std::pair<Player::ID, std::deque<unsigned int>> &inputBuffer)
 //{
-//	inputBuffer.second.push_back(numpadInput);
+//	inputBuffer.second.push_back(numpadInput.second);
 //	while (inputBuffer.second.size() > constants::INPUT_MAX_INPUT_BUFFER)
 //	{
 //		inputBuffer.second.pop_front();

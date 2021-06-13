@@ -6,11 +6,6 @@
 #include "CommandQueue.h"
 #include "Input.h"
 #include "Player.h"
-#include "CharState.h"
-#include "InputTrigger.h"
-#include "StateStack.h"
-
-#include <memory>
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -64,9 +59,6 @@ public:
 		std::vector<int>	idleIDs;
 		std::vector<int>	idleDurs;
 
-		std::vector<int>	crouchIDs;
-		std::vector<int>	crouchDurs;
-
 		std::vector<int>	walkFIDs;
 		std::vector<int>	walkFDurs;
 
@@ -75,68 +67,52 @@ public:
 	};
 
 public:
-	explicit										Character(Type type, const TextureHolder& textures);
-													~Character();
+	explicit			Character(Type type, const TextureHolder& textures);
+						~Character();
 
-	virtual void									drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void									updateCurrent();
-	virtual void									handleInput(int input);
+	virtual void		drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void		updateCurrent();
+	virtual void		takeInput(Player::TaggedInput input);
 
-	int												getCategory() const;
+	unsigned int		getCategory() const;
 
-	float											getHealth() const;
-	float											getMeter() const;
-	Facing											getFacing() const;
-	Posture											getPosture() const;
-	ActionState										getActionState() const;
-	bool											isActionable() const;
+	float				getHealth() const;
+	float				getMeter() const;
+	Facing				getFacing() const;
+	Posture				getPosture() const;
+	ActionState			getActionState() const;
+	bool				isActionable() const;
 
-	void											setHealth(float value);
-	void											subtractHealth(float value);
-	void											setMeter(float value);
-	void											addMeter(float value);
-	void											subtractMeter(float value);
-	void											setFacing(Facing facing);
-	void											flipFacing();
-	void											setPosture(Posture posture);
-	void											setActionState(ActionState actionState);
+	void				setHealth(float value);
+	void				subtractHealth(float value);
+	void				setMeter(float value);
+	void				addMeter(float value);
+	void				subtractMeter(float value);
+	void				setFacing(Facing facing);
+	void				flipFacing();
+	void				setPosture(Posture posture);
+	void				setActionState(ActionState actionState);
 
-	void											walkForward(float speed);
-	void											walkBackward(float speed);
-
-	void											setAnimation(const std::vector<int>& ids, 
-																 const std::vector<int>& durations, 
-																 const sf::Vector2i& spriteDims, 
-																 const bool& isRepeating = false);
-	void											setAnimation(const std::vector<sf::IntRect>& frameRects, 
-																 const std::vector<int>& durations,
-																 const bool& isRepeating = false);
-	int												getCharInput() const;
+	void				walkForward(float speed);
+	void				walkBackward(float speed);
 
 private:
-	void											setSignFlip();
-	void											calculateCharInput(int input);
+	void				setSignFlip();
 
 private:
-	Type											type_;
-	Animation										sprite_;
-	SpriteStruct									spriteStruct_;
+	Type				type_;
+	Animation			sprite_;
+	SpriteStruct		spriteStruct_;
 
-	StateStack										charStateStack_;
+	AnimationState		animationState_;
+	AnimationState		prevAnimationState_;
 
-	AnimationState									animationState_;
-	AnimationState									prevAnimationState_;
-
-	float											health_;
-	float											meter_;
-	Facing											facing_;
-	Posture											posture_;
-	ActionState										actionState_;
-	int												facingSignFlip_;
-
-	int												charInput_;
-
-	std::vector<std::unique_ptr<InputTrigger>>		triggers_;
+	float				health_;
+	float				meter_;
+	Facing				facing_;
+	Posture				posture_;
+	ActionState			actionState_;
+	int					facingSignFlip_;
 };
 
 #define COMMON_ACTION_IDLE				0

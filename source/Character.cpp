@@ -36,31 +36,38 @@ Character::Character(Type type, const TextureHolder& textures)
 	SpriteStruct EnkSprite;
 	EnkSprite.spriteDims = sf::Vector2(1600, 768);
 
-	// Idle animation
 	EnkSprite.idleIDs.resize(16);
 	std::iota(EnkSprite.idleIDs.begin(), EnkSprite.idleIDs.end(), 0);
 	EnkSprite.idleDurs.resize(16);
 	std::fill(EnkSprite.idleDurs.begin(), EnkSprite.idleDurs.end(), 5);
-
-	// Crouch animation
-	EnkSprite.crouchIDs.resize(15);
-	std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 16);
-	EnkSprite.crouchDurs.resize(15);
-	std::fill(EnkSprite.crouchDurs.begin(), EnkSprite.crouchDurs.end(), 5);
 		
-	// Forward walk animation
 	EnkSprite.walkFIDs.resize(9);
-	std::iota(EnkSprite.walkFIDs.begin(), EnkSprite.walkFIDs.end(), 31);
+	std::iota(EnkSprite.walkFIDs.begin(), EnkSprite.walkFIDs.end(), 16);
 	EnkSprite.walkFDurs.resize(9);
 	std::fill(EnkSprite.walkFDurs.begin(), EnkSprite.walkFDurs.end(), 5);
 
-	// Back walk animation
 	EnkSprite.walkBIDs.resize(11);
-	std::iota(EnkSprite.walkBIDs.begin(), EnkSprite.walkBIDs.end(), 40);
+	std::iota(EnkSprite.walkBIDs.begin(), EnkSprite.walkBIDs.end(), 25);
 	EnkSprite.walkBDurs.resize(11);
 	std::fill(EnkSprite.walkBDurs.begin(), EnkSprite.walkBDurs.end(), 5);
 
 	EnkSprite.originX = 655;
+
+	//for (int i = 0; i != 16; i++)
+	//{
+	//	EnkSprite.idleIDs.push_back(i);
+	//	EnkSprite.idleDurs.push_back(5);
+	//}
+	//for (int i = 16; i != 25; i++)
+	//{
+	//	EnkSprite.walkFIDs.push_back(i);
+	//	EnkSprite.walkFDurs.push_back(5);
+	//}
+	//for (int i = 25; i != 36; i++)
+	//{
+	//	EnkSprite.walkBIDs.push_back(i);
+	//	EnkSprite.walkBDurs.push_back(5);
+	//}
 
 	SpriteStruct YuzuSprite;
 	YuzuSprite.spriteDims = sf::Vector2(864, 640);
@@ -70,11 +77,21 @@ Character::Character(Type type, const TextureHolder& textures)
 		YuzuSprite.idleIDs.push_back(i);
 		YuzuSprite.idleDurs.push_back(5);
 	}
+	//for (int i = 16; i != 25; i++)
+	//{
+	//	YuzuSprite.walkFIDs.push_back(i);
+	//	YuzuSprite.walkFDurs.push_back(5);
+	//}
+	//for (int i = 25; i != 36; i++)
+	//{
+	//	YuzuSprite.walkBIDs.push_back(i);
+	//	YuzuSprite.walkBDurs.push_back(5);
+	//}
+
 
 	if (type_ == Type::Enkidu)
 	{
 		spriteStruct_ = EnkSprite;
-
 	}
 	else if (type_ == Type::Yuzuriha)
 	{
@@ -87,6 +104,7 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	health_			= 1000.f;
 	meter_			= 0.f;
+	//position_		= sf::Vector2f(0.f, 0.f);
 }
 
 Character::~Character()
@@ -100,6 +118,7 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 
 void Character::updateCurrent()
 {
+	// 
 	if (animationState_ != prevAnimationState_)
 	{
 		if (animationState_ == AnimationState::Idle)
@@ -126,24 +145,15 @@ void Character::updateCurrent()
 
 	sprite_.update();
 	animationState_ = AnimationState::Idle;
-
-	//state_->update(*this);
 }
 
-int Character::getCategory() const
+unsigned int Character::getCategory() const
 {
 	return Category::Character;
 }
 
-void Character::handleInput(int input)
+void Character::takeInput(Player::TaggedInput input)
 {
-	calculateCharInput(input);
-	//std::unique_ptr<CharState> state = state_->handleInput(*this, input);
-	//if (state != nullptr)
-	//{
-	//	state_ = std::move(state);
-	//	state_->enter(*this);
-	//}
 }
 
 float Character::getHealth() const
@@ -268,41 +278,4 @@ void Character::walkBackward(float speed)
 	animationState_ = AnimationState::WalkB;
 
 	this->move(-speed * facingSignFlip_, 0.f);
-}
-
-void Character::setAnimation(const std::vector<int>& ids,
-                             const std::vector<int>& durations,
-                             const sf::Vector2i& spriteDims, 
-                             const bool& isRepeating)
-{
-	sprite_.setFrames(ids, durations, spriteDims);
-	sprite_.setRepeating(isRepeating);
-}
-
-int Character::getCharInput() const
-{
-	return charInput_;
-}
-
-void Character::calculateCharInput(int input)
-{
-	// Assign everything except for the first two bits (left/right input)
-	charInput_ = input >> 2 << 2;
-
-	if ((input & (Input::Left | Input::Right)) == facing_)
-	{
-		charInput_ |= CharInput::CharForward;
-	}
-	if ((input & (Input::Left | Input::Right)) == (facing_ ^ Input::Left ^ Input::Right)) // Flip bits on facing to get opposite
-	{
-		charInput_ |= CharInput::CharBack;
-	}
-}
-
-void Character::setAnimation(const std::vector<sf::IntRect>& frameRects,
-						 	 const std::vector<int>& durations,
-							 const bool& isRepeating)
-{
-	sprite_.setFrames(frameRects, durations);
-	sprite_.setRepeating(isRepeating);
 }
