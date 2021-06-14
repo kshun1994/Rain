@@ -41,13 +41,18 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.idleDurs.resize(16);
 	std::fill(EnkSprite.idleDurs.begin(), EnkSprite.idleDurs.end(), 5);
 		
+	EnkSprite.crouchIDs.resize(15);
+	std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 16);
+	EnkSprite.crouchDurs.resize(15);
+	std::fill(EnkSprite.crouchDurs.begin(), EnkSprite.crouchDurs.end(), 5);
+		
 	EnkSprite.walkFIDs.resize(9);
-	std::iota(EnkSprite.walkFIDs.begin(), EnkSprite.walkFIDs.end(), 16);
+	std::iota(EnkSprite.walkFIDs.begin(), EnkSprite.walkFIDs.end(), 31);
 	EnkSprite.walkFDurs.resize(9);
 	std::fill(EnkSprite.walkFDurs.begin(), EnkSprite.walkFDurs.end(), 5);
 
 	EnkSprite.walkBIDs.resize(11);
-	std::iota(EnkSprite.walkBIDs.begin(), EnkSprite.walkBIDs.end(), 25);
+	std::iota(EnkSprite.walkBIDs.begin(), EnkSprite.walkBIDs.end(), 40);
 	EnkSprite.walkBDurs.resize(11);
 	std::fill(EnkSprite.walkBDurs.begin(), EnkSprite.walkBDurs.end(), 5);
 
@@ -92,6 +97,19 @@ Character::Character(Type type, const TextureHolder& textures)
 	if (type_ == Type::Enkidu)
 	{
 		spriteStruct_ = EnkSprite;
+
+		StandState* standState = new StandState();
+		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
+		standState->setAnimationRepeat(true);
+
+		CrouchState* crouchState = new CrouchState();
+		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
+		crouchState->setAnimationRepeat(true);
+
+		charStates_.push_back(standState);
+		charStates_.push_back(crouchState);
+
+		charState_ = charStates_[0];
 	}
 	else if (type_ == Type::Yuzuriha)
 	{
@@ -109,6 +127,10 @@ Character::Character(Type type, const TextureHolder& textures)
 
 Character::~Character()
 {
+	for (CharState* charState : charStates_)
+	{
+		delete charState;
+	}
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -119,29 +141,29 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 void Character::updateCurrent()
 {
 	// 
-	if (animationState_ != prevAnimationState_)
-	{
-		if (animationState_ == AnimationState::Idle)
-		{
-			RN_DEBUG("Idle");
-			sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
-			sprite_.setRepeating(true);
-		}
-		else if (animationState_ == AnimationState::WalkF)
-		{
-			RN_DEBUG("WalkF");
-			sprite_.setFrames(spriteStruct_.walkFIDs, spriteStruct_.walkFDurs, spriteStruct_.spriteDims);
-			sprite_.setRepeating(true);
-		}
-		else if (animationState_ == AnimationState::WalkB)
-		{
-			RN_DEBUG("WalkB");
-			sprite_.setFrames(spriteStruct_.walkBIDs, spriteStruct_.walkBDurs, spriteStruct_.spriteDims);
-			sprite_.setRepeating(true);
-		}
-	}
+	//if (animationState_ != prevAnimationState_)
+	//{
+	//	if (animationState_ == AnimationState::Idle)
+	//	{
+	//		RN_DEBUG("Idle");
+	//		sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
+	//		sprite_.setRepeating(true);
+	//	}
+	//	else if (animationState_ == AnimationState::WalkF)
+	//	{
+	//		RN_DEBUG("WalkF");
+	//		sprite_.setFrames(spriteStruct_.walkFIDs, spriteStruct_.walkFDurs, spriteStruct_.spriteDims);
+	//		sprite_.setRepeating(true);
+	//	}
+	//	else if (animationState_ == AnimationState::WalkB)
+	//	{
+	//		RN_DEBUG("WalkB");
+	//		sprite_.setFrames(spriteStruct_.walkBIDs, spriteStruct_.walkBDurs, spriteStruct_.spriteDims);
+	//		sprite_.setRepeating(true);
+	//	}
+	//}
 
-	prevAnimationState_ = animationState_;
+	//prevAnimationState_ = animationState_;
 
 	sprite_.update();
 	animationState_ = AnimationState::Idle;
@@ -152,8 +174,16 @@ unsigned int Character::getCategory() const
 	return Category::Character;
 }
 
-void Character::takeInput(Player::TaggedInput input)
+void Character::handleInput(Player::TaggedInput input)
 {
+	CharState* charState = charState_->handleInput(*this, input.second);
+
+	if (charState != nullptr)
+	{
+		charState_ = charState;
+
+		charState_->enter(*this);
+	}
 }
 
 float Character::getHealth() const
@@ -278,4 +308,19 @@ void Character::walkBackward(float speed)
 	animationState_ = AnimationState::WalkB;
 
 	this->move(-speed * facingSignFlip_, 0.f);
+}
+
+void Character::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& rect)
+{
+	sprite_.setFrames(frameIDs, durations, rect);
+}
+
+void Character::setAnimationRepeat(bool flag)
+{
+	sprite_.setRepeating(flag);
+}
+
+std::vector<CharState*> Character::getCharStates()
+{
+	return charStates_;
 }

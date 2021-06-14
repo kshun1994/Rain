@@ -20,7 +20,7 @@ public:
 	};
 
 public:
-	typedef std::pair<Player::ID, unsigned int> TaggedInput;
+	typedef std::pair<unsigned int, unsigned int> TaggedInput;
 
 public:
 												Player();

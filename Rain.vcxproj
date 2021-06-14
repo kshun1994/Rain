@@ -94,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="source\Action.h" />
+    <ClInclude Include="source\CharState.h" />
     <ClInclude Include="source\Event.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\Animation.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="source\Application.cpp" />
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\Character.cpp" />
+    <ClCompile Include="source\CharState.cpp" />
     <ClCompile Include="source\Command.cpp" />
     <ClCompile Include="source\CommandQueue.cpp" />
     <ClCompile Include="source\Component.cpp" />

@@ -88,6 +88,9 @@
     <ClCompile Include="source\WorldLogger.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="source\CharState.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -196,6 +199,9 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Event.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CharState.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
