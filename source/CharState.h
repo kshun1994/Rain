@@ -67,3 +67,34 @@ public:
 
 };
 
+class FWalkState : public CharState
+{
+public:
+	virtual								~FWalkState() {};
+
+	virtual CharState*					handleInput(Character& character, int input);
+	virtual void						update(Character& character);
+
+	virtual void						enter(Character& character);
+
+	void								setSpeed(float speed);
+
+private:
+	float								speed_ = 5.f;
+};
+
+class BWalkState : public CharState
+{
+public:
+	virtual								~BWalkState() {};
+
+	virtual CharState*					handleInput(Character& character, int input);
+	virtual void						update(Character& character);
+
+	virtual void						enter(Character& character);
+
+	void								setSpeed(float speed);
+
+private:
+	float								speed_ = 5.f;
+};

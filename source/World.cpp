@@ -194,14 +194,14 @@ void World::update()
 
 	p1Char_->handleInput(p1NumpadInput_);
 
-	if ((p1NumpadInput_.second & 15) == 6)
-	{
-		p1Char_->walkForward(5.f);
-	}
-	if ((p1NumpadInput_.second & 15) == 4)
-	{
-		p1Char_->walkBackward(5.f);
-	}
+	//if ((p1NumpadInput_.second & 15) == 6)
+	//{
+	//	p1Char_->walkForward(5.f);
+	//}
+	//if ((p1NumpadInput_.second & 15) == 4)
+	//{
+	//	p1Char_->walkBackward(5.f);
+	//}
 	
 	// Forward commands to scene graph
 	//while (!commandQueue_.isEmpty())

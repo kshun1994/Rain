@@ -102,6 +102,8 @@ void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, // sprite 
 		Frame frame = { frameRects[i], durations[i] };
 		frameVector_.push_back(std::move(frame));
 	}
+
+	sprite_.setTextureRect(frameVector_[currentFrame_].rect);
 }
 
 void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indices (start at 0)
@@ -129,6 +131,8 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 		Frame frame = { currentRect, durations[i] };
 		frameVector_.push_back(std::move(frame));
 	}
+
+	sprite_.setTextureRect(frameVector_[currentFrame_].rect);
 }
 
 
@@ -183,8 +187,6 @@ void Animation::update()
 
 	while (elapsedTicks_ >= frameVector_[currentFrame_].duration && (currentFrame_ != frameVector_.size() || repeat_))
 	{
-		sprite_.setTextureRect(frameVector_[currentFrame_].rect);
-
 		if (repeat_ && (currentFrame_ == frameVector_.size() - 1))
 		{
 			currentFrame_ = 0;
@@ -193,6 +195,8 @@ void Animation::update()
 		{
 			currentFrame_++;
 		}
+
+		sprite_.setTextureRect(frameVector_[currentFrame_].rect);
 
 		elapsedTicks_ = 0;
 	}

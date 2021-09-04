@@ -63,11 +63,11 @@ public:
 		std::vector<int>	crouchIDs;
 		std::vector<int>	crouchDurs;
 
-		std::vector<int>	walkFIDs;
-		std::vector<int>	walkFDurs;
+		std::vector<int>	fWalkIDs;
+		std::vector<int>	fWalkDurs;
 
-		std::vector<int>	walkBIDs;
-		std::vector<int>	walkBDurs;
+		std::vector<int>	bWalkIDs;
+		std::vector<int>	bWalkDurs;
 	};
 
 	enum BoxType
@@ -145,8 +145,8 @@ private:
 };
 
 #define COMMON_ACTION_STAND				0
-#define COMMON_ACTION_WALK_FORWARD		1
-#define COMMON_ACTION_WALK_BACK			2
+#define COMMON_ACTION_F_WALK			1
+#define COMMON_ACTION_B_WALK			2
 #define COMMON_ACTION_CROUCH			3
 #define COMMON_ACTION_BLOCK_STAND		4
 #define COMMON_ACTION_BLOCK_CROUCH		5

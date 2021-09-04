@@ -29,6 +29,7 @@ Character::Character(Type type, const TextureHolder& textures)
 , prevAnimationState_(AnimationState::Idle)
 , facingSignFlip_(1)
 , spriteStruct_()
+, charStates_(20)
 {
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
@@ -45,16 +46,18 @@ Character::Character(Type type, const TextureHolder& textures)
 	std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 16);
 	EnkSprite.crouchDurs.resize(15);
 	std::fill(EnkSprite.crouchDurs.begin(), EnkSprite.crouchDurs.end(), 5);
-		
-	EnkSprite.walkFIDs.resize(9);
-	std::iota(EnkSprite.walkFIDs.begin(), EnkSprite.walkFIDs.end(), 31);
-	EnkSprite.walkFDurs.resize(9);
-	std::fill(EnkSprite.walkFDurs.begin(), EnkSprite.walkFDurs.end(), 5);
 
-	EnkSprite.walkBIDs.resize(11);
-	std::iota(EnkSprite.walkBIDs.begin(), EnkSprite.walkBIDs.end(), 40);
-	EnkSprite.walkBDurs.resize(11);
-	std::fill(EnkSprite.walkBDurs.begin(), EnkSprite.walkBDurs.end(), 5);
+	// Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
+		
+	EnkSprite.fWalkIDs.resize(9);
+	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 31);
+	EnkSprite.fWalkDurs.resize(9);
+	std::fill(EnkSprite.fWalkDurs.begin(), EnkSprite.fWalkDurs.end(), 5);
+
+	EnkSprite.bWalkIDs.resize(9);
+	std::iota(EnkSprite.bWalkIDs.begin(), EnkSprite.bWalkIDs.end(), 42);
+	EnkSprite.bWalkDurs.resize(9);
+	std::fill(EnkSprite.bWalkDurs.begin(), EnkSprite.bWalkDurs.end(), 5);
 
 	EnkSprite.originX = 655;
 
@@ -106,10 +109,22 @@ Character::Character(Type type, const TextureHolder& textures)
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchState->setAnimationRepeat(true);
 
-		charStates_.push_back(standState);		// Idx 0
-		charStates_.push_back(crouchState);		// Idx 1
+		FWalkState* fWalkState = new FWalkState();
+		fWalkState->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
+		fWalkState->setAnimationRepeat(true);
+		fWalkState->setSpeed(7.f);
 
-		charState_ = charStates_[0];			// Start standing
+		BWalkState* bWalkState = new BWalkState();
+		bWalkState->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
+		bWalkState->setAnimationRepeat(true);
+		bWalkState->setSpeed(7.f);
+
+		charStates_[COMMON_ACTION_STAND]	= standState;
+		charStates_[COMMON_ACTION_CROUCH]	= crouchState;
+		charStates_[COMMON_ACTION_F_WALK]	= fWalkState;
+		charStates_[COMMON_ACTION_B_WALK]	= bWalkState;
+
+		charState_ = charStates_[COMMON_ACTION_STAND];		// Start standing
 	}
 	else if (type_ == Type::Yuzuriha)
 	{
@@ -165,6 +180,7 @@ void Character::updateCurrent()
 
 	//prevAnimationState_ = animationState_;
 
+	charState_->update(*this);
 	sprite_.update();
 	animationState_ = AnimationState::Idle;
 }
