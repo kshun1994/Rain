@@ -94,6 +94,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="source\Action.h" />
+    <ClInclude Include="source\Box.h" />
     <ClInclude Include="source\CharState.h" />
     <ClInclude Include="source\Event.h" />
     <ClInclude Include="source\Input.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="source\ParallelTask.h" />
     <ClInclude Include="source\PauseState.h" />
     <ClInclude Include="source\Player.h" />
+    <ClInclude Include="source\Property.h" />
     <ClInclude Include="source\ResourceHolder.h" />
     <ClInclude Include="source\ResourceIdentifiers.h" />
     <ClInclude Include="source\SceneNode.h" />
@@ -132,8 +134,10 @@
     <ClInclude Include="source\WorldLogger.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Action.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\Application.cpp" />
+    <ClCompile Include="source\Box.cpp" />
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\Character.cpp" />
     <ClCompile Include="source\CharState.cpp" />
@@ -152,6 +156,7 @@
     <ClCompile Include="source\ParallelTask.cpp" />
     <ClCompile Include="source\PauseState.cpp" />
     <ClCompile Include="source\Player.cpp" />
+    <ClCompile Include="source\Property.cpp" />
     <ClCompile Include="source\SceneNode.cpp" />
     <ClCompile Include="source\SettingsState.cpp" />
     <ClCompile Include="source\SpriteNode.cpp" />

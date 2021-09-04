@@ -91,6 +91,9 @@
     <ClCompile Include="source\CharState.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="source\Box.cpp" />
+    <ClCompile Include="source\Property.cpp" />
+    <ClCompile Include="source\Action.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -204,6 +207,8 @@
     <ClInclude Include="source\CharState.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="source\Box.h" />
+    <ClInclude Include="source\Property.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">
@@ -214,6 +219,9 @@
     </Filter>
     <Filter Include="source\state">
       <UniqueIdentifier>{b90f2c20-ffbb-4c4d-baa1-734a7d75ad79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\action">
+      <UniqueIdentifier>{45ce0560-faef-430e-8883-faa9e8e1c641}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

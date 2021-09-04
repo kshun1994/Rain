@@ -1,80 +1,30 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+#include "Property.h"
+
+// State-based system for Character Actions
+// Takes Character (Entity?) objects as reference and applies whatever 
+//     Properties to them
+// Need a mapping of inputs to cancel endpoints
+//     Pointers to InputTriggers mapped to pointers to Actions?
+//	   if Trigger->isTriggered() then Action->enter()
+
+class Character;
+
 class Action
 {
-};
-
-class InputDelegate
-{
 public:
-	virtual void SetInput() = 0;
+								~Action();
+	virtual void				update(Character& character);
+	virtual void				handleInput(Character& character);
+
+	virtual void				setDuration(int duration);
+
+	virtual void				addProperty(Property property);
+
+protected:
+	int							duration_;
+
+	std::vector<Property>		properties_;
 };
-
-	class HasInput : public InputDelegate
-	{
-	public:
-		virtual void SetInput() override
-		{
-		};
-	};
-
-	class HasNoInput : public InputDelegate
-	{
-	public:
-		virtual void SetInput() override { /* Nothing */ };
-	};
-
-class HitboxDelegate
-{
-public:
-	virtual void setHitbox(sf::IntRect rect) = 0;
-};
-
-	class HasHitbox : public HitboxDelegate
-	{
-	public:
-		virtual void setHitbox(sf::IntRect rect) override;
-	};
-
-	class HasNoHitbox : public HitboxDelegate
-	{
-	public:
-		virtual void setHitbox(sf::IntRect rect) override { /* Nothing */ };
-	};
-
-class HurtboxDelegate
-{
-public:
-	virtual void setHurtbox(sf::IntRect rect) = 0;
-};
-
-	class HasHurtbox : public HurtboxDelegate
-	{
-	public:
-		virtual void setHurtbox(sf::IntRect rect) override;
-	};
-
-	class HasNoHurtbox : public HurtboxDelegate
-	{
-	public:
-		virtual void setHurtbox(sf::IntRect rect) override { /* Nothing */ };
-	};
-
-class CollideboxDelegate
-{
-public:
-	virtual void setCollidebox(sf::IntRect rect) = 0;
-};
-
-	class HasCollidebox : public CollideboxDelegate
-	{
-	public:
-		virtual void setCollidebox(sf::IntRect rect) override;
-	};
-
-	class HasNoCollideBox : public CollideboxDelegate
-	{
-	public:
-		virtual void setCollidebox(sf::IntRect rect) override { /* Nothing */ };
-	};

@@ -70,69 +70,84 @@ public:
 		std::vector<int>	walkBDurs;
 	};
 
+	enum BoxType
+	{
+		Collide			= 1 << 0, 
+		Hit				= 1 << 1,
+		Hurt			= 1 << 2,
+	};
+
+	struct Box
+	{
+		int					boxType;
+		sf::IntRect			box;
+	};
+
 public:
-	explicit									Character(Type type, const TextureHolder& textures);
-												~Character();
+	explicit							Character(Type type, const TextureHolder& textures);
+										~Character();
 
-	virtual void								drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void								updateCurrent();
-	virtual void								handleInput(Player::TaggedInput input);
+	virtual void						drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void						updateCurrent();
+	virtual void						handleInput(Player::TaggedInput input);
 
-	unsigned int								getCategory() const;
+	unsigned int						getCategory() const;
 
-	float										getHealth() const;
-	float										getMeter() const;
-	Facing										getFacing() const;
-	Posture										getPosture() const;
-	ActionState									getActionState() const;
-	bool										isActionable() const;
+	float								getHealth() const;
+	float								getMeter() const;
+	Facing								getFacing() const;
+	Posture								getPosture() const;
+	ActionState							getActionState() const;
+	bool								isActionable() const;
 
-	void										setHealth(float value);
-	void										subtractHealth(float value);
-	void										setMeter(float value);
-	void										addMeter(float value);
-	void										subtractMeter(float value);
-	void										setFacing(Facing facing);
-	void										flipFacing();
-	void										setPosture(Posture posture);
-	void										setActionState(ActionState actionState);
+	void								setHealth(float value);
+	void								subtractHealth(float value);
+	void								setMeter(float value);
+	void								addMeter(float value);
+	void								subtractMeter(float value);
+	void								setFacing(Facing facing);
+	void								flipFacing();
+	void								setPosture(Posture posture);
+	void								setActionState(ActionState actionState);
 
-	std::vector<CharState*>						getCharStates();
+	std::vector<CharState*>				getCharStates();
 
-	void										setAnimationFrames(const std::vector<int>& frameIDs,
-																   const std::vector<int>& durations,
-														 		   const sf::Vector2i& rect);
-	void										setAnimationRepeat(bool flag);
+	void								setAnimationFrames(const std::vector<int>& frameIDs,
+														   const std::vector<int>& durations,
+												 		   const sf::Vector2i& rect);
+	void								setAnimationRepeat(bool flag);
 
-	void										walkForward(float speed);
-	void										walkBackward(float speed);
-
-private:
-	void										setSignFlip();
+	void								walkForward(float speed);
+	void								walkBackward(float speed);
 
 private:
-	Type										type_;
-	Animation									sprite_;
-	SpriteStruct								spriteStruct_;
+	void								setSignFlip();
 
-	CharState*									charState_;
-	std::vector<CharState*>						charStates_;
+private:
+	Type								type_;
+	Animation							sprite_;
+	SpriteStruct						spriteStruct_;
 
-	AnimationState								animationState_;
-	AnimationState								prevAnimationState_;
+	CharState*							charState_;
+	std::vector<CharState*>				charStates_;
 
-	float										health_;
-	float										meter_;
-	Facing										facing_;
-	Posture										posture_;
-	ActionState									actionState_;
-	int											facingSignFlip_;
+	std::vector<Box>					boxes_;
+
+	AnimationState						animationState_;
+	AnimationState						prevAnimationState_;
+
+	float								health_;
+	float								meter_;
+	Facing								facing_;
+	Posture								posture_;
+	ActionState							actionState_;
+	int									facingSignFlip_;
 };
 
-#define COMMON_ACTION_IDLE				0
+#define COMMON_ACTION_STAND				0
 #define COMMON_ACTION_WALK_FORWARD		1
 #define COMMON_ACTION_WALK_BACK			2
 #define COMMON_ACTION_CROUCH			3
-#define COMMON_ACTION_BLOCK_STANDING	4
-#define COMMON_ACTION_BLOCK_CROUCHING	5
+#define COMMON_ACTION_BLOCK_STAND		4
+#define COMMON_ACTION_BLOCK_CROUCH		5
 #define COMMON_ACTION_JUMP				6

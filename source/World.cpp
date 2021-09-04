@@ -118,9 +118,9 @@ void World::buildScene()
 
 	//std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, textures_));
 	//std::shared_ptr<Character> yuzuriha = std::make_shared<Character>(Character::Yuzuriha, textures_);
-	p2Char_ = std::make_shared<Character>(Character::Yuzuriha, textures_);
-	p2Char_->setPosition(spawnPosition_.x + 500, spawnPosition_.y - 64);
-	p2Char_->flipFacing();
+	p2Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
+	p2Char_->setPosition(spawnPosition_.x + 500, spawnPosition_.y - 25);
+	//p2Char_->flipFacing();
 	sceneLayers_[Player2]->attachChild(p2Char_);
 
 	charArray_ = { p1Char_, p2Char_ };
@@ -194,14 +194,14 @@ void World::update()
 
 	p1Char_->handleInput(p1NumpadInput_);
 
-	//if ((p1NumpadInput_.second & 15) == 6)
-	//{
-	//	p1Char_->walkForward(5.f);
-	//}
-	//if ((p1NumpadInput_.second & 15) == 4)
-	//{
-	//	p1Char_->walkBackward(5.f);
-	//}
+	if ((p1NumpadInput_.second & 15) == 6)
+	{
+		p1Char_->walkForward(5.f);
+	}
+	if ((p1NumpadInput_.second & 15) == 4)
+	{
+		p1Char_->walkBackward(5.f);
+	}
 	
 	// Forward commands to scene graph
 	//while (!commandQueue_.isEmpty())

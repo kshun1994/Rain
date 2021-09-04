@@ -23,7 +23,6 @@ CharState* StandState::handleInput(Character& character, int input)
 {
 	if ((input & 15) <= 3) // If downward input
 	{
-		character.getCharStates()[0] = this;
 		return character.getCharStates()[1];
 	}
 
@@ -44,8 +43,7 @@ CharState* CrouchState::handleInput(Character& character, int input)
 {
 	if ((input & 15) > 3) // If no downward input
 	{
-		character.getCharStates()[1] = this;
-		return character.getCharStates()[0];
+		return character.getCharStates()[0]; // Return standing state to Character
 	}
 
 	return nullptr;

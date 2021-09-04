@@ -106,10 +106,10 @@ Character::Character(Type type, const TextureHolder& textures)
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchState->setAnimationRepeat(true);
 
-		charStates_.push_back(standState);
-		charStates_.push_back(crouchState);
+		charStates_.push_back(standState);		// Idx 0
+		charStates_.push_back(crouchState);		// Idx 1
 
-		charState_ = charStates_[0];
+		charState_ = charStates_[0];			// Start standing
 	}
 	else if (type_ == Type::Yuzuriha)
 	{

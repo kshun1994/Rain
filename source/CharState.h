@@ -2,6 +2,22 @@
 
 class Character;
 
+
+/*
+
+Characters have vectors of CharState objects
+CharStates are allocated during game load (Character initialization)
+CharStates are entered via player inputs
+CharStates may have durations or may be indefinite until another CharState is entered
+CharStates can limit possible CharState changes
+	Hitstun/blockstun etc. doesn't allow for actions
+	Specific moves might be able to cancel into specific others
+Map of inputs to CharStates that can be filtered?
+	E.g. if in recovery state limit entry into states other than hitstun/blockstun etc.
+	Maybe use bit flag enum to categorize CharStates
+
+*/
+
 class CharState
 {
 public: 
