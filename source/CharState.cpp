@@ -19,28 +19,17 @@ void CharState::setAnimation(Character& character)
 	character.setAnimationFrames(animationFrameIDs_, animationFrameDurations_, animationSpriteDims_);
 }
 
-CharState* StandState::handleInput(Character& character, int input)
+std::shared_ptr<CharState> CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 {
-	if ((input & 15) <= 3) // If downward input
+	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
 	{
-		return character.getCharStates()[COMMON_ACTION_CROUCH]; // TODO do not hardcode the indices for character states
-	}
-
-	if ((input & 15) == 6) // To forward walk 
-	{
-		return character.getCharStates()[COMMON_ACTION_F_WALK];
-	}
-
-	if ((input & 15) == 4) // To back walk 
-	{
-		return character.getCharStates()[COMMON_ACTION_B_WALK];
+		if (it->second && (character.getCurrentCharState() != character.getCharStates()[it->first]))
+		{
+			return character.getCharStates()[it->first];
+		}
 	}
 
 	return nullptr;
-}
-
-void StandState::update(Character& character)
-{
 }
 
 void StandState::enter(Character& character)
@@ -49,55 +38,10 @@ void StandState::enter(Character& character)
 	RN_DEBUG("Entered StandState.");
 }
 
-CharState* CrouchState::handleInput(Character& character, int input)
-{
-	if ((input & 15) == 5) // If no downward input, to stand
-	{
-		RN_DEBUG("Returned standing from crouch.");
-		return character.getCharStates()[COMMON_ACTION_STAND]; // Return standing state to Character
-	}
-
-	if ((input & 15) == 6) // To forward walk 
-	{
-		return character.getCharStates()[COMMON_ACTION_F_WALK];
-	}
-
-	if ((input & 15) == 4) // To back walk 
-	{
-		return character.getCharStates()[COMMON_ACTION_B_WALK];
-	}
-
-	return nullptr;
-}
-
-void CrouchState::update(Character& character)
-{
-}
-
 void CrouchState::enter(Character& character)
 {
 	setAnimation(character);
 	RN_DEBUG("Entered CrouchState.");
-}
-
-CharState* FWalkState::handleInput(Character& character, int input)
-{
-	if ((input & 15) == 5) // To stand
-	{
-		return character.getCharStates()[COMMON_ACTION_STAND];
-	}
-
-	if ((input & 15) <= 3) // To crouch
-	{
-		return character.getCharStates()[COMMON_ACTION_CROUCH]; 
-	}
-
-	if ((input & 15) == 4) // To back walk 
-	{
-		return character.getCharStates()[COMMON_ACTION_B_WALK];
-	}
-
-	return nullptr;
 }
 
 void FWalkState::update(Character& character)
@@ -114,26 +58,6 @@ void FWalkState::enter(Character& character)
 void FWalkState::setSpeed(float speed)
 {
 	speed_ = speed;
-}
-
-CharState* BWalkState::handleInput(Character& character, int input)
-{
-	if ((input & 15) == 5) // To stand
-	{
-		return character.getCharStates()[COMMON_ACTION_STAND];
-	}
-
-	if ((input & 15) <= 3) // To crouch
-	{
-		return character.getCharStates()[COMMON_ACTION_CROUCH]; 
-	}
-
-	if ((input & 15) == 6) // To forward walk
-	{
-		return character.getCharStates()[COMMON_ACTION_F_WALK]; 
-	}
-
-	return nullptr;
 }
 
 void BWalkState::update(Character& character)

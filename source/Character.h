@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Player.h"
 #include "CharState.h"
+#include "InputTrigger.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -84,64 +85,71 @@ public:
 	};
 
 public:
-	explicit							Character(Type type, const TextureHolder& textures);
-										~Character();
+	explicit											Character(Type type, const TextureHolder& textures);
+														~Character();
 
-	virtual void						drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
-	virtual void						updateCurrent();
-	virtual void						handleInput(Player::TaggedInput input);
+	virtual void										drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
+	virtual void										updateCurrent();
+	virtual void										handleInput(Player::TaggedInput input);
 
-	unsigned int						getCategory() const;
+	unsigned int										getCategory() const;
 
-	float								getHealth() const;
-	float								getMeter() const;
-	Facing								getFacing() const;
-	Posture								getPosture() const;
-	ActionState							getActionState() const;
-	bool								isActionable() const;
+	float												getHealth() const;
+	float												getMeter() const;
+	Facing												getFacing() const;
+	Posture												getPosture() const;
+	ActionState											getActionState() const;
+	bool												isActionable() const;
 
-	void								setHealth(float value);
-	void								subtractHealth(float value);
-	void								setMeter(float value);
-	void								addMeter(float value);
-	void								subtractMeter(float value);
-	void								setFacing(Facing facing);
-	void								flipFacing();
-	void								setPosture(Posture posture);
-	void								setActionState(ActionState actionState);
+	void												setHealth(float value);
+	void												subtractHealth(float value);
+	void												setMeter(float value);
+	void												addMeter(float value);
+	void												subtractMeter(float value);
+	void												setFacing(Facing facing);
+	void												flipFacing();
+	void												setPosture(Posture posture);
+	void												setActionState(ActionState actionState);
 
-	std::vector<CharState*>				getCharStates();
+	std::vector<std::shared_ptr<CharState>>				getCharStates();
+	std::shared_ptr<CharState>							getCurrentCharState();
 
-	void								setAnimationFrames(const std::vector<int>& frameIDs,
-														   const std::vector<int>& durations,
-												 		   const sf::Vector2i& rect);
-	void								setAnimationRepeat(bool flag);
+	void												setAnimationFrames(const std::vector<int>& frameIDs,
+																		   const std::vector<int>& durations,
+																 		   const sf::Vector2i& rect);
+	void												setAnimationRepeat(bool flag);
 
-	void								walkForward(float speed);
-	void								walkBackward(float speed);
-
-private:
-	void								setSignFlip();
+	void												walkForward(float speed);
+	void												walkBackward(float speed);
 
 private:
-	Type								type_;
-	Animation							sprite_;
-	SpriteStruct						spriteStruct_;
+	void												setSignFlip();
+	void												parseInput(unsigned int input);
+	void												clearStateMap();
 
-	CharState*							charState_;
-	std::vector<CharState*>				charStates_;
+private:
+	Type												type_;
+	Animation											sprite_;
+	SpriteStruct										spriteStruct_;
 
-	std::vector<Box>					boxes_;
+	std::shared_ptr<CharState>							charState_;
+	std::vector<std::shared_ptr<CharState>>				charStates_;
 
-	AnimationState						animationState_;
-	AnimationState						prevAnimationState_;
+	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
 
-	float								health_;
-	float								meter_;
-	Facing								facing_;
-	Posture								posture_;
-	ActionState							actionState_;
-	int									facingSignFlip_;
+	std::map<int, bool>									stateMap_;
+
+	std::vector<Box>									boxes_;
+
+	AnimationState										animationState_;
+	AnimationState										prevAnimationState_;
+
+	float												health_;
+	float												meter_;
+	Facing												facing_;
+	Posture												posture_;
+	ActionState											actionState_;
+	int													facingSignFlip_;
 };
 
 #define COMMON_ACTION_STAND				0
@@ -151,3 +159,5 @@ private:
 #define COMMON_ACTION_BLOCK_STAND		4
 #define COMMON_ACTION_BLOCK_CROUCH		5
 #define COMMON_ACTION_JUMP				6
+#define COMMON_ACTION_QCF				7
+#define COMMON_ACTION_BACK_CHARGE		8

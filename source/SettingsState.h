@@ -13,18 +13,18 @@
 class SettingsState : public State
 {
 public:
-																				SettingsState(StateStack& stack, Context context);
-	virtual void																draw();
-	virtual bool																update();
-	virtual bool																handleEvent(const sf::Event& event);
+													SettingsState(StateStack& stack, Context context);
+	virtual void									draw();
+	virtual bool									update();
+	virtual bool									handleEvent(const sf::Event& event);
 
 private:
-	void																		updateLabels();
-	void																		addButtonLabel(Input input, float y, const std::string& text, Context context);
+	void											updateLabels();
+	void											addButtonLabel(Input input, float y, const std::string& text, Context context);
 
 private:
-	sf::Sprite																	backgroundSprite_;
-	GUI::Container																gUIContainer_;
-	std::map<Input, GUI::Button::Ptr>									bindingButtons_;
-	std::map<Input, GUI::Label::Ptr>									bindingLabels_;
+	sf::Sprite										backgroundSprite_;
+	GUI::Container									gUIContainer_;
+	std::map<Input, GUI::Button::Ptr>				bindingButtons_;
+	std::map<Input, GUI::Label::Ptr>				bindingLabels_;
 };

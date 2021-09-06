@@ -29,52 +29,6 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 
 	// Prepare the view
 	worldView_.setCenter(spawnPosition_.x, spawnPosition_.y - ViewYOffset);
-
-	// TEST STUFF
-	// Initialize input triggers
-	std::vector<std::vector<unsigned int>> inputs =
-	{
-		{ 2, 3, 6 },					// qcf
-		{ 6, 2, 3 },					// dp
-		{ 2, 1, 4 },					// qcb
-		{ 4, 2, 1 },					// reverse dp
-		{ 4, 1, 2, 3, 6},				// hcf
-		{ 6, 3, 2, 1, 4},				// hcb
-		{ 2, 5, 2 },					// down down
-		{ 2, 3, 6, 2, 3, 6 },			// double qcf
-		{ 2, 8 },						// flash kick (charge)
-		{ 4, 6 },						// sonic boom (charge)
-		{ 4, 6, 4, 6 },					// back-charge super
-		{ 1, 3, 1, 7 },					// delta super (charge)
-	};
-
-	std::vector<unsigned int> buffers =
-	{
-		constants::INPUT_BUFFER_236,
-		constants::INPUT_BUFFER_623,
-		constants::INPUT_BUFFER_214,
-		constants::INPUT_BUFFER_421,
-		constants::INPUT_BUFFER_HCF,
-		constants::INPUT_BUFFER_HCB,
-		constants::INPUT_BUFFER_22,
-		40,
-		5,
-		10,
-		20,
-		20,
-	};
-
-	for (int i = 0; i < inputs.size(); i++)
-	{
-		triggerArray_.push_back(std::make_unique<InputTrigger>());
-		triggerArray_[i]->setMotion(inputs[i]);
-		triggerArray_[i]->setBuffer(buffers[i]);
-	}
-
-	triggerArray_[8]->setCharge(40, std::vector<bool>{true, true});	 // flash kick
-	triggerArray_[9]->setCharge(40, std::vector<bool>{true, false}); // sonic boom
-	triggerArray_[10]->setCharge(40, std::vector<bool>{true, true, true, true}); // double-charge super
-	triggerArray_[11]->setCharge(40, std::vector<bool>{false, false, false, true}); // delta super
 }
 
 World::~World()
@@ -142,22 +96,6 @@ void World::draw()
 	window_.draw(sceneGraph_);
 }
 
-std::vector<std::string> inputString =
-{
-	"quarter-circle forward",
-	"dragon punch",
-	"quarter-circle backward",
-	"reverse dragon punch",
-	"half-circle forward",
-	"half-circle backward",
-	"down-down",
-	"double quarter-circle forward",
-	"down-charge to up",
-	"back-charge to forward",
-	"back-charge super",
-	"delta super",
-};
-
 void World::update()
 {
 	// Resolve entity interactions (hitbox/hurtbox overlaps etc.)
@@ -176,15 +114,6 @@ void World::update()
 		debugPrevInput_ = p1NumpadInput_.second & 15;
 	}
 
-	// Testing triggers
-	for (int i = 0; i < triggerArray_.size(); i++)
-	{
-		triggerArray_[i]->update(p1NumpadInput_.second);
-		if (triggerArray_[i]->isTriggered())
-		{
-			RN_DEBUG("Motion input detected -- {}", inputString[i]);
-		}
-	}
 
 	// Check hitbox/hurtbox overlaps
 
@@ -194,30 +123,12 @@ void World::update()
 
 	p1Char_->handleInput(p1NumpadInput_);
 
-	//if ((p1NumpadInput_.second & 15) == 6)
-	//{
-	//	p1Char_->walkForward(5.f);
-	//}
-	//if ((p1NumpadInput_.second & 15) == 4)
-	//{
-	//	p1Char_->walkBackward(5.f);
-	//}
-	
-	// Forward commands to scene graph
-	//while (!commandQueue_.isEmpty())
-	//{
-	//	sceneGraph_.onCommand(commandQueue_.pop());
-	//}
-
 	sceneGraph_.update();
 	adaptPlayerPosition();
 	adaptPlayerFacing();
 	// Get center between players
 	float CenterX = std::min(p1Char_->getPosition().x, p2Char_->getPosition().x) + abs((p1Char_->getPosition().x - p2Char_->getPosition().x) / 2);
 	worldView_.setCenter(CenterX, p1Char_->getPosition().y - ViewYOffset);
-
-	// RN_DEBUG("Current character coordinates are: ({0}, {1}).", 
-	// 	p1Char_->getPosition().x, p1Char_->getPosition().y);
 }
 
 void World::adaptPlayerPosition()

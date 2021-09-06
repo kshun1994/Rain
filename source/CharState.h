@@ -23,8 +23,8 @@ class CharState
 public: 
 	virtual								~CharState() {};
 
-	virtual CharState*					handleInput(Character& character, int input) { return nullptr; };
 	virtual void						update(Character& character) {};
+	virtual std::shared_ptr<CharState>	handleInput(Character& character, std::map<int, bool> stateMap);
 
 	virtual void						enter(Character& character) {};
 
@@ -48,9 +48,6 @@ class StandState : public CharState
 public:
 	virtual								~StandState() {};
 
-	virtual CharState*					handleInput(Character& character, int input);
-	virtual void						update(Character& character);
-
 	virtual void						enter(Character& character);
 
 };
@@ -59,9 +56,6 @@ class CrouchState : public CharState
 {
 public:
 	virtual								~CrouchState() {};
-
-	virtual CharState*					handleInput(Character& character, int input);
-	virtual void						update(Character& character);
 
 	virtual void						enter(Character& character);
 
@@ -72,7 +66,6 @@ class FWalkState : public CharState
 public:
 	virtual								~FWalkState() {};
 
-	virtual CharState*					handleInput(Character& character, int input);
 	virtual void						update(Character& character);
 
 	virtual void						enter(Character& character);
@@ -88,7 +81,6 @@ class BWalkState : public CharState
 public:
 	virtual								~BWalkState() {};
 
-	virtual CharState*					handleInput(Character& character, int input);
 	virtual void						update(Character& character);
 
 	virtual void						enter(Character& character);

@@ -99,22 +99,67 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	if (type_ == Type::Enkidu)
 	{
+		// Initialize input triggers
+		std::vector<std::vector<unsigned int>> inputs =
+		{
+			{ 2, 3, 6 },					// qcf
+			{ 6, 2, 3 },					// dp
+			{ 2, 1, 4 },					// qcb
+			{ 4, 2, 1 },					// reverse dp
+			{ 4, 1, 2, 3, 6},				// hcf
+			{ 6, 3, 2, 1, 4},				// hcb
+			{ 2, 5, 2 },					// down down
+			{ 2, 3, 6, 2, 3, 6 },			// double qcf
+			{ 2, 8 },						// flash kick (charge)
+			{ 4, 6 },						// sonic boom (charge)
+			{ 4, 6, 4, 6 },					// back-charge super
+			{ 1, 3, 1, 9 },					// delta super (charge)
+		};
+
+		std::vector<unsigned int> buffers =
+		{
+			constants::INPUT_BUFFER_236,
+			constants::INPUT_BUFFER_623,
+			constants::INPUT_BUFFER_214,
+			constants::INPUT_BUFFER_421,
+			constants::INPUT_BUFFER_HCF,
+			constants::INPUT_BUFFER_HCB,
+			constants::INPUT_BUFFER_22,
+			40,
+			5,
+			10,
+			20,
+			20,
+		};
+
+		for (int i = 0; i < inputs.size(); i++)
+		{
+			inputTriggers_.push_back(std::make_unique<InputTrigger>());
+			inputTriggers_[i]->setMotion(inputs[i]);
+			inputTriggers_[i]->setBuffer(buffers[i]);
+		}
+
+		inputTriggers_[8]->setCharge(40, std::vector<bool>{true, true});					// flash kick
+		inputTriggers_[9]->setCharge(40, std::vector<bool>{true, false});					// sonic boom
+		inputTriggers_[10]->setCharge(40, std::vector<bool>{true, true, true, true});		// double-charge super
+		inputTriggers_[11]->setCharge(40, std::vector<bool>{false, false, false, true});	// delta super
+
 		spriteStruct_ = EnkSprite;
 
-		StandState* standState = new StandState();
+		std::shared_ptr<StandState> standState = std::make_shared<StandState>();
 		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 		standState->setAnimationRepeat(true);
 
-		CrouchState* crouchState = new CrouchState();
+		std::shared_ptr<CrouchState> crouchState = std::make_shared<CrouchState>();
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchState->setAnimationRepeat(true);
 
-		FWalkState* fWalkState = new FWalkState();
+		std::shared_ptr<FWalkState> fWalkState = std::make_shared<FWalkState>();
 		fWalkState->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
 		fWalkState->setAnimationRepeat(true);
-		fWalkState->setSpeed(7.f);
+		fWalkState->setSpeed(10.f);
 
-		BWalkState* bWalkState = new BWalkState();
+		std::shared_ptr<BWalkState> bWalkState = std::make_shared<BWalkState>();
 		bWalkState->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
 		bWalkState->setAnimationRepeat(true);
 		bWalkState->setSpeed(7.f);
@@ -125,6 +170,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		charStates_[COMMON_ACTION_B_WALK]	= bWalkState;
 
 		charState_ = charStates_[COMMON_ACTION_STAND];		// Start standing
+
+		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
+		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_CROUCH, false));
+		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_F_WALK, false));
+		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_B_WALK, false));
 	}
 	else if (type_ == Type::Yuzuriha)
 	{
@@ -137,15 +187,19 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	health_			= 1000.f;
 	meter_			= 0.f;
-	//position_		= sf::Vector2f(0.f, 0.f);
 }
 
 Character::~Character()
 {
-	for (CharState* charState : charStates_)
-	{
-		delete charState;
-	}
+	//for (CharState* charState : charStates_)
+	//{
+	//		delete charState;
+	//}
+
+	//for (InputTrigger* inputTrigger : inputTriggers_)
+	//{
+	//	delete inputTrigger;
+	//}
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
@@ -155,31 +209,6 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 
 void Character::updateCurrent()
 {
-	// 
-	//if (animationState_ != prevAnimationState_)
-	//{
-	//	if (animationState_ == AnimationState::Idle)
-	//	{
-	//		RN_DEBUG("Idle");
-	//		sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
-	//		sprite_.setRepeating(true);
-	//	}
-	//	else if (animationState_ == AnimationState::WalkF)
-	//	{
-	//		RN_DEBUG("WalkF");
-	//		sprite_.setFrames(spriteStruct_.walkFIDs, spriteStruct_.walkFDurs, spriteStruct_.spriteDims);
-	//		sprite_.setRepeating(true);
-	//	}
-	//	else if (animationState_ == AnimationState::WalkB)
-	//	{
-	//		RN_DEBUG("WalkB");
-	//		sprite_.setFrames(spriteStruct_.walkBIDs, spriteStruct_.walkBDurs, spriteStruct_.spriteDims);
-	//		sprite_.setRepeating(true);
-	//	}
-	//}
-
-	//prevAnimationState_ = animationState_;
-
 	charState_->update(*this);
 	sprite_.update();
 	animationState_ = AnimationState::Idle;
@@ -192,13 +221,86 @@ unsigned int Character::getCategory() const
 
 void Character::handleInput(Player::TaggedInput input)
 {
-	CharState* charState = charState_->handleInput(*this, input.second);
+	for (int i = 0; i < inputTriggers_.size(); i++)
+	{
+		inputTriggers_[i]->update(input.second);
+	}
+
+	parseInput(input.second);
+
+	std::shared_ptr<CharState> charState = charState_->handleInput(*this, stateMap_);
+
+	clearStateMap();
 
 	if (charState != nullptr)
 	{
 		charState_ = charState;
 
 		charState_->enter(*this);
+	}
+}
+
+void Character::parseInput(unsigned int input)
+{
+	// Flip bools in stateMap_ based on current input
+	
+	// Check for forward walk
+	if ((input & 15) == 6)
+	{
+		stateMap_[COMMON_ACTION_F_WALK] = true;
+	}
+	
+	// Check for back walk
+	if ((input & 15) == 4)
+	{
+		stateMap_[COMMON_ACTION_B_WALK] = true;
+	}
+	
+	// Check for crouch
+	if ((input & 15) <= 3)
+	{
+		stateMap_[COMMON_ACTION_CROUCH] = true;
+	}
+
+	// Check for stand (idle)
+	if ((input & 15) == 5)
+	{
+		stateMap_[COMMON_ACTION_STAND] = true;
+	}
+
+	std::vector<std::string> inputString =
+	{
+		"quarter circle forward",
+		"dragon punch",
+		"quarter circle backward",
+		"reverse dragon punch",
+		"half circle forward",
+		"half circle backward",
+		"down down",
+		"double quarter circle forward",
+		"down-charge to up",
+		"back-charge to forward",
+		"back-charge super",
+		"delta super",
+	};
+
+
+	for (int i = 0; i < inputTriggers_.size(); i++)
+	{
+		if (inputTriggers_[i]->isTriggered())
+		{
+			RN_DEBUG("Motion input detected: {}.", inputString[i]);
+			//stateMap_[COMMON_ACTION_BACK_CHARGE] = true;
+		}
+	}
+}
+
+void Character::clearStateMap()
+{
+	// Sets all bools in stateMap to false; to be used after inputs have been parsed for the current frame
+	for (std::pair<int, bool> statePair : stateMap_)
+	{
+		stateMap_[statePair.first] = false;
 	}
 }
 
@@ -336,7 +438,12 @@ void Character::setAnimationRepeat(bool flag)
 	sprite_.setRepeating(flag);
 }
 
-std::vector<CharState*> Character::getCharStates()
+std::vector<std::shared_ptr<CharState>> Character::getCharStates()
 {
 	return charStates_;
+}
+
+std::shared_ptr<CharState> Character::getCurrentCharState()
+{
+	return charState_;
 }

@@ -88,6 +88,4 @@ private:
 
 	std::vector<int>									inputs;
 	unsigned int										debugPrevInput_;
-
-	std::vector<std::unique_ptr<InputTrigger>>			triggerArray_;
 };
