@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "CharState.h"
 #include "InputTrigger.h"
+#include "Box.h"
 
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -56,7 +57,8 @@ public:
 	struct SpriteStruct
 	{
 		sf::Vector2i		spriteDims;
-		int					originX;
+		float				originX;
+		float				originY;
 
 		std::vector<int>	idleIDs;
 		std::vector<int>	idleDurs;
@@ -71,18 +73,18 @@ public:
 		std::vector<int>	bWalkDurs;
 	};
 
-	enum BoxType
-	{
-		Collide			= 1 << 0, 
-		Hit				= 1 << 1,
-		Hurt			= 1 << 2,
-	};
+	//enum BoxType
+	//{
+	//	Collide			= 1 << 0, 
+	//	Hit				= 1 << 1,
+	//	Hurt			= 1 << 2,
+	//};
 
-	struct Box
-	{
-		int					boxType;
-		sf::IntRect			box;
-	};
+	//struct Box
+	//{
+	//	int					boxType;
+	//	sf::IntRect			box;
+	//};
 
 public:
 	explicit											Character(Type type, const TextureHolder& textures);
@@ -111,16 +113,17 @@ public:
 	void												setPosture(Posture posture);
 	void												setActionState(ActionState actionState);
 
-	std::vector<std::shared_ptr<CharState>>				getCharStates();
-	std::shared_ptr<CharState>							getCurrentCharState();
+	//std::vector<std::unique_ptr<CharState>>				getCharStates();
+	//std::unique_ptr<CharState>							getCurrentCharState();
+	int													getCurrentCharStateID();
+	void												setCurrentCharStateID(int id);
 
 	void												setAnimationFrames(const std::vector<int>& frameIDs,
 																		   const std::vector<int>& durations,
 																 		   const sf::Vector2i& rect);
 	void												setAnimationRepeat(bool flag);
 
-	void												walkForward(float speed);
-	void												walkBackward(float speed);
+	float												getFacingSign();
 
 private:
 	void												setSignFlip();
@@ -132,14 +135,16 @@ private:
 	Animation											sprite_;
 	SpriteStruct										spriteStruct_;
 
-	std::shared_ptr<CharState>							charState_;
-	std::vector<std::shared_ptr<CharState>>				charStates_;
+	CharState*											charState_;
+	std::vector<std::unique_ptr<CharState>>				charStates_;
+	int													charStateID_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
 
 	std::map<int, bool>									stateMap_;
 
-	std::vector<Box>									boxes_;
+	//std::vector<Box>									boxes_;
+	//std::unique_ptr<Box>								collideBox_;
 
 	AnimationState										animationState_;
 	AnimationState										prevAnimationState_;
@@ -149,15 +154,16 @@ private:
 	Facing												facing_;
 	Posture												posture_;
 	ActionState											actionState_;
-	int													facingSignFlip_;
+	float												facingSign_;
 };
 
-#define COMMON_ACTION_STAND				0
-#define COMMON_ACTION_F_WALK			1
-#define COMMON_ACTION_B_WALK			2
-#define COMMON_ACTION_CROUCH			3
-#define COMMON_ACTION_BLOCK_STAND		4
-#define COMMON_ACTION_BLOCK_CROUCH		5
-#define COMMON_ACTION_JUMP				6
-#define COMMON_ACTION_QCF				7
-#define COMMON_ACTION_BACK_CHARGE		8
+#define NULL_ACTION						 0
+#define COMMON_ACTION_STAND				 1
+#define COMMON_ACTION_F_WALK			 2
+#define COMMON_ACTION_B_WALK			 3
+#define COMMON_ACTION_CROUCH			 4
+#define COMMON_ACTION_BLOCK_STAND		 5
+#define COMMON_ACTION_BLOCK_CROUCH		 6
+#define COMMON_ACTION_JUMP				 7
+#define COMMON_ACTION_QCF				 8
+#define COMMON_ACTION_BACK_CHARGE		 9

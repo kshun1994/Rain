@@ -52,8 +52,9 @@ private:
 	void												loadTextures();
 	void												buildScene();
 
-	void												adaptPlayerPosition();
-	void												adaptPlayerFacing();
+	void												adaptCharacterPosition();
+	void												adaptCharacterFacing();
+	void												adaptCharacterCollision();
 
 	TaggedInput											translateToNumpadInput(const TaggedInput& playerRawInput);
 

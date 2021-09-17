@@ -94,6 +94,7 @@
     <ClCompile Include="source\Box.cpp" />
     <ClCompile Include="source\Property.cpp" />
     <ClCompile Include="source\Action.cpp" />
+    <ClCompile Include="source\BoxComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -209,6 +210,7 @@
     </ClInclude>
     <ClInclude Include="source\Box.h" />
     <ClInclude Include="source\Property.h" />
+    <ClInclude Include="source\BoxComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="source">

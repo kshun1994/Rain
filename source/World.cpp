@@ -7,8 +7,6 @@
 const int StageWidth = 2400;
 const int StageHeight = 1008;
 
-const float ViewYOffset = 400;
-
 World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 : window_(window)
 , worldView_(window.getDefaultView())
@@ -16,7 +14,8 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 , sceneGraph_()
 , sceneLayers_()
 , worldBounds_(0.f, 0.f, StageWidth, StageHeight)
-, spawnPosition_(worldView_.getSize().x / 2.f, worldBounds_.height)
+//, spawnPosition_(worldView_.getSize().x / 2.f, worldBounds_.height)
+, spawnPosition_(0, 0)
 , p1_(P1)
 , p2_(P2)
 , timer_()
@@ -28,7 +27,8 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 	buildScene();
 
 	// Prepare the view
-	worldView_.setCenter(spawnPosition_.x, spawnPosition_.y - ViewYOffset);
+	//worldView_.setCenter(spawnPosition_.x, spawnPosition_.y - ViewYOffset);
+	worldView_.setCenter(0, 0);
 }
 
 World::~World()
@@ -56,7 +56,9 @@ void World::buildScene()
 	sf::IntRect textureRect(worldBounds_);
 
 	std::unique_ptr<SpriteNode> backgroundSprite(new SpriteNode(texture, textureRect));
-	backgroundSprite->setPosition(worldBounds_.left, worldBounds_.top);
+	backgroundSprite->setOrigin(StageWidth / 2, StageHeight - 100); // Stage origin should be horizontal center and "ground" that characters stand on
+	//backgroundSprite->setPosition(worldBounds_.left, worldBounds_.top);
+	backgroundSprite->setPosition(0, 0); // Stage has to 
 	sceneLayers_[Background]->attachChild(std::move(backgroundSprite));
 
 	//std::unique_ptr<Character> aokoTest(new Character(Character::Yuzuriha, textures_));
@@ -67,13 +69,15 @@ void World::buildScene()
 
 	//std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, textures_));
 	p1Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
-	p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y - 25);
+	//p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y - 25);
+	p1Char_->setPosition(-250, 0);
 	sceneLayers_[Player1]->attachChild(p1Char_);
 
 	//std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, textures_));
 	//std::shared_ptr<Character> yuzuriha = std::make_shared<Character>(Character::Yuzuriha, textures_);
 	p2Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
-	p2Char_->setPosition(spawnPosition_.x + 500, spawnPosition_.y - 25);
+	//p2Char_->setPosition(spawnPosition_.x + 500, spawnPosition_.y - 25);
+	p2Char_->setPosition(250, 0);
 	//p2Char_->flipFacing();
 	sceneLayers_[Player2]->attachChild(p2Char_);
 
@@ -124,26 +128,27 @@ void World::update()
 	p1Char_->handleInput(p1NumpadInput_);
 
 	sceneGraph_.update();
-	adaptPlayerPosition();
-	adaptPlayerFacing();
+	adaptCharacterPosition();
+	adaptCharacterFacing();
+	adaptCharacterCollision();
 	// Get center between players
 	float CenterX = std::min(p1Char_->getPosition().x, p2Char_->getPosition().x) + abs((p1Char_->getPosition().x - p2Char_->getPosition().x) / 2);
-	worldView_.setCenter(CenterX, p1Char_->getPosition().y - ViewYOffset);
+	worldView_.setCenter(CenterX, p1Char_->getPosition().y - constants::VIEW_Y_OFFSET);
 }
 
-void World::adaptPlayerPosition()
+void World::adaptCharacterPosition()
 {
 	// Keep player's position inside the screen bounds, at least borderDistance units from the border
 	sf::FloatRect viewBounds(worldView_.getCenter() - worldView_.getSize() / 2.f, worldView_.getSize());
-	const float borderDistance = 40.f;
+	const float borderDistance = 200.f;
 
 	sf::Vector2f position = p1Char_->getPosition();
-	position.x = std::max(position.x, worldBounds_.left + borderDistance);
-	position.x = std::min(position.x, worldBounds_.left + worldBounds_.width - borderDistance);
+	position.x = std::max(position.x, -(StageWidth / 2) + borderDistance);
+	position.x = std::min(position.x, (StageWidth / 2) - borderDistance);
 	p1Char_->setPosition(position);
 }
 
-void World::adaptPlayerFacing()
+void World::adaptCharacterFacing()
 {
 	for (int i = 0; i < 2; i++) // Iterate through characters
 	{
@@ -164,6 +169,41 @@ void World::adaptPlayerFacing()
 			{
 				charArray_[i]->setFacing(Character::Facing::Left);
 			}
+		}
+	}
+}
+
+void World::adaptCharacterCollision()
+{
+	// If a character collide box is intersecting with another collide box, shunt the character in the direction of the center of their own collide box
+	for (size_t i = 0; i != 1; ++i)
+	{
+		// Check if current character collide box intersects with other character's
+		if (charArray_[i]->checkBoxIntersect(charArray_[1 - i]->getBox().getGlobalBounds()))
+		{
+			sf::FloatRect charBox = charArray_[i]->getBox().getGlobalBounds();
+			sf::FloatRect oppBox  = charArray_[1 - i]->getBox().getGlobalBounds();
+
+			// Figure out whether we're to the left or right of the relevant box
+			if (charArray_[i]->getBox().getOrigin().x <= charArray_[1 - i]->getBox().getOrigin().x) // To left
+			{
+				// "Push" opponent character
+				charArray_[1 - i]->move(sf::Vector2f(3.5f, 0.f));
+				// Set character position leftward an amount equal to the intersection distance
+				// Character collide box right edge minus opponent collide box left edge
+				sf::Vector2f newPosition = sf::Vector2f(charArray_[i]->getPosition().x - ((charBox.left + charBox.width) - oppBox.left), charArray_[i]->getPosition().y);
+				//charArray_[i]->move(sf::Vector2f(-((charBox.left + charBox.width) - oppBox.left), 0));
+				charArray_[i]->setPosition(newPosition);
+			}
+			else if (charArray_[i]->getBox().getOrigin().x > charArray_[1 - i]->getBox().getOrigin().x) // To right
+			{
+
+			}
+
+			// Move character so box no longer intersects in direction of collide box center
+			// I.e. move character so collide box center is half box size away from the edge of the opponent collide box
+			
+
 		}
 	}
 }

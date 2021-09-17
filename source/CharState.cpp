@@ -19,17 +19,31 @@ void CharState::setAnimation(Character& character)
 	character.setAnimationFrames(animationFrameIDs_, animationFrameDurations_, animationSpriteDims_);
 }
 
-std::shared_ptr<CharState> CharState::handleInput(Character& character, std::map<int, bool> stateMap)
+//std::shared_ptr<CharState> CharState::handleInput(Character& character, std::map<int, bool> stateMap)
+//{
+//	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
+//	{
+//		if (it->second && (character.getCurrentCharState() != character.getCharStates()[it->first]))
+//		{
+//			return character.getCharStates()[it->first];
+//		}
+//	}
+//
+//	return nullptr;
+//}
+
+int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 {
 	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
 	{
-		if (it->second && (character.getCurrentCharState() != character.getCharStates()[it->first]))
+		if (it->second && (character.getCurrentCharStateID() != it->first))
 		{
-			return character.getCharStates()[it->first];
+			character.setCurrentCharStateID(it->first);
+			return it->first;
 		}
 	}
 
-	return nullptr;
+	return NULL_ACTION;
 }
 
 void StandState::enter(Character& character)
@@ -46,7 +60,7 @@ void CrouchState::enter(Character& character)
 
 void FWalkState::update(Character& character)
 {
-	character.move((character.getFacing() == Character::Facing::Right) ? speed_ : -speed_, 0.f);
+	character.move(speed_ * character.getFacingSign(), 0.f);
 }
 
 void FWalkState::enter(Character& character)
@@ -62,7 +76,7 @@ void FWalkState::setSpeed(float speed)
 
 void BWalkState::update(Character& character)
 {
-	character.move((character.getFacing() == Character::Facing::Right) ? -speed_ : speed_, 0.f);
+	character.move(-speed_ * character.getFacingSign(), 0.f);
 }
 
 void BWalkState::enter(Character& character)

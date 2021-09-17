@@ -24,7 +24,7 @@ public:
 	virtual								~CharState() {};
 
 	virtual void						update(Character& character) {};
-	virtual std::shared_ptr<CharState>	handleInput(Character& character, std::map<int, bool> stateMap);
+	virtual int							handleInput(Character& character, std::map<int, bool> stateMap);
 
 	virtual void						enter(Character& character) {};
 

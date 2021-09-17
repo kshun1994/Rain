@@ -6,6 +6,9 @@ namespace constants
 	const int WINDOW_WIDTH  = 1280;
 	const int WINDOW_HEIGHT = 720;
 
+	const float VIEW_Y_OFFSET = 300;
+
+
 	//const int WINDOW_WIDTH  = 854;
 	//const int WINDOW_HEIGHT = 480;
 

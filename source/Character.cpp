@@ -27,9 +27,10 @@ Character::Character(Type type, const TextureHolder& textures)
 , actionState_(ActionState::None)
 , animationState_(AnimationState::Idle)
 , prevAnimationState_(AnimationState::Idle)
-, facingSignFlip_(1)
+, facingSign_(1.f)
 , spriteStruct_()
 , charStates_(20)
+, charStateID_(0)
 {
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
@@ -59,43 +60,19 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.bWalkDurs.resize(9);
 	std::fill(EnkSprite.bWalkDurs.begin(), EnkSprite.bWalkDurs.end(), 5);
 
-	EnkSprite.originX = 655;
+	EnkSprite.originX = 635.f; // Horizontal center of sprite (regardless of original image dimensions)
+	EnkSprite.originY = 83.f;  // Distance from bottom of image where sprite "touches the ground"
 
-	//for (int i = 0; i != 16; i++)
-	//{
-	//	EnkSprite.idleIDs.push_back(i);
-	//	EnkSprite.idleDurs.push_back(5);
-	//}
-	//for (int i = 16; i != 25; i++)
-	//{
-	//	EnkSprite.walkFIDs.push_back(i);
-	//	EnkSprite.walkFDurs.push_back(5);
-	//}
-	//for (int i = 25; i != 36; i++)
-	//{
-	//	EnkSprite.walkBIDs.push_back(i);
-	//	EnkSprite.walkBDurs.push_back(5);
-	//}
 
 	SpriteStruct YuzuSprite;
 	YuzuSprite.spriteDims = sf::Vector2(864, 640);
 	YuzuSprite.originX = 432;
+	YuzuSprite.originY = 44;
 	for (int i = 0; i != 36; i++)
 	{
 		YuzuSprite.idleIDs.push_back(i);
 		YuzuSprite.idleDurs.push_back(5);
 	}
-	//for (int i = 16; i != 25; i++)
-	//{
-	//	YuzuSprite.walkFIDs.push_back(i);
-	//	YuzuSprite.walkFDurs.push_back(5);
-	//}
-	//for (int i = 25; i != 36; i++)
-	//{
-	//	YuzuSprite.walkBIDs.push_back(i);
-	//	YuzuSprite.walkBDurs.push_back(5);
-	//}
-
 
 	if (type_ == Type::Enkidu)
 	{
@@ -146,30 +123,30 @@ Character::Character(Type type, const TextureHolder& textures)
 
 		spriteStruct_ = EnkSprite;
 
-		std::shared_ptr<StandState> standState = std::make_shared<StandState>();
+		std::unique_ptr<StandState> standState = std::make_unique<StandState>();
 		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 		standState->setAnimationRepeat(true);
 
-		std::shared_ptr<CrouchState> crouchState = std::make_shared<CrouchState>();
+		std::unique_ptr<CrouchState> crouchState = std::make_unique<CrouchState>();
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchState->setAnimationRepeat(true);
 
-		std::shared_ptr<FWalkState> fWalkState = std::make_shared<FWalkState>();
+		std::unique_ptr<FWalkState> fWalkState = std::make_unique<FWalkState>();
 		fWalkState->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
 		fWalkState->setAnimationRepeat(true);
 		fWalkState->setSpeed(10.f);
 
-		std::shared_ptr<BWalkState> bWalkState = std::make_shared<BWalkState>();
+		std::unique_ptr<BWalkState> bWalkState = std::make_unique<BWalkState>();
 		bWalkState->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
 		bWalkState->setAnimationRepeat(true);
 		bWalkState->setSpeed(7.f);
 
-		charStates_[COMMON_ACTION_STAND]	= standState;
-		charStates_[COMMON_ACTION_CROUCH]	= crouchState;
-		charStates_[COMMON_ACTION_F_WALK]	= fWalkState;
-		charStates_[COMMON_ACTION_B_WALK]	= bWalkState;
+		charStates_[COMMON_ACTION_STAND]	= std::move(standState);
+		charStates_[COMMON_ACTION_CROUCH]	= std::move(crouchState);
+		charStates_[COMMON_ACTION_F_WALK]	= std::move(fWalkState);
+		charStates_[COMMON_ACTION_B_WALK]	= std::move(bWalkState);
 
-		charState_ = charStates_[COMMON_ACTION_STAND];		// Start standing
+		charState_ = charStates_[COMMON_ACTION_STAND].get();		// Start standing
 
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_CROUCH, false));
@@ -182,11 +159,22 @@ Character::Character(Type type, const TextureHolder& textures)
 	}
 
 	sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
-	sprite_.setOrigin(spriteStruct_.originX, spriteStruct_.spriteDims.y);
+	sprite_.setOrigin(spriteStruct_.originX, spriteStruct_.spriteDims.y - spriteStruct_.originY);
 	sprite_.setRepeating(true);
 
 	health_			= 1000.f;
 	meter_			= 0.f;
+
+	// Create and attach collision box
+	//std::unique_ptr<Box> collideBox = std::make_unique<Box>(sf::FloatRect(sf::Vector2f(0, 0),
+	//																	  sf::Vector2f(140, 350)));
+	//collideBox->setOrigin(collideBox->getRect().width / 2, collideBox->getRect().height);
+	//collideBox->setPosition(this->getPosition());
+	//this->attachChild(collideBox);
+
+	// TODO: move box component creation/handling to CharStates
+	createBoxComponent(*this, BoxComponent::Type::Collide, 0.f, 0.f, 140, 350);
+
 }
 
 Character::~Character()
@@ -204,7 +192,40 @@ Character::~Character()
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
+
 	target.draw(sprite_, states);
+
+	#ifdef RN_DEBUG
+
+		if (this->boxComponent_)
+		{
+			this->boxComponent_->draw(target);
+		};
+
+		// Draw a cross at character's location
+		float segmentLength = 20.f;
+		sf::Vector2f coord = this->getPosition();
+		//RN_DEBUG("Current position - ({}, {})", coord.x, coord.y);
+
+		sf::Vertex vertLine[] =
+		{
+			sf::Vertex(sf::Vector2f(coord.x, coord.y - segmentLength), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(coord.x, coord.y + segmentLength), sf::Color::Green)
+		};
+		sf::Vertex horiLine[] =
+		{
+			sf::Vertex(sf::Vector2f(coord.x - segmentLength, coord.y), sf::Color::Green),
+			sf::Vertex(sf::Vector2f(coord.x + segmentLength, coord.y), sf::Color::Green)
+		};
+
+		target.draw(vertLine, 2, sf::Lines);
+		target.draw(horiLine, 2, sf::Lines);
+
+	#endif // RN_DEBUG
+
+	//RN_DEBUG("Character position - ({}, {})", this->getPosition().x, this->getPosition().y);
+	//RN_DEBUG("Sprite    position - ({}, {})", sprite_.getPosition().x, sprite_.getPosition().y);
+	
 }
 
 void Character::updateCurrent()
@@ -212,6 +233,9 @@ void Character::updateCurrent()
 	charState_->update(*this);
 	sprite_.update();
 	animationState_ = AnimationState::Idle;
+
+	// TODO: move box component update to CharStates
+	boxComponent_->update();
 }
 
 unsigned int Character::getCategory() const
@@ -228,13 +252,13 @@ void Character::handleInput(Player::TaggedInput input)
 
 	parseInput(input.second);
 
-	std::shared_ptr<CharState> charState = charState_->handleInput(*this, stateMap_);
+	int charStateID = charState_->handleInput(*this, stateMap_);
 
 	clearStateMap();
 
-	if (charState != nullptr)
+	if (charStateID != NULL_ACTION)
 	{
-		charState_ = charState;
+		charState_ = charStates_[charStateID].get();
 
 		charState_->enter(*this);
 	}
@@ -393,12 +417,17 @@ void Character::setSignFlip()
 	// If Character faces Right, all forward movement vectors etc. should be positive and backward should be negative
 	if (facing_ == Facing::Right)
 	{
-		facingSignFlip_ = 1;
+		facingSign_ = 1;
 	}
 	else if (facing_ == Facing::Left)
 	{
-		facingSignFlip_ = -1;
+		facingSign_ = -1;
 	}
+}
+ 
+float Character::getFacingSign()
+{
+	return facingSign_;
 }
 
 void Character::setPosture(Posture posture)
@@ -411,23 +440,6 @@ void Character::setActionState(ActionState actionState)
 	actionState_ = actionState;
 }
 
-void Character::walkForward(float speed)
-{
-	animationState_ = AnimationState::WalkF;
-
-	// Walk in the direction the Character is Facing
-	this->move(speed * facingSignFlip_, 0.f);
-	
-	// Change the animation frames for as long as the Player holds forward 
-}
-
-void Character::walkBackward(float speed)
-{
-	animationState_ = AnimationState::WalkB;
-
-	this->move(-speed * facingSignFlip_, 0.f);
-}
-
 void Character::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& rect)
 {
 	sprite_.setFrames(frameIDs, durations, rect);
@@ -438,12 +450,22 @@ void Character::setAnimationRepeat(bool flag)
 	sprite_.setRepeating(flag);
 }
 
-std::vector<std::shared_ptr<CharState>> Character::getCharStates()
+//std::vector<std::unique_ptr<CharState>> Character::getCharStates()
+//{
+//	return charStates_;
+//}
+
+int Character::getCurrentCharStateID()
 {
-	return charStates_;
+	return charStateID_;
 }
 
-std::shared_ptr<CharState> Character::getCurrentCharState()
+void Character::setCurrentCharStateID(int id)
 {
-	return charState_;
+	charStateID_ = id;
 }
+
+//std::unique_ptr<CharState> Character::getCurrentCharState()
+//{
+//	return charState_;
+//}

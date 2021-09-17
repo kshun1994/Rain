@@ -10,7 +10,7 @@ struct Frame
 	int									duration; // num render frames to display animation frame for
 };
 
-class Animation : public sf::Drawable, public sf::Transformable
+class Animation : public sf::Sprite // public sf::Drawable, public sf::Transformable
 {
 public:
 										Animation();
