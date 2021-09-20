@@ -107,7 +107,8 @@ void World::update()
 	sceneGraph_.update();
 	adaptCharacterPosition();
 	adaptCharacterFacing();
-	adaptCharacterCollision();
+	handleCollision();
+
 	// Get center between players
 	float CenterX = std::min(charArray_[0]->getPosition().x, charArray_[1]->getPosition().x) + abs((charArray_[0]->getPosition().x - charArray_[1]->getPosition().x) / 2);
 	worldView_.setCenter(CenterX, charArray_[0]->getPosition().y - constants::VIEW_Y_OFFSET);
@@ -159,41 +160,6 @@ void World::adaptCharacterFacing()
 	}
 }
 
-void World::adaptCharacterCollision()
-{
-	//// If a character collide box is intersecting with another collide box, shunt the character in the direction of the center of their own collide box
-	//for (size_t i = 0; i != 1; ++i)
-	//{
-	//	// Check if current character collide box intersects with other character's
-	//	if (charArray_[i]->checkBoxIntersect(charArray_[1 - i]->getBox().getGlobalBounds()))
-	//	{
-	//		sf::FloatRect charBox = charArray_[i]->getBox().getGlobalBounds();
-	//		sf::FloatRect oppBox  = charArray_[1 - i]->getBox().getGlobalBounds();
-
-	//		// Figure out whether we're to the left or right of the relevant box
-	//		if (charArray_[i]->getBox().getOrigin().x <= charArray_[1 - i]->getBox().getOrigin().x) // To left
-	//		{
-	//			// "Push" opponent character
-	//			charArray_[1 - i]->move(sf::Vector2f(3.5f, 0.f));
-	//			// Set character position leftward an amount equal to the intersection distance
-	//			// Character collide box right edge minus opponent collide box left edge
-	//			sf::Vector2f newPosition = sf::Vector2f(charArray_[i]->getPosition().x - ((charBox.left + charBox.width) - oppBox.left), charArray_[i]->getPosition().y);
-	//			//charArray_[i]->move(sf::Vector2f(-((charBox.left + charBox.width) - oppBox.left), 0));
-	//			charArray_[i]->setPosition(newPosition);
-	//		}
-	//		else if (charArray_[i]->getBox().getOrigin().x > charArray_[1 - i]->getBox().getOrigin().x) // To right
-	//		{
-
-	//		}
-
-	//		// Move character so box no longer intersects in direction of collide box center
-	//		// I.e. move character so collide box center is half box size away from the edge of the opponent collide box
-	//		
-
-	//	}
-	//}
-}
-
 World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playerRawInput)
 {
 	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
@@ -224,6 +190,18 @@ World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playe
 
 	// Convert the first four bits in playerRawInput.second.second to 0s; preserve bits pertaining to buttons (fifth onward)
 	return { playerRawInput.first, numpad + (playerRawInput.second >> 4 << 4) };
+}
+
+void World::handleCollision()
+{
+	std::set<std::pair<SceneNode*, SceneNode*>> intersectPairs;
+
+	sceneGraph_.checkSceneCollide(sceneGraph_, intersectPairs);
+
+	for (std::pair<SceneNode*, SceneNode*> pair : intersectPairs)
+	{
+		// Write intersect results code here
+	}
 }
 
 // TODO: need a function to update character facings

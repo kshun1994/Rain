@@ -19,46 +19,46 @@ unsigned int Box::getCategory() const
 	return Category::Box;
 }
 
-void Box::setDims(float width, float height)
+void Box::setCollideDims(const float& width, const float& height)
 {
 	width_ = width;
 	height_ = height;
 }
 
-void Box::setDims(sf::Vector2f dims)
+void Box::setCollideDims(const sf::Vector2f& dims)
 {
 	width_ = dims.x;
 	height_ = dims.y;
 }
 
-sf::Vector2f Box::getDims()
+sf::Vector2f Box::getCollideDims() const
 {
 	return sf::Vector2f(width_, height_);
 }
 
-void Box::setOffset(float xOffset, float yOffset)
+void Box::setCollideOffset(const float& xOffset, const float& yOffset)
 {
 	xOffset_ = xOffset;
 	yOffset_ = yOffset;
 }
 
-void Box::setOffset(sf::Vector2f offset)
+void Box::setCollideOffset(const sf::Vector2f& offset)
 {
 	xOffset_ = offset.x;
 	yOffset_ = offset.y;
 }
 
-sf::Vector2f Box::getOffset()
+sf::Vector2f Box::getCollideOffset() const
 {
 	return sf::Vector2f(width_, height_);
 }
 
-void Box::setType(Box::Type type)
+void Box::setType(const Box::Type& type)
 {
 	type_ = type;
 }
 
-Box::Type Box::getType()
+Box::Type Box::getType() const
 {
 	return type_;
 }

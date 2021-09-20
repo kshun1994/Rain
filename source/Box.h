@@ -31,16 +31,16 @@ public:
 
 	virtual unsigned int	getCategory() const;
 
-	virtual void			setDims(float width, float height);
-	virtual void			setDims(sf::Vector2f dims);
-	virtual sf::Vector2f	getDims();
+	virtual void			setCollideDims(const float& width, const float& height);
+	virtual void			setCollideDims(const sf::Vector2f& dims);
+	virtual sf::Vector2f	getCollideDims() const;
 
-	virtual void			setOffset(float xOffset, float yOffset);
-	virtual void			setOffset(sf::Vector2f offset);
-	virtual sf::Vector2f	getOffset();
+	virtual void			setCollideOffset(const float& xOffset, const float& yOffset);
+	virtual void			setCollideOffset(const sf::Vector2f& offset);
+	virtual sf::Vector2f	getCollideOffset() const;
 
-	virtual void			setType(Type type);
-	virtual Type			getType();
+	virtual void			setType(const Type& type);
+	virtual Type			getType() const;
 
 private:
 	virtual void			drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;

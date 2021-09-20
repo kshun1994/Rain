@@ -53,7 +53,8 @@ private:
 
 	void												adaptCharacterPosition();
 	void												adaptCharacterFacing();
-	void												adaptCharacterCollision();
+
+	void												handleCollision();
 
 	TaggedInput											translateToNumpadInput(const TaggedInput& playerRawInput);
 
