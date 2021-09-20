@@ -125,6 +125,8 @@ public:
 
 	float												getFacingSign();
 
+	void												detachBoxes();
+
 private:
 	void												setSignFlip();
 	void												parseInput(unsigned int input);

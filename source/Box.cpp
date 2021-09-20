@@ -1,9 +1,12 @@
 #include "rnpch.h"
 #include "Box.h"
 
-Box::Box(sf::FloatRect rect)
-: type_(Box::Type::None)
-, rect_(rect)
+Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height)
+: type_(type)
+, xOffset_(xOffset)
+, yOffset_(yOffset)
+, width_(width)
+, height_(height)
 {
 }
 
@@ -11,14 +14,43 @@ void Box::updateCurrent()
 {
 }
 
-void Box::setRect(sf::FloatRect rect)
+unsigned int Box::getCategory() const
 {
-	rect_ = rect;
+	return Category::Box;
 }
 
-sf::FloatRect Box::getRect()
+void Box::setDims(float width, float height)
 {
-	return rect_;
+	width_ = width;
+	height_ = height;
+}
+
+void Box::setDims(sf::Vector2f dims)
+{
+	width_ = dims.x;
+	height_ = dims.y;
+}
+
+sf::Vector2f Box::getDims()
+{
+	return sf::Vector2f(width_, height_);
+}
+
+void Box::setOffset(float xOffset, float yOffset)
+{
+	xOffset_ = xOffset;
+	yOffset_ = yOffset;
+}
+
+void Box::setOffset(sf::Vector2f offset)
+{
+	xOffset_ = offset.x;
+	yOffset_ = offset.y;
+}
+
+sf::Vector2f Box::getOffset()
+{
+	return sf::Vector2f(width_, height_);
 }
 
 void Box::setType(Box::Type type)
@@ -35,23 +67,18 @@ void Box::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	#ifdef RN_DEBUG
 
-	// NEEDS TO BE FIXED
-	// Currently moving a character only applies transforms to the drawn rect, not to the Box itself
-	// Need rects for drawing to be created based on the Box instead of independently
+		sf::Color fillColor = BoxDrawColors[magic_enum::enum_integer(type_)];
+		fillColor.a = 32;
 
-	// Draw the relevant box
-	sf::Vertex rectangle[] =
-	{
-		sf::Vertex(sf::Vector2f(rect_.left,					rect_.top), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left + rect_.width,	rect_.top), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left + rect_.width,	rect_.top + rect_.height), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left,					rect_.top + rect_.height), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left,					rect_.top), sf::Color::White)
-	};
+		sf::RectangleShape drawBox;
+		drawBox.setSize(sf::Vector2f(width_, height_));
+		drawBox.setOrigin(width_ / 2, height_);
+		drawBox.setFillColor(fillColor);
+		drawBox.setOutlineColor(BoxDrawColors[magic_enum::enum_integer(type_)]);
+		drawBox.setOutlineThickness(1.f);
+		drawBox.setPosition(this->getWorldPosition().x + xOffset_, this->getWorldPosition().y + yOffset_);
 
-	target.draw(rectangle, 5, sf::LineStrip, states);
+		target.draw(drawBox);
 
 	#endif // RN_DEBUG
-
-	RN_DEBUG("Current box position - ({}, {})", this->getPosition().x, this->getPosition().y);
 }

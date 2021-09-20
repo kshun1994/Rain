@@ -14,6 +14,16 @@ void CharState::setAnimationRepeat(bool flag)
 	animationIsRepeating_ = flag;
 }
 
+void CharState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
+{
+	boxes_ = boxes;
+}
+
+void CharState::appendBox(std::shared_ptr<Box> box)
+{
+	boxes_.push_back(box);
+}
+
 void CharState::setAnimation(Character& character)
 {
 	character.setAnimationFrames(animationFrameIDs_, animationFrameDurations_, animationSpriteDims_);
@@ -38,6 +48,23 @@ int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 	{
 		if (it->second && (character.getCurrentCharStateID() != it->first))
 		{
+			// Iterate through all child nodes of Character and detach boxes; move back to CharState
+			//for (SceneNode* ptr : character.getChildren())
+			//{
+			//	if (ptr->getCategory() == Category::Box)
+			//	{
+			//		boxes_.push_back(std::static_pointer_cast<Box>(character.detachChild(*ptr)));
+			//	}
+
+			//}
+
+			//for (auto box : boxes_)
+			//{
+			//	//character.detachChild(*box.get());
+			//}
+
+			//character.detachBoxes();
+
 			character.setCurrentCharStateID(it->first);
 			return it->first;
 		}
@@ -46,14 +73,24 @@ int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 	return NULL_ACTION;
 }
 
+void CharState::enter(Character& character)
+{
+	for (std::shared_ptr<Box>& box : boxes_)
+	{
+		character.attachChild(box);
+	}
+}
+
 void StandState::enter(Character& character)
 {
+	CharState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered StandState.");
 }
 
 void CrouchState::enter(Character& character)
 {
+	CharState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered CrouchState.");
 }
@@ -65,6 +102,7 @@ void FWalkState::update(Character& character)
 
 void FWalkState::enter(Character& character)
 {
+	CharState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered FWalkState.");
 }
@@ -81,6 +119,7 @@ void BWalkState::update(Character& character)
 
 void BWalkState::enter(Character& character)
 {
+	CharState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered BWalkState.");
 }

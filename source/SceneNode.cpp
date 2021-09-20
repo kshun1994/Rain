@@ -13,6 +13,7 @@ void SceneNode::attachChild(Ptr child)
 	children_.push_back(std::move(child));
 }
 
+
 SceneNode::Ptr SceneNode::detachChild(const SceneNode& node)
 {
 	auto found = std::find_if(children_.begin(), children_.end(), [&](Ptr& p) -> bool { return p.get() == &node; }); // return iterator to wanted node
@@ -23,6 +24,26 @@ SceneNode::Ptr SceneNode::detachChild(const SceneNode& node)
 	result->parent_ = nullptr; // set parent pointer to nullptr
 	children_.erase(found); // remove empty element from vector
 	return result;
+}
+
+void SceneNode::detachChildren()
+{
+	for (Ptr child : children_)
+	{
+		this->detachChild(*child);
+	}
+}
+
+std::vector<SceneNode*> SceneNode::getChildren()
+{
+	std::vector<SceneNode*> ptrs(children_.size());
+
+	for (std::shared_ptr<SceneNode>& child : children_)
+	{
+		ptrs.push_back(child.get());
+	}
+
+	return ptrs;
 }
 
 sf::Transform SceneNode::getWorldTransform() const

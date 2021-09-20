@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Box.h"
+
 class Character;
 
 
@@ -26,12 +28,15 @@ public:
 	virtual void						update(Character& character) {};
 	virtual int							handleInput(Character& character, std::map<int, bool> stateMap);
 
-	virtual void						enter(Character& character) {};
+	virtual void						enter(Character& character);
 
 	virtual void						setAnimationFrames(const std::vector<int>& frameIDs,
 														   const std::vector<int>& durations,
 														   const sf::Vector2i& spriteDims);
 	virtual void						setAnimationRepeat(bool flag);
+
+	virtual void						setBoxes(std::vector<std::shared_ptr<Box>> boxes);
+	virtual void						appendBox(std::shared_ptr<Box> box);
 
 protected:
 	virtual void						setAnimation(Character& character);
@@ -41,6 +46,9 @@ protected:
 	std::vector<int>					animationFrameDurations_;
 	sf::Vector2i						animationSpriteDims_;
 	bool								animationIsRepeating_;
+
+protected:
+	std::vector<std::shared_ptr<Box>>	boxes_;
 };
 
 class StandState : public CharState

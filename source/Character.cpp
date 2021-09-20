@@ -127,6 +127,17 @@ Character::Character(Type type, const TextureHolder& textures)
 		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 		standState->setAnimationRepeat(true);
 
+		// Make collision boxes for testing
+		std::unique_ptr<Box> hurtBox = std::make_unique<Box>(Box::Type::Hurt, 0.f, 0.f, 300, 400);
+		//this->attachChild(std::move(hurtBox));
+
+		std::unique_ptr<Box> collideBox = std::make_unique<Box>(Box::Type::Collide, 0.f, 0.f, 140, 350);
+		//this->attachChild(std::move(collideBox));
+
+		standState->appendBox(std::move(hurtBox));
+		standState->appendBox(std::move(collideBox));
+
+
 		std::unique_ptr<CrouchState> crouchState = std::make_unique<CrouchState>();
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchState->setAnimationRepeat(true);
@@ -173,7 +184,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	//this->attachChild(collideBox);
 
 	// TODO: move box component creation/handling to CharStates
-	createBoxComponent(*this, BoxComponent::Type::Collide, 0.f, 0.f, 140, 350);
+	//createBoxComponent(*this, BoxComponent::Type::Collide, 0.f, 0.f, 140, 350);
 
 }
 
@@ -197,10 +208,10 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 
 	#ifdef RN_DEBUG
 
-		if (this->boxComponent_)
-		{
-			this->boxComponent_->draw(target);
-		};
+		//if (this->boxComponent_)
+		//{
+		//	this->boxComponent_->draw(target);
+		//};
 
 		// Draw a cross at character's location
 		float segmentLength = 20.f;
@@ -235,7 +246,7 @@ void Character::updateCurrent()
 	animationState_ = AnimationState::Idle;
 
 	// TODO: move box component update to CharStates
-	boxComponent_->update();
+	//boxComponent_->update();
 }
 
 unsigned int Character::getCategory() const
@@ -428,6 +439,35 @@ void Character::setSignFlip()
 float Character::getFacingSign()
 {
 	return facingSign_;
+}
+
+//std::vector<std::unique_ptr<Box>> Character::detachBoxes()
+//{
+//	std::vector<std::unique_ptr<Box>> boxes;
+//
+//	for (std::unique_ptr<SceneNode>& child : children_)
+//	{
+//		if (child->getCategory() == Category::Box)
+//		{
+//			boxes.push_back(std::move());
+//		}
+//	}
+//
+//}
+
+void Character::detachBoxes()
+{
+	//for (SceneNode::Ptr child : children_)
+	//for (int i = 0; i != children_.size(); ++i)
+	this->detachChildren();
+	//for (auto child : children_)
+	//{
+	//	//if (children_[i]->getCategory() == Category::Box)
+	//	//{
+	//	//	this->detachChild(*children_[i]);
+	//	//}
+	//	this->detachChild(*child);
+	//}
 }
 
 void Character::setPosture(Posture posture)

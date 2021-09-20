@@ -6,7 +6,7 @@
 class Box : public SceneNode
 {
 public:
-	enum Type
+	enum class Type
 	{
 		None		= 0,
 		Collide		= 1,
@@ -14,18 +14,30 @@ public:
 		Hurt		= 3,
 	};
 
-public: 
-	typedef std::shared_ptr<SceneNode> Ptr;
+protected:
+	std::vector<sf::Color> BoxDrawColors = {
+		sf::Color::Black,
+		sf::Color::White, 
+		sf::Color::Red,
+		sf::Color::Green,
+	};
 
 public:
 							Box() = default;
-							Box(sf::FloatRect rect);
+							Box(Type type_, float xOffset, float yOffset, float width, float height);
 	virtual					~Box() {};
 
 	virtual void			updateCurrent();
 
-	virtual void			setRect(sf::FloatRect rect);
-	virtual sf::FloatRect	getRect();
+	virtual unsigned int	getCategory() const;
+
+	virtual void			setDims(float width, float height);
+	virtual void			setDims(sf::Vector2f dims);
+	virtual sf::Vector2f	getDims();
+
+	virtual void			setOffset(float xOffset, float yOffset);
+	virtual void			setOffset(sf::Vector2f offset);
+	virtual sf::Vector2f	getOffset();
 
 	virtual void			setType(Type type);
 	virtual Type			getType();
@@ -33,7 +45,11 @@ public:
 private:
 	virtual void			drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 
-private:
+protected:
+	float					xOffset_;
+	float					yOffset_;
+	float					width_;
+	float					height_;
+
 	Type					type_;
-	sf::FloatRect			rect_;
 };

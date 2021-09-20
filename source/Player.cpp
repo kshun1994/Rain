@@ -216,6 +216,31 @@ Player::TaggedInput Player::getInput() const
 	return input_;
 }
 
+Player::GameStats Player::getGameStats() const
+{
+	return gameStats_;
+}
+
+void Player::setGameStats(const std::string& member, const float& value)
+{
+	// Convert string to lowercase
+	std::string lcMember = member;
+	std::transform(member.begin(), member.end(), lcMember.begin(), [](unsigned char c) { return std::tolower(c); });
+
+	if (lcMember == "health")
+	{
+		gameStats_.health = value;
+	}
+	else if (lcMember == "specialmeter")
+	{
+		gameStats_.specialMeter = value;
+	}
+	else
+	{
+		RN_ERROR("Unknown Player::GameStats lcMember - {}.", lcMember);
+	}
+}
+
 void Player::cleanInput()
 {
 	// Clean inputs according to SOCD
