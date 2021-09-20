@@ -16,12 +16,12 @@ void CharState::setAnimationRepeat(bool flag)
 
 void CharState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
 {
-	boxes_ = boxes;
+	boxes_ = std::move(boxes);
 }
 
 void CharState::appendBox(std::shared_ptr<Box> box)
 {
-	boxes_.push_back(box);
+	boxes_.push_back(std::move(box));
 }
 
 void CharState::setAnimation(Character& character)
@@ -58,10 +58,17 @@ int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 
 			//}
 
-			//for (auto box : boxes_)
-			//{
-			//	//character.detachChild(*box.get());
-			//}
+			for (Box* box : boxPtrs_)
+			{
+				auto detachedBox = character.detachChild(*box);
+				boxes_.push_back(std::static_pointer_cast<Box>(detachedBox));
+
+				//if (box != nullptr)
+				//{
+				//	boxes_.push_back(static_cast_ptr<Box>(character.detachChild(*box)));
+				//}
+			}
+			boxPtrs_.clear();
 
 			//character.detachBoxes();
 
@@ -77,8 +84,10 @@ void CharState::enter(Character& character)
 {
 	for (std::shared_ptr<Box>& box : boxes_)
 	{
-		character.attachChild(box);
+		boxPtrs_.push_back(box.get());
+		character.attachChild(std::move(box));
 	}
+	boxes_.clear();
 }
 
 void StandState::enter(Character& character)

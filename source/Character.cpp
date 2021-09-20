@@ -123,34 +123,42 @@ Character::Character(Type type, const TextureHolder& textures)
 
 		spriteStruct_ = EnkSprite;
 
+		// Create Enkidu standing state
 		std::unique_ptr<StandState> standState = std::make_unique<StandState>();
 		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 		standState->setAnimationRepeat(true);
 
-		// Make collision boxes for testing
-		std::unique_ptr<Box> hurtBox = std::make_unique<Box>(Box::Type::Hurt, 0.f, 0.f, 300, 400);
-		//this->attachChild(std::move(hurtBox));
+		standState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
+		standState->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 
-		std::unique_ptr<Box> collideBox = std::make_unique<Box>(Box::Type::Collide, 0.f, 0.f, 140, 350);
-		//this->attachChild(std::move(collideBox));
-
-		standState->appendBox(std::move(hurtBox));
-		standState->appendBox(std::move(collideBox));
-
-
+		// Crouching state
 		std::unique_ptr<CrouchState> crouchState = std::make_unique<CrouchState>();
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchState->setAnimationRepeat(true);
 
+		crouchState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 180.f, 220.f)));
+		crouchState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -150.f, 110.f, 100.f)));
+		crouchState->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 200.f)));
+
+		// Forward walk state
 		std::unique_ptr<FWalkState> fWalkState = std::make_unique<FWalkState>();
 		fWalkState->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
 		fWalkState->setAnimationRepeat(true);
 		fWalkState->setSpeed(10.f);
 
+		fWalkState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
+		fWalkState->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+
+		// Backward walk state
 		std::unique_ptr<BWalkState> bWalkState = std::make_unique<BWalkState>();
 		bWalkState->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
 		bWalkState->setAnimationRepeat(true);
 		bWalkState->setSpeed(7.f);
+
+		std::shared_ptr<Box> hurtBox = std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f);
+		bWalkState->appendBox(std::move(hurtBox));
+		std::shared_ptr<Box> collideBox = std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f);
+		bWalkState->appendBox(std::move(collideBox));
 
 		charStates_[COMMON_ACTION_STAND]	= std::move(standState);
 		charStates_[COMMON_ACTION_CROUCH]	= std::move(crouchState);
@@ -158,6 +166,8 @@ Character::Character(Type type, const TextureHolder& textures)
 		charStates_[COMMON_ACTION_B_WALK]	= std::move(bWalkState);
 
 		charState_ = charStates_[COMMON_ACTION_STAND].get();		// Start standing
+		charState_->enter(*this);
+		setCurrentCharStateID(COMMON_ACTION_STAND);
 
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_CROUCH, false));
@@ -220,13 +230,13 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 
 		sf::Vertex vertLine[] =
 		{
-			sf::Vertex(sf::Vector2f(coord.x, coord.y - segmentLength), sf::Color::Green),
-			sf::Vertex(sf::Vector2f(coord.x, coord.y + segmentLength), sf::Color::Green)
+			sf::Vertex(sf::Vector2f(coord.x, coord.y - segmentLength), sf::Color::Cyan),
+			sf::Vertex(sf::Vector2f(coord.x, coord.y + segmentLength), sf::Color::Cyan)
 		};
 		sf::Vertex horiLine[] =
 		{
-			sf::Vertex(sf::Vector2f(coord.x - segmentLength, coord.y), sf::Color::Green),
-			sf::Vertex(sf::Vector2f(coord.x + segmentLength, coord.y), sf::Color::Green)
+			sf::Vertex(sf::Vector2f(coord.x - segmentLength, coord.y), sf::Color::Cyan),
+			sf::Vertex(sf::Vector2f(coord.x + segmentLength, coord.y), sf::Color::Cyan)
 		};
 
 		target.draw(vertLine, 2, sf::Lines);

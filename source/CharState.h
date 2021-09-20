@@ -49,6 +49,7 @@ protected:
 
 protected:
 	std::vector<std::shared_ptr<Box>>	boxes_;
+	std::vector<Box*>					boxPtrs_;
 };
 
 class StandState : public CharState

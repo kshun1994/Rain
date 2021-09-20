@@ -13,7 +13,6 @@ void SceneNode::attachChild(Ptr child)
 	children_.push_back(std::move(child));
 }
 
-
 SceneNode::Ptr SceneNode::detachChild(const SceneNode& node)
 {
 	auto found = std::find_if(children_.begin(), children_.end(), [&](Ptr& p) -> bool { return p.get() == &node; }); // return iterator to wanted node
