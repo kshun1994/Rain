@@ -185,17 +185,6 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	health_			= 1000.f;
 	meter_			= 0.f;
-
-	// Create and attach collision box
-	//std::unique_ptr<Box> collideBox = std::make_unique<Box>(sf::FloatRect(sf::Vector2f(0, 0),
-	//																	  sf::Vector2f(140, 350)));
-	//collideBox->setOrigin(collideBox->getRect().width / 2, collideBox->getRect().height);
-	//collideBox->setPosition(this->getPosition());
-	//this->attachChild(collideBox);
-
-	// TODO: move box component creation/handling to CharStates
-	//createBoxComponent(*this, BoxComponent::Type::Collide, 0.f, 0.f, 140, 350);
-
 }
 
 Character::~Character()
@@ -464,21 +453,6 @@ float Character::getFacingSign()
 //	}
 //
 //}
-
-void Character::detachBoxes()
-{
-	//for (SceneNode::Ptr child : children_)
-	//for (int i = 0; i != children_.size(); ++i)
-	this->detachChildren();
-	//for (auto child : children_)
-	//{
-	//	//if (children_[i]->getCategory() == Category::Box)
-	//	//{
-	//	//	this->detachChild(*children_[i]);
-	//	//}
-	//	this->detachChild(*child);
-	//}
-}
 
 void Character::setPosture(Posture posture)
 {

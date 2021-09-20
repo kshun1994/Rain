@@ -93,7 +93,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\BoxComponent.h" />
     <ClInclude Include="source\Action.h" />
     <ClInclude Include="source\Box.h" />
     <ClInclude Include="source\CharState.h" />
@@ -135,7 +134,6 @@
     <ClInclude Include="source\WorldLogger.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\BoxComponent.cpp" />
     <ClCompile Include="source\Action.cpp" />
     <ClCompile Include="source\Animation.cpp" />
     <ClCompile Include="source\Application.cpp" />

@@ -17,15 +17,16 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Need some way to easily identify Boxes and their subtypes within World
+- [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in CharState)
 - [ ] Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
-- [ ] Add jumping - State-based system
+- [ ] Add jumping
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log
 - [ ] Fix charge input trigger so the charge has to be continuous
 - [ ] Expand settings state to allow joystick button binding
 	- Analog stick threshold/axis binding
 	- Make sure dpad inputs override analog stick inputs
-- [ ] Add state-based system to Characters
 - [ ] Device select state: 
 	- List available input devices
 	- "Move" device left or right to claim 1P/2P
@@ -36,36 +37,37 @@ Rainy days
 - [ ] Fix hardcoded pixel values
 	- Window resolution should be changeable and everything should scale to match
 ---------------------------------------------------------------------------------------------------------------------------------------------
-- [X] ~~Added teabagging functionality~~
-- [X] ~~Make it so changing Character::Facing actually changes sprite direction~~
-- [X] ~~Create a trigger class for charge inputs or expand InputTrigger to handle those too~~
-- [X] ~~Figure out where Enkidu's disappeared to~~
-- [X] ~~**BUG** When keybindings are changed, old keybindings appear to persist and simultaneously add inputs while in GameState~~
-	- ~~If ESDF is set to directions instead of WASD, numpad input when pressing F ("right") is simultaneously 6 and 5. Pressing D ("down") is simultaneously 2 and 6~~
-- [X] ~~Gamepad buttons~~
-	- ~~Try plugging a bunch of controllers in and have the engine output whatever button's being pressed to debug log~~
-- [X] ~~Include update rate in Applications::mStatisticsText~~
-- [X] ~~Try creating some test trigger functions for motion inputs~~
-	- ~~Observe the input stream with variable buffer, output debug log text when relevant motion is detected~~
-- [X] ~~Get rid of command-style entity modification~~
-	- ~~Just handle everything through input stream~~
-	- ~~Entities have access to inputs over the last X frames~~
-	- ~~Inputs are represented as controller state per frame, represented as bit flag sum int~~
-- [X] ~~SOCD~~
-	- ~~Currently possible to input opposite directions at the same time---needs to be fixed~~
-- [X] ~~Input wrapper---incorporate into Player class~~
-	- ~~Player class takes InputWrapper as member~~
-	- ~~Device ID~~
-	- ~~Keybindings~~
-	- ~~Passes stream of device-agnostic input (i.e. numpad notation or something)~~
-- [X] ~~Create a full animation class~~
-	- ~~Takes a spritesheet and a range of sprite IDs; get texture rect pos/dim from IDs~~
-	- ~~Need to be able to specify number of frames each animation frame is displayed for~~
-	- ~~Current rudimentary class needs to be modified to take an array of durations~~
-- [X] ~~Tick-based game logic updates~~
-	- ~~Rendering rate is not tied to game logic~~
-	- ~~Game logic updates at 60 fps~~
-	- ~~Rendering takes snapshots of game logic; if a user drops frames then rendering will skip game logic that has already been done~~
+- [X] Add state-based system to Characters
+- [X] Added teabagging functionality
+- [X] Make it so changing Character::Facing actually changes sprite direction
+- [X] Create a trigger class for charge inputs or expand InputTrigger to handle those too
+- [X] Figure out where Enkidu's disappeared to
+- [X] **BUG** When keybindings are changed, old keybindings appear to persist and simultaneously add inputs while in GameState
+	- If ESDF is set to directions instead of WASD, numpad input when pressing F ("right") is simultaneously 6 and 5. Pressing D ("down") is simultaneously 2 and 6
+- [X] Gamepad buttons
+	- Try plugging a bunch of controllers in and have the engine output whatever button's being pressed to debug log
+- [X] Include update rate in Applications::mStatisticsText
+- [X] Try creating some test trigger functions for motion inputs
+	- Observe the input stream with variable buffer, output debug log text when relevant motion is detected
+- [X] Get rid of command-style entity modification
+	- Just handle everything through input stream
+	- Entities have access to inputs over the last X frames
+	- Inputs are represented as controller state per frame, represented as bit flag sum int
+- [X] SOCD
+	- Currently possible to input opposite directions at the same time---needs to be fixed
+- [X] Input wrapper---incorporate into Player class
+	- Player class takes InputWrapper as member
+	- Device ID
+	- Keybindings
+	- Passes stream of device-agnostic input (i.e. numpad notation or something)
+- [X] Create a full animation class
+	- Takes a spritesheet and a range of sprite IDs; get texture rect pos/dim from IDs
+	- Need to be able to specify number of frames each animation frame is displayed for
+	- Current rudimentary class needs to be modified to take an array of durations
+- [X] Tick-based game logic updates
+	- Rendering rate is not tied to game logic
+	- Game logic updates at 60 fps
+	- Rendering takes snapshots of game logic; if a user drops frames then rendering will skip game logic that has already been done
 
 # Notes from Skullgirls
 ## Menus and options
