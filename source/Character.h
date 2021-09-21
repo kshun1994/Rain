@@ -22,36 +22,11 @@ public:
 		Shun,
 	};
 
-	enum Facing
-	{
-		Left	= Input::Left,
-		Right	= Input::Right,
-	};
-
 	enum Posture
 	{
 		Standing,
 		Crouching,
 		Airborne,
-	};
-
-	#define Actionable 0
-	#define NotActionable 1
-
-	enum ActionState
-	{
-		None			= Actionable,
-		Recovery		= NotActionable + 0,
-		Hitstun			= NotActionable + 1,
-		Blockstun		= NotActionable + 2,
-		Knockdown		= NotActionable + 3,
-	};
-
-	enum class AnimationState
-	{
-		Idle,
-		WalkF, 
-		WalkB,
 	};
 
 	struct SpriteStruct
@@ -73,19 +48,6 @@ public:
 		std::vector<int>	bWalkDurs;
 	};
 
-	//enum BoxType
-	//{
-	//	Collide			= 1 << 0, 
-	//	Hit				= 1 << 1,
-	//	Hurt			= 1 << 2,
-	//};
-
-	//struct Box
-	//{
-	//	int					boxType;
-	//	sf::IntRect			box;
-	//};
-
 public:
 	explicit											Character(Type type, const TextureHolder& textures);
 														~Character();
@@ -97,21 +59,16 @@ public:
 	unsigned int										getCategory() const;
 
 	float												getHealth() const;
-	float												getMeter() const;
-	Facing												getFacing() const;
-	Posture												getPosture() const;
-	ActionState											getActionState() const;
-	bool												isActionable() const;
-
 	void												setHealth(float value);
 	void												subtractHealth(float value);
+
+	float												getMeter() const;
 	void												setMeter(float value);
 	void												addMeter(float value);
 	void												subtractMeter(float value);
-	void												setFacing(Facing facing);
-	void												flipFacing();
+
+	Posture												getPosture() const;
 	void												setPosture(Posture posture);
-	void												setActionState(ActionState actionState);
 
 	int													getCurrentCharStateID();
 	void												setCurrentCharStateID(int id);
@@ -121,15 +78,12 @@ public:
 																 		   const sf::Vector2i& rect);
 	void												setAnimationRepeat(bool flag);
 
-	float												getFacingSign();
 private:
-	void												setSignFlip();
 	void												parseInput(unsigned int input);
 	void												clearStateMap();
 
 private:
 	Type												type_;
-	Animation											sprite_;
 	SpriteStruct										spriteStruct_;
 
 	CharState*											charState_;
@@ -140,15 +94,10 @@ private:
 
 	std::map<int, bool>									stateMap_;
 
-	AnimationState										animationState_;
-	AnimationState										prevAnimationState_;
-
 	float												health_;
 	float												meter_;
 	Facing												facing_;
 	Posture												posture_;
-	ActionState											actionState_;
-	float												facingSign_;
 };
 
 #define NULL_ACTION						 0

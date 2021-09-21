@@ -131,7 +131,6 @@
     <ClInclude Include="source\Utility.h" />
     <ClInclude Include="source\World.h" />
     <ClInclude Include="source\rnpch.h" />
-    <ClInclude Include="source\WorldLogger.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Action.cpp" />
@@ -168,10 +167,10 @@
     <ClCompile Include="source\rnpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\WorldLogger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="source\ResourceHolder.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

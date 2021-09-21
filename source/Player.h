@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Command.h"
-#include "InputWrapper.h"
 #include "Input.h"
 
 #include <SFML/Window/Event.hpp>

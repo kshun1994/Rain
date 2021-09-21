@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneNode.h"
+#include "Animation.h"
 #include "Input.h"
 
 class Entity : public SceneNode
@@ -13,32 +14,25 @@ public:
 	};
 
 public:
-	/*explicit				Entity(int health);
-	void					damage(int points);
-	void					destroy();
-
-	int						getHitpoints() const;
-	bool					isDestroyed() const;*/
-							Entity() = default;
+							Entity();
 							~Entity();
 
-	void					setVelocity(sf::Vector2f velocity);
-	void					setVelocity(float vx, float vy);
-	sf::Vector2f			getVelocity() const;
-	void					accelerate(sf::Vector2f velocity);
 
 	void					setFacing(const Facing& facing);
 	Facing					getFacing() const;
 	void					flipFacing();
 	void					setSignFlip();
+	float					getFacingSign() const;
 
-private:
-	virtual void			updateCurrent();
+protected:
+	void					flipSprite();
 
-private:
-	int						health_;
-	sf::Vector2f			velocity_;
+protected:
+	Animation				sprite_;
 
 	Facing					facing_;
 	float					facingSign_;
+
+private:
+	int						health_;
 };

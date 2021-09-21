@@ -1,6 +1,6 @@
 #include "rnpch.h"
 #include "Box.h"
-#include "Character.h"
+#include "Entity.h"
 
 Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height)
 : type_(type)
@@ -14,7 +14,7 @@ Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height
 void Box::updateCurrent()
 {
 	// Flip offset relative to parent if parent flips facing
-	xOffset_ = dynamic_cast<Character*>(parent_)->getFacing() == Character::Facing::Right ? abs(xOffset_) : -1 * abs(xOffset_);
+	xOffset_ = dynamic_cast<Entity*>(parent_)->getFacing() == Entity::Facing::Right ? abs(xOffset_) : -1 * abs(xOffset_);
 }
 
 unsigned int Box::getCategory() const

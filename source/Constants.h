@@ -1,13 +1,15 @@
 #pragma once
 
-namespace constants
+namespace Constants
 {
 	// Window resolution
 	const int WINDOW_WIDTH  = 1280;
 	const int WINDOW_HEIGHT = 720;
 
-	const float VIEW_Y_OFFSET = 300;
+	const float VIEW_Y_OFFSET = -300;
 
+	const int STAGE_WIDTH = 2400;
+	const int STAGE_HEIGHT = 1008;
 
 	//const int WINDOW_WIDTH  = 854;
 	//const int WINDOW_HEIGHT = 480;

@@ -19,19 +19,16 @@ Textures::ID toTextureID(Character::Type type)
 
 Character::Character(Type type, const TextureHolder& textures)
 : type_(type)
-, sprite_(textures.get(toTextureID(type)))
 , health_(0.f)
 , meter_(0.f)
 , facing_(Facing::Right)
 , posture_(Posture::Standing)
-, actionState_(ActionState::None)
-, animationState_(AnimationState::Idle)
-, prevAnimationState_(AnimationState::Idle)
-, facingSign_(1.f)
 , spriteStruct_()
 , charStates_(20)
 , charStateID_(0)
 {
+	sprite_.setTexture(textures.get(toTextureID(type)));
+
 	std::vector<int> frameIDs;
 	std::vector<int> durations;
 
@@ -48,7 +45,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.crouchDurs.resize(15);
 	std::fill(EnkSprite.crouchDurs.begin(), EnkSprite.crouchDurs.end(), 5);
 
-	// Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
+	// TODO Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
 		
 	EnkSprite.fWalkIDs.resize(9);
 	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 31);
@@ -95,13 +92,13 @@ Character::Character(Type type, const TextureHolder& textures)
 
 		std::vector<unsigned int> buffers =
 		{
-			constants::INPUT_BUFFER_236,
-			constants::INPUT_BUFFER_623,
-			constants::INPUT_BUFFER_214,
-			constants::INPUT_BUFFER_421,
-			constants::INPUT_BUFFER_HCF,
-			constants::INPUT_BUFFER_HCB,
-			constants::INPUT_BUFFER_22,
+			Constants::INPUT_BUFFER_236,
+			Constants::INPUT_BUFFER_623,
+			Constants::INPUT_BUFFER_214,
+			Constants::INPUT_BUFFER_421,
+			Constants::INPUT_BUFFER_HCF,
+			Constants::INPUT_BUFFER_HCB,
+			Constants::INPUT_BUFFER_22,
 			40,
 			5,
 			10,
@@ -189,30 +186,14 @@ Character::Character(Type type, const TextureHolder& textures)
 
 Character::~Character()
 {
-	//for (CharState* charState : charStates_)
-	//{
-	//		delete charState;
-	//}
-
-	//for (InputTrigger* inputTrigger : inputTriggers_)
-	//{
-	//	delete inputTrigger;
-	//}
 }
 
 void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
-
 	target.draw(sprite_, states);
 
 	#ifdef RN_DEBUG
-
-		//if (this->boxComponent_)
-		//{
-		//	this->boxComponent_->draw(target);
-		//};
-
-		// Draw a cross at character's location
+		// Draw a cross at character's origin position
 		float segmentLength = 20.f;
 		sf::Vector2f coord = this->getPosition();
 		//RN_DEBUG("Current position - ({}, {})", coord.x, coord.y);
@@ -230,22 +211,13 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 
 		target.draw(vertLine, 2, sf::Lines);
 		target.draw(horiLine, 2, sf::Lines);
-
 	#endif // RN_DEBUG
-
-	//RN_DEBUG("Character position - ({}, {})", this->getPosition().x, this->getPosition().y);
-	//RN_DEBUG("Sprite    position - ({}, {})", sprite_.getPosition().x, sprite_.getPosition().y);
-	
 }
 
 void Character::updateCurrent()
 {
 	charState_->update(*this);
 	sprite_.update();
-	animationState_ = AnimationState::Idle;
-
-	// TODO: move box component update to CharStates
-	//boxComponent_->update();
 }
 
 unsigned int Character::getCategory() const
@@ -318,7 +290,6 @@ void Character::parseInput(unsigned int input)
 		"delta super",
 	};
 
-
 	for (int i = 0; i < inputTriggers_.size(); i++)
 	{
 		if (inputTriggers_[i]->isTriggered())
@@ -338,34 +309,19 @@ void Character::clearStateMap()
 	}
 }
 
+int Character::getCurrentCharStateID()
+{
+	return charStateID_;
+}
+
+void Character::setCurrentCharStateID(int id)
+{
+	charStateID_ = id;
+}
+
 float Character::getHealth() const
 {
 	return health_;
-}
-
-float Character::getMeter() const
-{
-	return meter_;
-}
-
-Character::Facing Character::getFacing() const
-{
-	return facing_;
-}
-
-Character::Posture Character::getPosture() const
-{
-	return posture_;
-}
-
-Character::ActionState Character::getActionState() const
-{
-	return actionState_;
-}
-
-bool Character::isActionable() const
-{
-	return !actionState_;
 }
 
 void Character::setHealth(float value)
@@ -382,6 +338,11 @@ void Character::subtractHealth(float value)
 	}
 }
 
+float Character::getMeter() const
+{
+	return meter_;
+}
+
 void Character::setMeter(float value)
 {
 	meter_ = value;
@@ -390,9 +351,9 @@ void Character::setMeter(float value)
 void Character::addMeter(float value)
 {
 	meter_ += value;
-	if (meter_ > constants::METER_MAX)
+	if (meter_ > Constants::METER_MAX)
 	{
-		meter_ = constants::METER_MAX;
+		meter_ = Constants::METER_MAX;
 	}
 }
 
@@ -405,63 +366,14 @@ void Character::subtractMeter(float value)
 	}
 }
 
-void Character::setFacing(Facing facing)
+Character::Posture Character::getPosture() const
 {
-	if (facing_ != facing)
-	{
-		facing_ = facing;
-		sprite_.scale(-1, 1); // Flip sprite horizontally
-	}
-	setSignFlip();
+	return posture_;
 }
-
-void Character::flipFacing()
-{
-	facing_ != facing_;
-	sprite_.scale(-1, 1);
-	setSignFlip();
-}
-
-void Character::setSignFlip()
-{
-	// If Character faces Right, all forward movement vectors etc. should be positive and backward should be negative
-	if (facing_ == Facing::Right)
-	{
-		facingSign_ = 1;
-	}
-	else if (facing_ == Facing::Left)
-	{
-		facingSign_ = -1;
-	}
-}
- 
-float Character::getFacingSign()
-{
-	return facingSign_;
-}
-
-//std::vector<std::unique_ptr<Box>> Character::detachBoxes()
-//{
-//	std::vector<std::unique_ptr<Box>> boxes;
-//
-//	for (std::unique_ptr<SceneNode>& child : children_)
-//	{
-//		if (child->getCategory() == Category::Box)
-//		{
-//			boxes.push_back(std::move());
-//		}
-//	}
-//
-//}
 
 void Character::setPosture(Posture posture)
 {
 	posture_ = posture;
-}
-
-void Character::setActionState(ActionState actionState)
-{
-	actionState_ = actionState;
 }
 
 void Character::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& rect)
@@ -473,23 +385,3 @@ void Character::setAnimationRepeat(bool flag)
 {
 	sprite_.setRepeating(flag);
 }
-
-//std::vector<std::unique_ptr<CharState>> Character::getCharStates()
-//{
-//	return charStates_;
-//}
-
-int Character::getCurrentCharStateID()
-{
-	return charStateID_;
-}
-
-void Character::setCurrentCharStateID(int id)
-{
-	charStateID_ = id;
-}
-
-//std::unique_ptr<CharState> Character::getCurrentCharState()
-//{
-//	return charState_;
-//}

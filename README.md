@@ -17,7 +17,8 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
-- [ ] Consolidate Facing functions to Entity and remove from Character
+- [ ] Have some way of specifying draw priority (i.e. be able to determine what entities are on top of the others on any given display frame)
+- [ ] Add camera zoom-in/-out based on between-Character distance and shift camera view to stay within stage bounds
 - [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in CharState)
 - [ ] Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
 - [ ] Add jumping
@@ -37,11 +38,12 @@ Rainy days
 - [ ] Fix hardcoded pixel values
 	- Window resolution should be changeable and everything should scale to match
 ---------------------------------------------------------------------------------------------------------------------------------------------
+- [X] Consolidate Facing functions to Entity and remove from Character
 - [X] Need some way to easily identify Boxes and their subtypes within World
 - [X] Finish collidebox intersect resolution math
 - [X] Add state-based system to Characters
 - [X] Added teabagging functionality
-- [X] Make it so changing Character::Facing actually changes sprite direction
+- [X] Make it so changing Entity::Facing actually changes sprite direction
 - [X] Create a trigger class for charge inputs or expand InputTrigger to handle those too
 - [X] Figure out where Enkidu's disappeared to
 - [X] **BUG** When keybindings are changed, old keybindings appear to persist and simultaneously add inputs while in GameState

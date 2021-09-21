@@ -12,7 +12,7 @@
 
 
 Application::Application()
-	: window_(sf::VideoMode(constants::WINDOW_WIDTH, constants::WINDOW_HEIGHT), "Window", sf::Style::Titlebar | sf::Style::Close)
+	: window_(sf::VideoMode(Constants::WINDOW_WIDTH, Constants::WINDOW_HEIGHT), "Window", sf::Style::Titlebar | sf::Style::Close)
 	, textures_()
 	, fonts_()
 	, player1_(Player::ID::Player1)
@@ -74,7 +74,7 @@ void Application::run()
 		currentSlice_ += lastFT_;
 		int numUpdates_ = 0;
 
-		for (; currentSlice_ >= constants::TICK_DURATION; currentSlice_ -= constants::TICK_DURATION)
+		for (; currentSlice_ >= Constants::TICK_DURATION; currentSlice_ -= Constants::TICK_DURATION)
 		{
 			update();
 			numUpdates_++;

@@ -4,20 +4,20 @@
 #include "Character.h"
 
 
-struct CharacterMover
-{
-	CharacterMover(float vx, float vy)
-		: velocity(vx, vy)
-	{
-	}
-
-	void operator() (Character& character) const
-	{
-		character.accelerate(velocity);
-	}
-
-	sf::Vector2f velocity;
-};
+//struct CharacterMover
+//{
+//	CharacterMover(float vx, float vy)
+//		: velocity(vx, vy)
+//	{
+//	}
+//
+//	void operator() (Character& character) const
+//	{
+//		character.accelerate(velocity);
+//	}
+//
+//	sf::Vector2f velocity;
+//};
 
 struct PlayerContext
 {

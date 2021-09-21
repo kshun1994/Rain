@@ -4,7 +4,6 @@
 #include "ResourceIdentifiers.h"
 #include "Player.h"
 #include "StateStack.h"
-#include "InputDevice.h"
 
 #include <SFML/System/Time.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

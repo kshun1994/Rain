@@ -1,44 +1,16 @@
 #include "rnpch.h"
 #include "Entity.h"
 
+Entity::Entity()
+: sprite_()
+, facing_(Facing::Right)
+, facingSign_(1.f)
+, health_()
+{
+}
+
 Entity::~Entity()
 {
-}
-
-void Entity::setVelocity(sf::Vector2f velocity)
-{
-	velocity_ = velocity;
-}
-
-void Entity::setVelocity(float vx, float vy)
-{
-	velocity_.x = vx;
-	velocity_.y = vy;
-}
-
-sf::Vector2f Entity::getVelocity() const
-{
-	return velocity_;
-}
-
-void Entity::updateCurrent()
-{
-	move(velocity_);
-}
-
-void Entity::accelerate(sf::Vector2f velocity)
-{
-	velocity_ += velocity;
-}
-
-void Entity::setFacing(const Facing& facing)
-{
-	if (facing_ != facing)
-	{
-		facing_ = facing;
-	}
-
-	setSignFlip();
 }
 
 Entity::Facing Entity::getFacing() const
@@ -46,9 +18,22 @@ Entity::Facing Entity::getFacing() const
 	return facing_;
 }
 
+void Entity::setFacing(const Facing& facing)
+{
+	if (facing_ != facing)
+	{
+		facing_ = facing;
+		//sprite_.scale(-1, 1); // Flip sprite horizontally
+		flipSprite();
+	}
+	setSignFlip();
+}
+
 void Entity::flipFacing()
 {
 	facing_ != facing_;
+	//sprite_.scale(-1, 1);
+	flipSprite();
 	setSignFlip();
 }
 
@@ -63,4 +48,14 @@ void Entity::setSignFlip()
 	{
 		facingSign_ = -1;
 	}
+}
+
+float Entity::getFacingSign() const
+{
+	return facingSign_;
+}
+
+void Entity::flipSprite()
+{
+	sprite_.scale(-1, 1);
 }

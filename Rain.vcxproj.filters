@@ -85,9 +85,6 @@
     <ClCompile Include="source\InputTrigger.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\WorldLogger.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="source\CharState.cpp">
       <Filter>source</Filter>
     </ClCompile>
@@ -198,9 +195,6 @@
     <ClInclude Include="source\Action.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\WorldLogger.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="source\Event.h">
       <Filter>source</Filter>
     </ClInclude>
@@ -226,5 +220,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="source\ResourceHolder.inl" />
   </ItemGroup>
 </Project>
