@@ -7,5 +7,6 @@ namespace Category
 		None		= 0,
 		Scene		= 1 << 0,
 		Character	= 1 << 1,
+		Box			= 1 << 2,
 	};
 }

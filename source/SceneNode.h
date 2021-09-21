@@ -22,6 +22,8 @@ public:
 
 	void							attachChild(Ptr child);
 	Ptr								detachChild(const SceneNode& node);
+	void							detachChildren();
+	std::vector<SceneNode*>			getChildren();
 
 	void							update();
 
@@ -31,6 +33,13 @@ public:
 	virtual unsigned int			getCategory() const;
 	void							onCommand(const Command& command);
 
+	virtual sf::Vector2f			getCollideDims() const;
+	virtual sf::Vector2f			getCollideOffset() const;
+
+	virtual bool					checkIntersect(SceneNode& lhs, SceneNode& rhs);
+	virtual void					checkNodeCollide(SceneNode& node, std::set<std::pair<SceneNode*, SceneNode*>>& collidePairs);
+	virtual void					checkSceneCollide(SceneNode& sceneGraph, std::set<std::pair<SceneNode*, SceneNode*>>& collidePairs);
+
 private:
 	virtual void					updateCurrent();
 	void							updateChildren();
@@ -39,7 +48,7 @@ private:
 	virtual void					drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	void							drawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
 
-private:
+protected:
 	std::vector<Ptr>				children_;
 	SceneNode*						parent_;
 };

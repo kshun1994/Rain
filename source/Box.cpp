@@ -1,32 +1,67 @@
 #include "rnpch.h"
 #include "Box.h"
+#include "Character.h"
 
-Box::Box(sf::FloatRect rect)
-: type_(Box::Type::None)
-, rect_(rect)
+Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height)
+: type_(type)
+, xOffset_(xOffset)
+, yOffset_(yOffset)
+, width_(width)
+, height_(height)
 {
 }
 
 void Box::updateCurrent()
 {
+	// Flip offset relative to parent if parent flips facing
+	xOffset_ = dynamic_cast<Character*>(parent_)->getFacing() == Character::Facing::Right ? abs(xOffset_) : -1 * abs(xOffset_);
 }
 
-void Box::setRect(sf::FloatRect rect)
+unsigned int Box::getCategory() const
 {
-	rect_ = rect;
+	return Category::Box;
 }
 
-sf::FloatRect Box::getRect()
+void Box::setCollideDims(const float& width, const float& height)
 {
-	return rect_;
+	width_ = width;
+	height_ = height;
 }
 
-void Box::setType(Box::Type type)
+void Box::setCollideDims(const sf::Vector2f& dims)
+{
+	width_ = dims.x;
+	height_ = dims.y;
+}
+
+sf::Vector2f Box::getCollideDims() const
+{
+	return sf::Vector2f(width_, height_);
+}
+
+void Box::setCollideOffset(const float& xOffset, const float& yOffset)
+{
+	xOffset_ = xOffset;
+	yOffset_ = yOffset;
+}
+
+void Box::setCollideOffset(const sf::Vector2f& offset)
+{
+	xOffset_ = offset.x;
+	yOffset_ = offset.y;
+}
+
+sf::Vector2f Box::getCollideOffset() const
+{
+	return sf::Vector2f(width_, height_);
+}
+
+void Box::setType(const unsigned int& type)
 {
 	type_ = type;
 }
 
-Box::Type Box::getType()
+unsigned int Box::getType() const
 {
 	return type_;
 }
@@ -35,23 +70,30 @@ void Box::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	#ifdef RN_DEBUG
 
-	// NEEDS TO BE FIXED
-	// Currently moving a character only applies transforms to the drawn rect, not to the Box itself
-	// Need rects for drawing to be created based on the Box instead of independently
+		sf::Color fillColor = BoxDrawColors[(type_)];
+		fillColor.a = 32;
 
-	// Draw the relevant box
-	sf::Vertex rectangle[] =
-	{
-		sf::Vertex(sf::Vector2f(rect_.left,					rect_.top), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left + rect_.width,	rect_.top), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left + rect_.width,	rect_.top + rect_.height), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left,					rect_.top + rect_.height), sf::Color::White),
-		sf::Vertex(sf::Vector2f(rect_.left,					rect_.top), sf::Color::White)
-	};
+		sf::RectangleShape drawBox;
+		drawBox.setSize(sf::Vector2f(width_, height_));
+		drawBox.setOrigin(width_ / 2, height_);
+		drawBox.setFillColor(fillColor);
+		drawBox.setOutlineColor(BoxDrawColors[type_]);
+		drawBox.setOutlineThickness(1.f);
+		drawBox.setPosition(this->getWorldPosition().x + xOffset_, this->getWorldPosition().y + yOffset_);
 
-	target.draw(rectangle, 5, sf::LineStrip, states);
+		target.draw(drawBox);
 
 	#endif // RN_DEBUG
+}
 
-	RN_DEBUG("Current box position - ({}, {})", this->getPosition().x, this->getPosition().y);
+sf::FloatRect Box::getRect() const
+{
+	return sf::FloatRect(this->getWorldPosition().x + xOffset_ - (width_ / 2), 
+						 this->getWorldPosition().y + yOffset_ - height_, 
+						 width_, height_);
+}
+
+void Box::moveParent(const float& x, const float& y)
+{
+	parent_->move(x, y);
 }

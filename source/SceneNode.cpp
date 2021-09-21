@@ -25,6 +25,26 @@ SceneNode::Ptr SceneNode::detachChild(const SceneNode& node)
 	return result;
 }
 
+void SceneNode::detachChildren()
+{
+	for (Ptr child : children_)
+	{
+		this->detachChild(*child);
+	}
+}
+
+std::vector<SceneNode*> SceneNode::getChildren()
+{
+	std::vector<SceneNode*> ptrs(children_.size());
+
+	for (std::shared_ptr<SceneNode>& child : children_)
+	{
+		ptrs.push_back(child.get());
+	}
+
+	return ptrs;
+}
+
 sf::Transform SceneNode::getWorldTransform() const
 {
 	sf::Transform transform = sf::Transform::Identity; // identity transform does nothing; base to multiply all parent transforms onto
@@ -57,6 +77,60 @@ void SceneNode::onCommand(const Command& command)
 	for (const Ptr& child : children_)
 	{
 		child->onCommand(command); // propagate command down node children chain
+	}
+}
+
+sf::Vector2f SceneNode::getCollideDims() const
+{
+	// SceneNodes have no dimensions by default
+	return sf::Vector2f(0.f, 0.f);
+}
+
+sf::Vector2f SceneNode::getCollideOffset() const
+{
+	// SceneNodes have no offset by default
+	return sf::Vector2f(0.f, 0.f);
+}
+
+bool SceneNode::checkIntersect(SceneNode& lhs, SceneNode& rhs)
+{
+	// Get rects of each box
+	sf::FloatRect lhsRect = sf::FloatRect(lhs.getWorldPosition().x + lhs.getCollideOffset().x - (lhs.getCollideDims().x / 2),    // Need to account for the fact that Box origin isn't top-left
+										  lhs.getWorldPosition().y + lhs.getCollideOffset().y - lhs.getCollideDims().y, 
+										  lhs.getCollideDims().x, lhs.getCollideDims().y);
+
+	sf::FloatRect rhsRect = sf::FloatRect(rhs.getWorldPosition().x + rhs.getCollideOffset().x - (rhs.getCollideDims().x / 2),
+										  rhs.getWorldPosition().y + rhs.getCollideOffset().y - rhs.getCollideDims().y, 
+										  rhs.getCollideDims().x, rhs.getCollideDims().y);
+
+	return lhsRect.intersects(rhsRect);
+}
+
+void SceneNode::checkNodeCollide(SceneNode& node, std::set<std::pair<SceneNode*, SceneNode*>>& collidePairs)
+{
+	// Check intersection with given node and to make sure collisions aren't happening between boxes owned by the same entity
+	if (this->parent_ != node.parent_ && checkIntersect(*this, node))
+	{
+		// std::set objects can only have one instance of any given unique object
+		// std::minmax makes it so order doesn't matter: minmax(a, b) == minmax(b, a) and thus 
+		//     a given intersect pair will only be added once even if computed twice
+		collidePairs.insert(std::minmax(this, &node));
+	}
+
+	for (Ptr& child : children_)
+	{
+		child->checkNodeCollide(node, collidePairs);
+	}
+
+}
+
+void SceneNode::checkSceneCollide(SceneNode& sceneGraph, std::set<std::pair<SceneNode*, SceneNode*>>& collidePairs)
+{
+	checkNodeCollide(sceneGraph, collidePairs);
+
+	for (Ptr& child : sceneGraph.children_)
+	{
+		checkSceneCollide(*child, collidePairs);
 	}
 }
 

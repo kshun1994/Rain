@@ -113,8 +113,6 @@ public:
 	void												setPosture(Posture posture);
 	void												setActionState(ActionState actionState);
 
-	//std::vector<std::unique_ptr<CharState>>				getCharStates();
-	//std::unique_ptr<CharState>							getCurrentCharState();
 	int													getCurrentCharStateID();
 	void												setCurrentCharStateID(int id);
 
@@ -124,7 +122,6 @@ public:
 	void												setAnimationRepeat(bool flag);
 
 	float												getFacingSign();
-
 private:
 	void												setSignFlip();
 	void												parseInput(unsigned int input);
@@ -142,9 +139,6 @@ private:
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
 
 	std::map<int, bool>									stateMap_;
-
-	//std::vector<Box>									boxes_;
-	//std::unique_ptr<Box>								collideBox_;
 
 	AnimationState										animationState_;
 	AnimationState										prevAnimationState_;

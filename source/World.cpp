@@ -14,7 +14,6 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 , sceneGraph_()
 , sceneLayers_()
 , worldBounds_(0.f, 0.f, StageWidth, StageHeight)
-//, spawnPosition_(worldView_.getSize().x / 2.f, worldBounds_.height)
 , spawnPosition_(0, 0)
 , p1_(P1)
 , p2_(P2)
@@ -27,7 +26,6 @@ World::World(sf::RenderWindow& window, Player& P1, Player& P2)
 	buildScene();
 
 	// Prepare the view
-	//worldView_.setCenter(spawnPosition_.x, spawnPosition_.y - ViewYOffset);
 	worldView_.setCenter(0, 0);
 }
 
@@ -57,41 +55,20 @@ void World::buildScene()
 
 	std::unique_ptr<SpriteNode> backgroundSprite(new SpriteNode(texture, textureRect));
 	backgroundSprite->setOrigin(StageWidth / 2, StageHeight - 100); // Stage origin should be horizontal center and "ground" that characters stand on
-	//backgroundSprite->setPosition(worldBounds_.left, worldBounds_.top);
 	backgroundSprite->setPosition(0, 0); // Stage has to 
 	sceneLayers_[Background]->attachChild(std::move(backgroundSprite));
 
-	//std::unique_ptr<Character> aokoTest(new Character(Character::Yuzuriha, textures_));
-	//p1Char_ = aokoTest.get();
-	//p1Char_->setScale(sf::Vector2f(3.7f, 3.7f));
-	//p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y + 50);
-	//sceneLayers_[Characters]->attachChild(std::move(aokoTest));
-
-	//std::unique_ptr<Character> enkidu(new Character(Character::Enkidu, textures_));
 	p1Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
-	//p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y - 25);
 	p1Char_->setPosition(-250, 0);
-	sceneLayers_[Player1]->attachChild(p1Char_);
+	p1Char_->setFacing(Character::Facing::Right);
+	sceneLayers_[Characters]->attachChild(p1Char_);
 
-	//std::unique_ptr<Character> yuzuriha(new Character(Character::Yuzuriha, textures_));
-	//std::shared_ptr<Character> yuzuriha = std::make_shared<Character>(Character::Yuzuriha, textures_);
 	p2Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
-	//p2Char_->setPosition(spawnPosition_.x + 500, spawnPosition_.y - 25);
 	p2Char_->setPosition(250, 0);
-	//p2Char_->flipFacing();
-	sceneLayers_[Player2]->attachChild(p2Char_);
-
+	p2Char_->setFacing(Character::Facing::Left);
+	sceneLayers_[Characters]->attachChild(p2Char_);
+	
 	charArray_ = { p1Char_, p2Char_ };
-
-	//PlayerContext P1Context(p1Char_, p1RawInput_, p1NumpadInput_);
-	//PlayerContext P2Context(p2Char_, p2RawInput_, p2NumpadInput_);
-	//BattleContext BattleContext(&P1Context, &P2Context, &timer_);
-
-	//std::unique_ptr<Character> shun(new Character(Character::Shun, textures_));
-	//p1Char_ = shun.get();
-	//p1Char_->setScale(sf::Vector2f(5.0f, 5.0f));
-	//p1Char_->setPosition(spawnPosition_.x, spawnPosition_.y);
-	//sceneLayers_[Characters]->attachChild(std::move(shun));
 }
 
 void World::draw()
@@ -125,15 +102,16 @@ void World::update()
 
 		// If actionable, initiate action based on input buffer readout
 
-	p1Char_->handleInput(p1NumpadInput_);
+	charArray_[0]->handleInput(p1NumpadInput_);
 
 	sceneGraph_.update();
 	adaptCharacterPosition();
 	adaptCharacterFacing();
-	adaptCharacterCollision();
+	handleCollision();
+
 	// Get center between players
-	float CenterX = std::min(p1Char_->getPosition().x, p2Char_->getPosition().x) + abs((p1Char_->getPosition().x - p2Char_->getPosition().x) / 2);
-	worldView_.setCenter(CenterX, p1Char_->getPosition().y - constants::VIEW_Y_OFFSET);
+	float CenterX = std::min(charArray_[0]->getPosition().x, charArray_[1]->getPosition().x) + abs((charArray_[0]->getPosition().x - charArray_[1]->getPosition().x) / 2);
+	worldView_.setCenter(CenterX, charArray_[0]->getPosition().y - constants::VIEW_Y_OFFSET);
 }
 
 void World::adaptCharacterPosition()
@@ -142,18 +120,27 @@ void World::adaptCharacterPosition()
 	sf::FloatRect viewBounds(worldView_.getCenter() - worldView_.getSize() / 2.f, worldView_.getSize());
 	const float borderDistance = 200.f;
 
-	sf::Vector2f position = p1Char_->getPosition();
+	sf::Vector2f position = charArray_[0]->getPosition();
 	position.x = std::max(position.x, -(StageWidth / 2) + borderDistance);
 	position.x = std::min(position.x, (StageWidth / 2) - borderDistance);
-	p1Char_->setPosition(position);
+	charArray_[0]->setPosition(position);
 }
 
 void World::adaptCharacterFacing()
 {
-	for (int i = 0; i < 2; i++) // Iterate through characters
+	//for (SceneNode* character : sceneLayers_[Characters]->getChildren()) // Iterate through characters
+
+	//std::vector<Character*> characters(sceneLayers_[Characters]->getChildren().size());
+
+	//for (Character* character : sceneLayers_[Characters]->getChildren())
+	//{
+	//	characters.push_back(static_cast<Character*>(character));
+	//}
+
+	for (size_t i = 0; i < charArray_.size(); ++i) // Iterate through characters
 	{
 		float xPosition = charArray_[i]->getPosition().x; // Only x-axis matters
-		float xPositionOpp = charArray_[abs(1 - i)]->getPosition().x; // Get opponent x-axis position
+		float xPositionOpp = charArray_[1 - i]->getPosition().x; // Get opponent x-axis position
 
 		// In UNI at least, if you jump over an opponent they change facing as you cross over them. 
 		// If hit by an attack after the cross-over, the hit animation reflects your facing and any attack that does not change
@@ -173,41 +160,6 @@ void World::adaptCharacterFacing()
 	}
 }
 
-void World::adaptCharacterCollision()
-{
-	// If a character collide box is intersecting with another collide box, shunt the character in the direction of the center of their own collide box
-	for (size_t i = 0; i != 1; ++i)
-	{
-		// Check if current character collide box intersects with other character's
-		if (charArray_[i]->checkBoxIntersect(charArray_[1 - i]->getBox().getGlobalBounds()))
-		{
-			sf::FloatRect charBox = charArray_[i]->getBox().getGlobalBounds();
-			sf::FloatRect oppBox  = charArray_[1 - i]->getBox().getGlobalBounds();
-
-			// Figure out whether we're to the left or right of the relevant box
-			if (charArray_[i]->getBox().getOrigin().x <= charArray_[1 - i]->getBox().getOrigin().x) // To left
-			{
-				// "Push" opponent character
-				charArray_[1 - i]->move(sf::Vector2f(3.5f, 0.f));
-				// Set character position leftward an amount equal to the intersection distance
-				// Character collide box right edge minus opponent collide box left edge
-				sf::Vector2f newPosition = sf::Vector2f(charArray_[i]->getPosition().x - ((charBox.left + charBox.width) - oppBox.left), charArray_[i]->getPosition().y);
-				//charArray_[i]->move(sf::Vector2f(-((charBox.left + charBox.width) - oppBox.left), 0));
-				charArray_[i]->setPosition(newPosition);
-			}
-			else if (charArray_[i]->getBox().getOrigin().x > charArray_[1 - i]->getBox().getOrigin().x) // To right
-			{
-
-			}
-
-			// Move character so box no longer intersects in direction of collide box center
-			// I.e. move character so collide box center is half box size away from the edge of the opponent collide box
-			
-
-		}
-	}
-}
-
 World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playerRawInput)
 {
 	// Change bit flag inputs from Player to numpad notation. Keep bit flags for buttons (A = 1 << 4 = 16 etc.). Since numpad 
@@ -216,12 +168,12 @@ World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playe
 	unsigned int numpad = 5; // Neutral
 
 	// If x-axis input matches current character facing
-	if ((playerRawInput.second & (Input::Left | Input::Right)) == p1Char_->getFacing())
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == charArray_[0]->getFacing())
 	{
 		numpad += 1;
 	}
 	// If x-axis input is opposite of current character facing
-	if ((playerRawInput.second & (Input::Left | Input::Right)) == (p1Char_->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
+	if ((playerRawInput.second & (Input::Left | Input::Right)) == (charArray_[0]->getFacing() ^ Input::Left ^ Input::Right)) // Flip bits on character facing to get opposite
 	{
 		numpad -= 1;
 	}
@@ -238,6 +190,61 @@ World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playe
 
 	// Convert the first four bits in playerRawInput.second.second to 0s; preserve bits pertaining to buttons (fifth onward)
 	return { playerRawInput.first, numpad + (playerRawInput.second >> 4 << 4) };
+}
+
+bool World::matchesTypes(std::pair<SceneNode*, SceneNode*>& colliders, Box::Type type1, Box::Type type2)
+{
+	// Helper function for checking the types of Boxes colliding
+	unsigned int colliderType1 = static_cast<Box*>(colliders.first)->getType();
+	unsigned int colliderType2 = static_cast<Box*>(colliders.second)->getType();
+
+	if (type1 == colliderType1 && type2 == colliderType2)
+	{
+		return true;
+	}
+	else if (type1 == colliderType2 && type2 == colliderType1)
+	{
+		std::swap(colliders.first, colliders.second);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void World::handleCollision()
+{
+	std::set<std::pair<SceneNode*, SceneNode*>> intersectPairs;
+
+	sceneGraph_.checkSceneCollide(sceneGraph_, intersectPairs);
+
+	for (std::pair<SceneNode*, SceneNode*> pair : intersectPairs)
+	{
+		if (matchesTypes(pair, Box::Type::Collide, Box::Type::Collide)) // If two collision boxes overlap
+		{
+			// Get bounds of relevant Boxes
+			sf::FloatRect box1 = dynamic_cast<Box*>(pair.first)->getRect();
+			sf::FloatRect box2 = dynamic_cast<Box*>(pair.second)->getRect();
+
+			float distance = std::min(box1.left + box1.width, box2.left + box2.width) - std::max(box1.left, box2.left);
+
+			if ((box1.left + (box1.width / 2)) <= (box2.left + (box2.width / 2))) // If box1 is to the left of box2
+			{
+				dynamic_cast<Box*>(pair.first)->moveParent(-1 * (distance / 2), 0.f);
+				dynamic_cast<Box*>(pair.second)->moveParent(distance / 2, 0.f);
+			}
+			else if ((box1.left + (box1.width / 2)) > (box2.left + (box2.width / 2))) // If box1 is to the right of box2
+			{
+				dynamic_cast<Box*>(pair.first)->moveParent(distance / 2, 0.f);
+				dynamic_cast<Box*>(pair.second)->moveParent(-1 * (distance / 2), 0.f);
+			}
+		}
+		else if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
+		{
+			RN_DEBUG("Hitbox intersection!");
+		}
+	}
 }
 
 // TODO: need a function to update character facings

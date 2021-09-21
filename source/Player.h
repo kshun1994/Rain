@@ -19,6 +19,12 @@ public:
 		Player2 = 1,
 	};
 
+	struct GameStats
+	{
+		int			health;
+		int			specialMeter;
+	};
+
 public:
 	typedef std::pair<unsigned int, unsigned int> TaggedInput;
 
@@ -50,6 +56,9 @@ public:
 
 	TaggedInput									getInput() const;
 
+	GameStats									getGameStats() const;
+	void										setGameStats(const std::string& member, const float& value);
+
 private:
 	static bool									isRealtimeAction(Input input);
 	void										initializeActions();
@@ -72,4 +81,6 @@ private:
 
 	unsigned int								inputState_;
 	TaggedInput									input_;
+
+	GameStats									gameStats_;
 };

@@ -1,11 +1,17 @@
 #pragma once
 
 #include "SceneNode.h"
-
-#include "BoxComponent.h"
+#include "Input.h"
 
 class Entity : public SceneNode
 {
+public:
+	enum Facing
+	{
+		Left	= Input::Left,
+		Right	= Input::Right,
+	};
+
 public:
 	/*explicit				Entity(int health);
 	void					damage(int points);
@@ -16,17 +22,15 @@ public:
 							Entity() = default;
 							~Entity();
 
-	void					createBoxComponent(Entity& entity, BoxComponent::Type type, float offsetX, float offsetY, float width, float height);
-	bool					checkBoxIntersect(sf::FloatRect rect);
-	sf::RectangleShape		getBox();
-
 	void					setVelocity(sf::Vector2f velocity);
 	void					setVelocity(float vx, float vy);
 	sf::Vector2f			getVelocity() const;
 	void					accelerate(sf::Vector2f velocity);
 
-protected:
-	BoxComponent*			boxComponent_;
+	void					setFacing(const Facing& facing);
+	Facing					getFacing() const;
+	void					flipFacing();
+	void					setSignFlip();
 
 private:
 	virtual void			updateCurrent();
@@ -34,4 +38,7 @@ private:
 private:
 	int						health_;
 	sf::Vector2f			velocity_;
+
+	Facing					facing_;
+	float					facingSign_;
 };

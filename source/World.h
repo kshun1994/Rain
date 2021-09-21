@@ -8,6 +8,7 @@
 #include "CommandQueue.h"
 #include "InputTrigger.h"
 #include "Player.h"
+#include "Box.h"
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -26,19 +27,17 @@ public:
 	typedef std::pair<unsigned int, unsigned int> TaggedInput;
 
 public:
-	struct PlayerObjects
+	enum PID
 	{
-														PlayerObjects() = default;
-
-		Player&											player_;
-		Character										character_;
+		P1, 
+		P2,
+		NumPlayers
 	};
 
-	struct BattleContext
+	struct BattleData
 	{
-														BattleContext() = default;
-														~BattleContext();
-		float*											Timer;
+		float	health;
+		float	specialmeter;
 	};
 
 public:
@@ -54,7 +53,9 @@ private:
 
 	void												adaptCharacterPosition();
 	void												adaptCharacterFacing();
-	void												adaptCharacterCollision();
+
+	bool												matchesTypes(std::pair<SceneNode*, SceneNode*>& colliders, Box::Type type1, Box::Type type2);
+	void												handleCollision();
 
 	TaggedInput											translateToNumpadInput(const TaggedInput& playerRawInput);
 
@@ -62,8 +63,8 @@ private:
 	enum Layer
 	{
 		Background,
-		Player1,
-		Player2,
+		Boxes,
+		Characters,
 		UI,
 		LayerCount,
 	};
@@ -77,6 +78,8 @@ private:
 
 	sf::FloatRect										worldBounds_;
 	sf::Vector2f										spawnPosition_;
+
+	std::array<BattleData*, NumPlayers>					battleData_;
 
 	float												timer_;
 
