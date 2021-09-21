@@ -192,6 +192,27 @@ World::TaggedInput World::translateToNumpadInput(const World::TaggedInput& playe
 	return { playerRawInput.first, numpad + (playerRawInput.second >> 4 << 4) };
 }
 
+bool World::matchesTypes(std::pair<SceneNode*, SceneNode*>& colliders, Box::Type type1, Box::Type type2)
+{
+	// Helper function for checking the types of Boxes colliding
+	unsigned int colliderType1 = static_cast<Box*>(colliders.first)->getType();
+	unsigned int colliderType2 = static_cast<Box*>(colliders.second)->getType();
+
+	if (type1 == colliderType1 && type2 == colliderType2)
+	{
+		return true;
+	}
+	else if (type1 == colliderType2 && type2 == colliderType1)
+	{
+		std::swap(colliders.first, colliders.second);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void World::handleCollision()
 {
 	std::set<std::pair<SceneNode*, SceneNode*>> intersectPairs;
@@ -200,7 +221,36 @@ void World::handleCollision()
 
 	for (std::pair<SceneNode*, SceneNode*> pair : intersectPairs)
 	{
-		// Write intersect results code here
+		if (matchesTypes(pair, Box::Type::Collide, Box::Type::Collide)) // If two collision boxes overlap
+		{
+			// Separate both owning entities equally to either side such that the collision boxes are adjacent and no longer overlapping
+			// Get entity positions
+			sf::Vector2f entity1Position = pair.first->getWorldPosition(); // Box positions are the same as parent entity
+			sf::Vector2f entity2Position = pair.second->getWorldPosition();
+
+			// Get bounds of relevant Boxes
+
+
+			//float midpoint = std::max(pair.first->get, entity2Position.x) - std::min(entity1Position.x, entity2Position.x);
+
+			if (entity1Position.x <= entity2Position.x) // If entity1 is to the left of entity2
+			{
+
+			}
+			else if (entity1Position.x > entity2Position.x) // If entity1 is to the right of entity2
+			{
+
+			}
+
+			// Offset will be half the distance between the x of the intersecting Box borders
+			//float entity1Offset = 
+
+			RN_DEBUG("Collision box intersection!");
+		}
+		else if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
+		{
+			RN_DEBUG("Hitbox intersection!");
+		}
 	}
 }
 

@@ -54,6 +54,7 @@ private:
 	void												adaptCharacterPosition();
 	void												adaptCharacterFacing();
 
+	bool												matchesTypes(std::pair<SceneNode*, SceneNode*>& colliders, Box::Type type1, Box::Type type2);
 	void												handleCollision();
 
 	TaggedInput											translateToNumpadInput(const TaggedInput& playerRawInput);

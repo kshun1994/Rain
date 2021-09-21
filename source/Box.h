@@ -6,12 +6,12 @@
 class Box : public SceneNode
 {
 public:
-	enum class Type
+	enum Type
 	{
 		None		= 0,
-		Collide		= 1,
-		Hit			= 2,
-		Hurt		= 3,
+		Collide		= 1, // >> 0, // 1
+		Hit			= 2, // >> 1, // 2
+		Hurt		= 3, // >> 2, // 4
 	};
 
 protected:
@@ -39,8 +39,12 @@ public:
 	virtual void			setCollideOffset(const sf::Vector2f& offset);
 	virtual sf::Vector2f	getCollideOffset() const;
 
-	virtual void			setType(const Type& type);
-	virtual Type			getType() const;
+	virtual void			setType(const unsigned int& type);
+	virtual unsigned int	getType() const;
+
+	virtual sf::FloatRect	getRect() const;
+
+	virtual void			moveParent(const float& x, const float& y);
 
 private:
 	virtual void			drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -51,5 +55,5 @@ protected:
 	float					width_;
 	float					height_;
 
-	Type					type_;
+	unsigned int			type_;
 };

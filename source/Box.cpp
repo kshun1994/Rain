@@ -1,5 +1,6 @@
 #include "rnpch.h"
 #include "Box.h"
+#include "Character.h"
 
 Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height)
 : type_(type)
@@ -12,6 +13,7 @@ Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height
 
 void Box::updateCurrent()
 {
+	xOffset_ = dynamic_cast<Character*>(parent_)->getFacing() == Character::Facing::Right ? abs(xOffset_) : -1 * abs(xOffset_);
 }
 
 unsigned int Box::getCategory() const
@@ -53,12 +55,12 @@ sf::Vector2f Box::getCollideOffset() const
 	return sf::Vector2f(width_, height_);
 }
 
-void Box::setType(const Box::Type& type)
+void Box::setType(const unsigned int& type)
 {
 	type_ = type;
 }
 
-Box::Type Box::getType() const
+unsigned int Box::getType() const
 {
 	return type_;
 }
@@ -67,18 +69,30 @@ void Box::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	#ifdef RN_DEBUG
 
-		sf::Color fillColor = BoxDrawColors[magic_enum::enum_integer(type_)];
+		sf::Color fillColor = BoxDrawColors[(type_)];
 		fillColor.a = 32;
 
 		sf::RectangleShape drawBox;
 		drawBox.setSize(sf::Vector2f(width_, height_));
 		drawBox.setOrigin(width_ / 2, height_);
 		drawBox.setFillColor(fillColor);
-		drawBox.setOutlineColor(BoxDrawColors[magic_enum::enum_integer(type_)]);
+		drawBox.setOutlineColor(BoxDrawColors[type_]);
 		drawBox.setOutlineThickness(1.f);
 		drawBox.setPosition(this->getWorldPosition().x + xOffset_, this->getWorldPosition().y + yOffset_);
 
 		target.draw(drawBox);
 
 	#endif // RN_DEBUG
+}
+
+sf::FloatRect Box::getRect() const
+{
+	return sf::FloatRect(this->getWorldPosition().x + xOffset_ - (width_ / 2), 
+						 this->getWorldPosition().y + yOffset_ - height_, 
+						 width_, height_);
+}
+
+void Box::moveParent(const float& x, const float& y)
+{
+	parent_->move(x, y);
 }

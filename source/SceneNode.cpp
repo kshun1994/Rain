@@ -108,14 +108,13 @@ bool SceneNode::checkIntersect(SceneNode& lhs, SceneNode& rhs)
 
 void SceneNode::checkNodeCollide(SceneNode& node, std::set<std::pair<SceneNode*, SceneNode*>>& collidePairs)
 {
-	// Check intersection with given node
+	// Check intersection with given node and to make sure collisions aren't happening between boxes owned by the same entity
 	if (this->parent_ != node.parent_ && checkIntersect(*this, node))
 	{
 		// std::set objects can only have one instance of any given unique object
 		// std::minmax makes it so order doesn't matter: minmax(a, b) == minmax(b, a) and thus 
 		//     a given intersect pair will only be added once even if computed twice
 		collidePairs.insert(std::minmax(this, &node));
-		RN_DEBUG("Collision detected!");
 	}
 
 	for (Ptr& child : children_)

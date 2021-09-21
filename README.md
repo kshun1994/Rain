@@ -17,6 +17,8 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Consolidate Facing functions to Entity and remove from Character
+- [ ] Finish collidebox intersect resolution math
 - [ ] Need some way to easily identify Boxes and their subtypes within World
 - [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in CharState)
 - [ ] Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
