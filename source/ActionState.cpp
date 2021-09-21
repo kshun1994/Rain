@@ -1,54 +1,54 @@
 #include "rnpch.h"
-#include "CharState.h"
+#include "ActionState.h"
 #include "Character.h"
 
-void CharState::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
+void ActionState::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
 {
 	animationFrameIDs_ = frameIDs;
 	animationFrameDurations_ = durations;
 	animationSpriteDims_ = spriteDims;
 }
 
-void CharState::setAnimationRepeat(bool flag)
+void ActionState::setAnimationRepeat(bool flag)
 {
 	animationIsRepeating_ = flag;
 }
 
-void CharState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
+void ActionState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
 {
 	boxes_ = std::move(boxes);
 }
 
-void CharState::appendBox(std::shared_ptr<Box> box)
+void ActionState::appendBox(std::shared_ptr<Box> box)
 {
 	boxes_.push_back(std::move(box));
 }
 
-void CharState::setAnimation(Character& character)
+void ActionState::setAnimation(Character& character)
 {
 	character.setAnimationFrames(animationFrameIDs_, animationFrameDurations_, animationSpriteDims_);
 }
 
-//std::shared_ptr<CharState> CharState::handleInput(Character& character, std::map<int, bool> stateMap)
+//std::shared_ptr<ActionState> ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
 //{
 //	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
 //	{
-//		if (it->second && (character.getCurrentCharState() != character.getCharStates()[it->first]))
+//		if (it->second && (character.getCurrentActionState() != character.getActionStates()[it->first]))
 //		{
-//			return character.getCharStates()[it->first];
+//			return character.getActionStates()[it->first];
 //		}
 //	}
 //
 //	return nullptr;
 //}
 
-int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
+int ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
 {
 	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
 	{
-		if (it->second && (character.getCurrentCharStateID() != it->first))
+		if (it->second && (character.getCurrentActionStateID() != it->first))
 		{
-			// Iterate through all child nodes of Character and detach boxes; move back to CharState
+			// Iterate through all child nodes of Character and detach boxes; move back to ActionState
 			//for (SceneNode* ptr : character.getChildren())
 			//{
 			//	if (ptr->getCategory() == Category::Box)
@@ -72,7 +72,7 @@ int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 
 			//character.detachBoxes();
 
-			character.setCurrentCharStateID(it->first);
+			character.setCurrentActionStateID(it->first);
 			return it->first;
 		}
 	}
@@ -80,7 +80,7 @@ int CharState::handleInput(Character& character, std::map<int, bool> stateMap)
 	return NULL_ACTION;
 }
 
-void CharState::enter(Character& character)
+void ActionState::enter(Character& character)
 {
 	for (std::shared_ptr<Box>& box : boxes_)
 	{
@@ -92,14 +92,14 @@ void CharState::enter(Character& character)
 
 void StandState::enter(Character& character)
 {
-	CharState::enter(character);
+	ActionState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered StandState.");
 }
 
 void CrouchState::enter(Character& character)
 {
-	CharState::enter(character);
+	ActionState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered CrouchState.");
 }
@@ -111,7 +111,7 @@ void FWalkState::update(Character& character)
 
 void FWalkState::enter(Character& character)
 {
-	CharState::enter(character);
+	ActionState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered FWalkState.");
 }
@@ -128,7 +128,7 @@ void BWalkState::update(Character& character)
 
 void BWalkState::enter(Character& character)
 {
-	CharState::enter(character);
+	ActionState::enter(character);
 	setAnimation(character);
 	RN_DEBUG("Entered BWalkState.");
 }

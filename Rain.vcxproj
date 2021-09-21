@@ -15,6 +15,7 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Rain</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -95,7 +96,7 @@
   <ItemGroup>
     <ClInclude Include="source\Action.h" />
     <ClInclude Include="source\Box.h" />
-    <ClInclude Include="source\CharState.h" />
+    <ClInclude Include="source\ActionState.h" />
     <ClInclude Include="source\Event.h" />
     <ClInclude Include="source\Input.h" />
     <ClInclude Include="source\Animation.h" />
@@ -139,7 +140,7 @@
     <ClCompile Include="source\Box.cpp" />
     <ClCompile Include="source\Button.cpp" />
     <ClCompile Include="source\Character.cpp" />
-    <ClCompile Include="source\CharState.cpp" />
+    <ClCompile Include="source\ActionState.cpp" />
     <ClCompile Include="source\Command.cpp" />
     <ClCompile Include="source\CommandQueue.cpp" />
     <ClCompile Include="source\Component.cpp" />

@@ -7,23 +7,23 @@ class Character;
 
 /*
 
-Characters have vectors of CharState objects
-CharStates are allocated during game load (Character initialization)
-CharStates are entered via player inputs
-CharStates may have durations or may be indefinite until another CharState is entered
-CharStates can limit possible CharState changes
+Characters have vectors of ActionState objects
+ActionStates are allocated during game load (Character initialization)
+ActionStates are entered via player inputs
+ActionStates may have durations or may be indefinite until another ActionState is entered
+ActionStates can limit possible ActionState changes
 	Hitstun/blockstun etc. doesn't allow for actions
 	Specific moves might be able to cancel into specific others
-Map of inputs to CharStates that can be filtered?
+Map of inputs to ActionStates that can be filtered?
 	E.g. if in recovery state limit entry into states other than hitstun/blockstun etc.
-	Maybe use bit flag enum to categorize CharStates
+	Maybe use bit flag enum to categorize ActionStates
 
 */
 
-class CharState
+class ActionState
 {
 public: 
-	virtual								~CharState() {};
+	virtual								~ActionState() {};
 
 	virtual void						update(Character& character) {};
 	virtual int							handleInput(Character& character, std::map<int, bool> stateMap);
@@ -52,7 +52,7 @@ protected:
 	std::vector<Box*>					boxPtrs_;
 };
 
-class StandState : public CharState
+class StandState : public ActionState
 {
 public:
 	virtual								~StandState() {};
@@ -61,7 +61,7 @@ public:
 
 };
 
-class CrouchState : public CharState
+class CrouchState : public ActionState
 {
 public:
 	virtual								~CrouchState() {};
@@ -70,7 +70,7 @@ public:
 
 };
 
-class FWalkState : public CharState
+class FWalkState : public ActionState
 {
 public:
 	virtual								~FWalkState() {};
@@ -85,7 +85,7 @@ private:
 	float								speed_ = 5.f;
 };
 
-class BWalkState : public CharState
+class BWalkState : public ActionState
 {
 public:
 	virtual								~BWalkState() {};

@@ -24,8 +24,8 @@ Character::Character(Type type, const TextureHolder& textures)
 , facing_(Facing::Right)
 , posture_(Posture::Standing)
 , spriteStruct_()
-, charStates_(20)
-, charStateID_(0)
+, actionStates_(20)
+, actionStateID_(0)
 {
 	sprite_.setTexture(textures.get(toTextureID(type)));
 
@@ -45,7 +45,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.crouchDurs.resize(15);
 	std::fill(EnkSprite.crouchDurs.begin(), EnkSprite.crouchDurs.end(), 5);
 
-	// TODO Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
+	// TODO Both forward and back walks have transition-into animations; include those somehow into ActionState::enter()
 		
 	EnkSprite.fWalkIDs.resize(9);
 	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 31);
@@ -157,14 +157,14 @@ Character::Character(Type type, const TextureHolder& textures)
 		std::shared_ptr<Box> collideBox = std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f);
 		bWalkState->appendBox(std::move(collideBox));
 
-		charStates_[COMMON_ACTION_STAND]	= std::move(standState);
-		charStates_[COMMON_ACTION_CROUCH]	= std::move(crouchState);
-		charStates_[COMMON_ACTION_F_WALK]	= std::move(fWalkState);
-		charStates_[COMMON_ACTION_B_WALK]	= std::move(bWalkState);
+		actionStates_[COMMON_ACTION_STAND]	= std::move(standState);
+		actionStates_[COMMON_ACTION_CROUCH]	= std::move(crouchState);
+		actionStates_[COMMON_ACTION_F_WALK]	= std::move(fWalkState);
+		actionStates_[COMMON_ACTION_B_WALK]	= std::move(bWalkState);
 
-		charState_ = charStates_[COMMON_ACTION_STAND].get();		// Start standing
-		charState_->enter(*this);
-		setCurrentCharStateID(COMMON_ACTION_STAND);
+		actionState_ = actionStates_[COMMON_ACTION_STAND].get();		// Start standing
+		actionState_->enter(*this);
+		setCurrentActionStateID(COMMON_ACTION_STAND);
 
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_CROUCH, false));
@@ -216,7 +216,7 @@ void Character::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) c
 
 void Character::updateCurrent()
 {
-	charState_->update(*this);
+	actionState_->update(*this);
 	sprite_.update();
 }
 
@@ -234,15 +234,15 @@ void Character::handleInput(Player::TaggedInput input)
 
 	parseInput(input.second);
 
-	int charStateID = charState_->handleInput(*this, stateMap_);
+	int actionStateID = actionState_->handleInput(*this, stateMap_);
 
 	clearStateMap();
 
-	if (charStateID != NULL_ACTION)
+	if (actionStateID != NULL_ACTION)
 	{
-		charState_ = charStates_[charStateID].get();
+		actionState_ = actionStates_[actionStateID].get();
 
-		charState_->enter(*this);
+		actionState_->enter(*this);
 	}
 }
 
@@ -309,14 +309,14 @@ void Character::clearStateMap()
 	}
 }
 
-int Character::getCurrentCharStateID()
+int Character::getCurrentActionStateID()
 {
-	return charStateID_;
+	return actionStateID_;
 }
 
-void Character::setCurrentCharStateID(int id)
+void Character::setCurrentActionStateID(int id)
 {
-	charStateID_ = id;
+	actionStateID_ = id;
 }
 
 float Character::getHealth() const

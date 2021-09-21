@@ -85,7 +85,7 @@
     <ClCompile Include="source\InputTrigger.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\CharState.cpp">
+    <ClCompile Include="source\ActionState.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="source\Box.cpp" />
@@ -198,7 +198,7 @@
     <ClInclude Include="source\Event.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\CharState.h">
+    <ClInclude Include="source\ActionState.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Box.h" />

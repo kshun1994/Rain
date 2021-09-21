@@ -17,10 +17,12 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Both forward and back walks have transition-into animations; include those somehow into ActionState::enter()
+- [ ] Have actions that directly lead into other actions
+- [ ] Have actions that change out boxes throughout their duration
 - [ ] Have some way of specifying draw priority (i.e. be able to determine what entities are on top of the others on any given display frame)
 - [ ] Add camera zoom-in/-out based on between-Character distance and shift camera view to stay within stage bounds
-- [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in CharState)
-- [ ] Both forward and back walks have transition-into animations; include those somehow into CharState::enter()
+- [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in ActionState)
 - [ ] Add jumping
 - [ ] Create an in-game logger to display things in World
 	- Create an Observer that monitors World entities for things to print to log

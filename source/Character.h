@@ -6,7 +6,7 @@
 #include "CommandQueue.h"
 #include "Input.h"
 #include "Player.h"
-#include "CharState.h"
+#include "ActionState.h"
 #include "InputTrigger.h"
 #include "Box.h"
 
@@ -70,8 +70,8 @@ public:
 	Posture												getPosture() const;
 	void												setPosture(Posture posture);
 
-	int													getCurrentCharStateID();
-	void												setCurrentCharStateID(int id);
+	int													getCurrentActionStateID();
+	void												setCurrentActionStateID(int id);
 
 	void												setAnimationFrames(const std::vector<int>& frameIDs,
 																		   const std::vector<int>& durations,
@@ -86,9 +86,9 @@ private:
 	Type												type_;
 	SpriteStruct										spriteStruct_;
 
-	CharState*											charState_;
-	std::vector<std::unique_ptr<CharState>>				charStates_;
-	int													charStateID_;
+	ActionState*											actionState_;
+	std::vector<std::unique_ptr<ActionState>>				actionStates_;
+	int													actionStateID_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
 
