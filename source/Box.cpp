@@ -13,6 +13,7 @@ Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height
 
 void Box::updateCurrent()
 {
+	// Flip offset relative to parent if parent flips facing
 	xOffset_ = dynamic_cast<Character*>(parent_)->getFacing() == Character::Facing::Right ? abs(xOffset_) : -1 * abs(xOffset_);
 }
 

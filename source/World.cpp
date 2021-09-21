@@ -223,29 +223,22 @@ void World::handleCollision()
 	{
 		if (matchesTypes(pair, Box::Type::Collide, Box::Type::Collide)) // If two collision boxes overlap
 		{
-			// Separate both owning entities equally to either side such that the collision boxes are adjacent and no longer overlapping
-			// Get entity positions
-			sf::Vector2f entity1Position = pair.first->getWorldPosition(); // Box positions are the same as parent entity
-			sf::Vector2f entity2Position = pair.second->getWorldPosition();
-
 			// Get bounds of relevant Boxes
+			sf::FloatRect box1 = dynamic_cast<Box*>(pair.first)->getRect();
+			sf::FloatRect box2 = dynamic_cast<Box*>(pair.second)->getRect();
 
+			float distance = std::min(box1.left + box1.width, box2.left + box2.width) - std::max(box1.left, box2.left);
 
-			//float midpoint = std::max(pair.first->get, entity2Position.x) - std::min(entity1Position.x, entity2Position.x);
-
-			if (entity1Position.x <= entity2Position.x) // If entity1 is to the left of entity2
+			if ((box1.left + (box1.width / 2)) <= (box2.left + (box2.width / 2))) // If box1 is to the left of box2
 			{
-
+				dynamic_cast<Box*>(pair.first)->moveParent(-1 * (distance / 2), 0.f);
+				dynamic_cast<Box*>(pair.second)->moveParent(distance / 2, 0.f);
 			}
-			else if (entity1Position.x > entity2Position.x) // If entity1 is to the right of entity2
+			else if ((box1.left + (box1.width / 2)) > (box2.left + (box2.width / 2))) // If box1 is to the right of box2
 			{
-
+				dynamic_cast<Box*>(pair.first)->moveParent(distance / 2, 0.f);
+				dynamic_cast<Box*>(pair.second)->moveParent(-1 * (distance / 2), 0.f);
 			}
-
-			// Offset will be half the distance between the x of the intersecting Box borders
-			//float entity1Offset = 
-
-			RN_DEBUG("Collision box intersection!");
 		}
 		else if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
 		{

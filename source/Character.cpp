@@ -144,7 +144,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		std::unique_ptr<FWalkState> fWalkState = std::make_unique<FWalkState>();
 		fWalkState->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
 		fWalkState->setAnimationRepeat(true);
-		fWalkState->setSpeed(10.f);
+		fWalkState->setSpeed(7.f);
 
 		fWalkState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		fWalkState->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
@@ -153,7 +153,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		std::unique_ptr<BWalkState> bWalkState = std::make_unique<BWalkState>();
 		bWalkState->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
 		bWalkState->setAnimationRepeat(true);
-		bWalkState->setSpeed(7.f);
+		bWalkState->setSpeed(5.f);
 
 		std::shared_ptr<Box> hurtBox = std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f);
 		bWalkState->appendBox(std::move(hurtBox));
