@@ -24,23 +24,17 @@ void ActionState::appendBox(std::shared_ptr<Box> box)
 	boxes_.push_back(std::move(box));
 }
 
+void ActionState::setFrameData(const int& startup, const int& active, const int& recovery)
+{
+	startup_	= startup;
+	active_		= active;
+	recovery_	= recovery;
+}
+
 void ActionState::setAnimation(Character& character)
 {
 	character.setAnimationFrames(animationFrameIDs_, animationFrameDurations_, animationSpriteDims_);
 }
-
-//std::shared_ptr<ActionState> ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
-//{
-//	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
-//	{
-//		if (it->second && (character.getCurrentActionState() != character.getActionStates()[it->first]))
-//		{
-//			return character.getActionStates()[it->first];
-//		}
-//	}
-//
-//	return nullptr;
-//}
 
 int ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
 {

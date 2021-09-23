@@ -38,6 +38,8 @@ public:
 	virtual void						setBoxes(std::vector<std::shared_ptr<Box>> boxes);
 	virtual void						appendBox(std::shared_ptr<Box> box);
 
+	virtual void						setFrameData(const int& startup, const int& active, const int& recovery);
+
 protected:
 	virtual void						setAnimation(Character& character);
 
@@ -47,9 +49,15 @@ protected:
 	sf::Vector2i						animationSpriteDims_;
 	bool								animationIsRepeating_;
 
-protected:
 	std::vector<std::shared_ptr<Box>>	boxes_;
 	std::vector<Box*>					boxPtrs_;
+
+protected:
+	int									startup_;
+	int									active_;
+	int									recovery_;
+
+	int									progress_;
 };
 
 class StandState : public ActionState

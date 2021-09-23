@@ -17,6 +17,8 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Convert ActionState into composition-based design?
+	- 
 - [ ] Both forward and back walks have transition-into animations; include those somehow into ActionState::enter()
 - [ ] Have actions that directly lead into other actions
 - [ ] Have actions that change out boxes throughout their duration
