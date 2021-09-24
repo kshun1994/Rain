@@ -2,6 +2,33 @@
 #include "ActionState.h"
 #include "Character.h"
 
+ActionState::ActionState()
+: animationDoesLoop_(false)
+, animationIsLooping_(false)
+, progress_(0)
+, properties_()
+{
+}
+
+void ActionState::update(Character& character)
+{
+	// If there is a part of the action that loops, check if progress_ has reached that part and if so set the animation frames to just the looping part
+	if (animationDoesLoop_ && !animationIsLooping_ && (std::find(animationLoopFrames_.begin(), animationLoopFrames_.end(), progress_) != animationLoopFrames_.end()))
+	{
+		animationIsLooping_ = true;
+		// Use range constructor to slice original Frame ID vector
+		std::vector<int> newFrames(animationFrameIDs_.begin() + animationLoopFrames_.front(), 
+								   animationFrameIDs_.begin() + animationLoopFrames_.back());
+		std::vector<int> newDurations(animationFrameDurations_.begin() + animationLoopFrames_.front(), 
+									  animationFrameDurations_.begin() + animationLoopFrames_.back());
+		character.setAnimationFrames(newFrames, newDurations, animationSpriteDims_);
+		character.setAnimationRepeat(true);
+		RN_DEBUG("Animation loop set!");
+	}
+
+	++progress_;
+}
+
 void ActionState::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
 {
 	animationFrameIDs_ = frameIDs;
@@ -9,9 +36,18 @@ void ActionState::setAnimationFrames(const std::vector<int>& frameIDs, const std
 	animationSpriteDims_ = spriteDims;
 }
 
-void ActionState::setAnimationRepeat(bool flag)
+void ActionState::setAnimationLoop(const bool& flag)
 {
-	animationIsRepeating_ = flag;
+	// In case of no arguments to function set entire animation as loop range
+	animationDoesLoop_ = flag;
+	animationLoopFrames_.resize(animationFrameIDs_.size());
+	std::iota(animationLoopFrames_.begin(), animationLoopFrames_.end(), 0);
+}
+
+void ActionState::setAnimationLoop(const std::vector<int>& loopFrames)
+{
+	animationDoesLoop_ = true;
+	animationLoopFrames_ = loopFrames;
 }
 
 void ActionState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
@@ -24,16 +60,14 @@ void ActionState::appendBox(std::shared_ptr<Box> box)
 	boxes_.push_back(std::move(box));
 }
 
-void ActionState::setFrameData(const int& startup, const int& active, const int& recovery)
-{
-	startup_	= startup;
-	active_		= active;
-	recovery_	= recovery;
-}
-
 void ActionState::setAnimation(Character& character)
 {
 	character.setAnimationFrames(animationFrameIDs_, animationFrameDurations_, animationSpriteDims_);
+}
+
+void ActionState::setAnimation(Character& character, const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
+{
+	character.setAnimationFrames(frameIDs, durations, spriteDims);
 }
 
 int ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
@@ -67,6 +101,10 @@ int ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
 			//character.detachBoxes();
 
 			character.setCurrentActionStateID(it->first);
+
+			progress_ = 0;
+			animationIsLooping_ = false;
+
 			return it->first;
 		}
 	}
@@ -100,6 +138,7 @@ void CrouchState::enter(Character& character)
 
 void FWalkState::update(Character& character)
 {
+	ActionState::update(character);
 	character.move(speed_ * character.getFacingSign(), 0.f);
 }
 
@@ -117,6 +156,7 @@ void FWalkState::setSpeed(float speed)
 
 void BWalkState::update(Character& character)
 {
+	ActionState::update(character);
 	character.move(-speed_ * character.getFacingSign(), 0.f);
 }
 

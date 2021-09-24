@@ -86,8 +86,8 @@ private:
 	Type												type_;
 	SpriteStruct										spriteStruct_;
 
-	ActionState*											actionState_;
-	std::vector<std::unique_ptr<ActionState>>				actionStates_;
+	ActionState*										actionState_;
+	std::vector<std::unique_ptr<ActionState>>			actionStates_;
 	int													actionStateID_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
