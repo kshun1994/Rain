@@ -37,25 +37,21 @@ Character::Character(Type type, const TextureHolder& textures)
 
 	EnkSprite.idleIDs.resize(16);
 	std::iota(EnkSprite.idleIDs.begin(), EnkSprite.idleIDs.end(), 0);
-	EnkSprite.idleDurs.resize(16);
-	std::fill(EnkSprite.idleDurs.begin(), EnkSprite.idleDurs.end(), 5);
+	EnkSprite.idleDurs.resize(16, 5);
 		
 	EnkSprite.crouchIDs.resize(15);
 	std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 16);
-	EnkSprite.crouchDurs.resize(15);
-	std::fill(EnkSprite.crouchDurs.begin(), EnkSprite.crouchDurs.end(), 5);
+	EnkSprite.crouchDurs.resize(15, 5);
 
 	// TODO Both forward and back walks have transition-into animations; include those somehow into ActionState::enter()
 		
 	EnkSprite.fWalkIDs.resize(9);
 	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 31);
-	EnkSprite.fWalkDurs.resize(9);
-	std::fill(EnkSprite.fWalkDurs.begin(), EnkSprite.fWalkDurs.end(), 5);
+	EnkSprite.fWalkDurs.resize(9, 5);
 
 	EnkSprite.bWalkIDs.resize(11);
 	std::iota(EnkSprite.bWalkIDs.begin(), EnkSprite.bWalkIDs.end(), 40);
-	EnkSprite.bWalkDurs.resize(11);
-	std::fill(EnkSprite.bWalkDurs.begin(), EnkSprite.bWalkDurs.end(), 5);
+	EnkSprite.bWalkDurs.resize(11, 5);
 
 	EnkSprite.originX = 635.f; // Horizontal center of sprite (regardless of original image dimensions)
 	EnkSprite.originY = 83.f;  // Distance from bottom of image where sprite "touches the ground"
@@ -123,7 +119,8 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Create Enkidu standing state
 		std::unique_ptr<StandState> standState = std::make_unique<StandState>();
 		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
-		standState->setAnimationLoop(true);
+		standState->setLoopBounds(0, std::accumulate(spriteStruct_.idleDurs.begin(), spriteStruct_.idleDurs.end(), 0) - 1);
+		//standState->setAnimationLoop(true);
 
 		standState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		standState->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
@@ -131,7 +128,8 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Crouching state
 		std::unique_ptr<CrouchState> crouchState = std::make_unique<CrouchState>();
 		crouchState->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
-		crouchState->setAnimationLoop(true);
+		crouchState->setLoopBounds(0, std::accumulate(spriteStruct_.crouchDurs.begin(), spriteStruct_.crouchDurs.end(), 0) - 1);
+		//crouchState->setAnimationLoop(true);
 
 		crouchState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 180.f, 220.f)));
 		crouchState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -150.f, 110.f, 100.f)));
@@ -140,7 +138,8 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Forward walk state
 		std::unique_ptr<FWalkState> fWalkState = std::make_unique<FWalkState>();
 		fWalkState->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
-		fWalkState->setAnimationLoop(true);
+		fWalkState->setLoopBounds(0, std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0) - 1);
+		//fWalkState->setAnimationLoop(true);
 		fWalkState->setSpeed(7.f);
 
 		fWalkState->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
@@ -149,8 +148,9 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Backward walk state
 		std::unique_ptr<BWalkState> bWalkState = std::make_unique<BWalkState>();
 		bWalkState->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
-		std::vector<int> loopFrames	{3, 4, 5, 6, 7, 8, 9, 10, 11};
-		bWalkState->setAnimationLoop(loopFrames);
+		bWalkState->setLoopBounds(10, std::accumulate(spriteStruct_.bWalkDurs.begin(), spriteStruct_.bWalkDurs.end(), 0) - 1);
+		//std::vector<int> loopFrames	{3, 4, 5, 6, 7, 8, 9, 10, 11};
+		//bWalkState->setAnimationLoop(loopFrames);
 		bWalkState->setSpeed(5.f);
 
 		std::shared_ptr<Box> hurtBox = std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f);
@@ -175,11 +175,22 @@ Character::Character(Type type, const TextureHolder& textures)
 	else if (type_ == Type::Yuzuriha)
 	{
 		spriteStruct_ = YuzuSprite;
+
+		// Create Yuzu standing state
+		std::unique_ptr<StandState> standState = std::make_unique<StandState>();
+		standState->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
+		standState->setLoopBounds(0, std::accumulate(spriteStruct_.idleDurs.begin(), spriteStruct_.idleDurs.end(), 0) - 1);
+
+		actionStates_[COMMON_ACTION_STAND] = std::move(standState);
+		actionState_ = actionStates_[COMMON_ACTION_STAND].get();
+		actionState_->enter(*this);
+		setCurrentActionStateID(COMMON_ACTION_STAND);
+		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
 	}
 
 	sprite_.setFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 	sprite_.setOrigin(spriteStruct_.originX, spriteStruct_.spriteDims.y - spriteStruct_.originY);
-	sprite_.setRepeating(true);
+	//sprite_.setRepeating(true);
 
 	health_			= 1000.f;
 	meter_			= 0.f;
@@ -224,6 +235,11 @@ void Character::updateCurrent()
 unsigned int Character::getCategory() const
 {
 	return Category::Character;
+}
+
+Character::Type Character::getType() const
+{
+	return type_;
 }
 
 void Character::handleInput(Player::TaggedInput input)
@@ -385,4 +401,9 @@ void Character::setAnimationFrames(const std::vector<int>& frameIDs, const std::
 void Character::setAnimationRepeat(bool flag)
 {
 	sprite_.setRepeating(flag);
+}
+
+void Character::setCurrentAnimationTick(const int& tick)
+{
+	sprite_.setCurrentTick(tick);
 }

@@ -31,6 +31,8 @@ public:
 												  const std::vector<int>& durations,
 												  const sf::Vector2i& rect);
 
+	void								setCurrentTick(const int& tick);
+
 	void								setFrameSize(sf::Vector2i frameSize);
 	void								setNumFrames(std::size_t numFrames);
 	void								setRepeating(bool flag);
@@ -50,10 +52,12 @@ private:
 	sf::Sprite							sprite_;
 	sf::Vector2i						frameSize_; // size of one frame rect
 	std::size_t							numFrames_;
-	std::size_t							currentFrame_;
+	std::size_t							currentAnimationFrame_;
 	std::vector<Frame>					frameVector_;
+	std::vector<sf::IntRect>			frameRects_;
+	std::vector<int>					durations_;
 	sf::Time							duration_;
 	sf::Time							elapsedTime_;
-	int									elapsedTicks_;
+	int									currentTick_;
 	bool								repeat_;
 };

@@ -11,10 +11,10 @@ Animation::Animation()
 : sprite_()
 , frameSize_()
 , numFrames_(0)
-, currentFrame_(0)
+, currentAnimationFrame_(0)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
-, elapsedTicks_(0)
+, currentTick_(0)
 , repeat_(false)
 {
 }
@@ -23,10 +23,10 @@ Animation::Animation(const sf::Texture& texture)
 : sprite_(texture)
 , frameSize_()
 , numFrames_(0)
-, currentFrame_(0)
+, currentAnimationFrame_(0)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
-, elapsedTicks_(0)
+, currentTick_(0)
 , repeat_(false)
 {
 }
@@ -37,10 +37,10 @@ Animation::Animation(const sf::Texture& texture,
 					 const sf::Vector2i& rect)
 : sprite_(texture)
 , frameSize_()
-, currentFrame_(0)
+, currentAnimationFrame_(0)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
-, elapsedTicks_(0)
+, currentTick_(0)
 , repeat_(false)
 {
 	numFrames_ = durations.size();
@@ -50,14 +50,17 @@ Animation::Animation(const sf::Texture& texture,
 	currentRect.width  = rect.x;
 	currentRect.height = rect.y;
 
+	durations_ = durations;
+
 	for (int i = 0; i != durations.size(); i++)
 	{
 		int currentFrameID = frameIDs[i];
 		currentRect.left   = rect.x * (currentFrameID % nSpritesheetCol);
 		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
 
-		Frame frame = { currentRect, durations[i] };
-		frameVector_.push_back(std::move(frame));
+		//Frame frame = { currentRect, durations[i] };
+		//frameVector_.push_back(std::move(frame));
+		frameRects_.push_back(std::move(currentRect));
 	}
 }
 
@@ -66,19 +69,22 @@ Animation::Animation(const sf::Texture& texture,
 					 const std::vector<int>& durations)
 : sprite_(texture)
 , frameSize_()
-, currentFrame_(0)
+, currentAnimationFrame_(0)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
-, elapsedTicks_(0)
+, currentTick_(0)
 , repeat_(false)
 {
 	numFrames_ = durations.size();
 
-	for (int i = 0; i != durations.size(); i++)
-	{
-		Frame frame = { frameRects[i], durations[i] };
-		frameVector_.push_back(std::move(frame));
-	}
+	frameRects_ = frameRects;
+	durations_ = durations;
+
+	//for (int i = 0; i != durations.size(); i++)
+	//{
+	//	//Frame frame = { frameRects[i], durations[i] };
+	//	//frameVector_.push_back(std::move(frame));
+	//}
 }
 
 void Animation::setTexture(const sf::Texture& texture)
@@ -90,20 +96,22 @@ void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, // sprite 
 						  const std::vector<int>& durations)		  // corresponding durations in frames
 {
 	// Clear any stuff from previous animation
-	currentFrame_ = 0;
-	elapsedTicks_ = 0;
-	frameVector_.clear();
+	currentAnimationFrame_ = 0;
+	currentTick_ = 0;
+	//frameVector_.clear();
+	frameRects_ = frameRects;
+	durations_ = durations;
 
 	numFrames_ = durations.size();
 	assert(frameRects.size() == durations.size()); // make sure the two vectors are the same size
 
-	for (int i = 0; i != durations.size(); i++)
-	{
-		Frame frame = { frameRects[i], durations[i] };
-		frameVector_.push_back(std::move(frame));
-	}
+	//for (int i = 0; i != durations.size(); i++)
+	//{
+	//	Frame frame = { frameRects[i], durations[i] };
+	//	frameVector_.push_back(std::move(frame));
+	//}
 
-	sprite_.setTextureRect(frameVector_[currentFrame_].rect);
+	sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);
 }
 
 void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indices (start at 0)
@@ -111,9 +119,12 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 						  const sf::Vector2i& rect)			 // bounding box width/height
 {
 	// Clear any stuff from previous animation
-	currentFrame_ = 0;
-	elapsedTicks_ = 0;
-	frameVector_.clear();
+	currentAnimationFrame_ = 0;
+	currentTick_ = 0;
+	//frameVector_.clear();
+	frameRects_.clear();
+
+	durations_ = durations;
 
 	numFrames_ = durations.size();
 	assert(frameIDs.size() == durations.size()); // make sure the two vectors are the same size
@@ -128,11 +139,29 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 		currentRect.left   = rect.x * (currentFrameID % nSpritesheetCol);
 		currentRect.top	   = rect.y * (currentFrameID / nSpritesheetCol);
 
-		Frame frame = { currentRect, durations[i] };
-		frameVector_.push_back(std::move(frame));
+		//Frame frame = { currentRect, durations[i] };
+		//frameVector_.push_back(std::move(frame));
+		frameRects_.push_back(std::move(currentRect));
 	}
 
-	sprite_.setTextureRect(frameVector_[currentFrame_].rect);
+	sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);
+}
+
+void Animation::setCurrentTick(const int& tick)
+{
+	currentTick_ = tick;
+
+	int count = currentTick_;
+
+	for (int i = 0; i < durations_.size(); ++i)
+	{
+		count -= durations_[i];
+		if (count < 0)
+		{
+			currentAnimationFrame_ = i;
+			break;
+		}
+	}
 }
 
 
@@ -183,23 +212,36 @@ sf::FloatRect Animation::getGlobalBounds() const
 
 void Animation::update()
 {
-	elapsedTicks_++;
+	//RN_DEBUG("Accumulate - {}", std::accumulate(durations_.begin(), durations_.begin() + currentAnimationFrame_ + 1, 0));
+	//if (currentTick_ == std::accumulate(durations_.begin(), std::next(durations_.begin(), currentAnimationFrame_ + 1), 0) &&
+	//   (currentAnimationFrame_ != frameRects_.size() || repeat_))
+	//{
+	//	if (repeat_ && (currentAnimationFrame_ == frameRects_.size() - 1))
+	//	{
+	//		currentAnimationFrame_ = 0;
+	//	}
+	//	else
+	//	{
+	//		currentAnimationFrame_++;
+	//	}
 
-	while (elapsedTicks_ >= frameVector_[currentFrame_].duration && (currentFrame_ != frameVector_.size() || repeat_))
+	//	sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);
+
+	//	//currentTick_ = 0;
+	//}
+	
+	int nextAnimationFrameTick = std::accumulate(durations_.begin(), durations_.begin() + currentAnimationFrame_ + 1, 0);
+
+	//RN_DEBUG("Current tick - {}", currentTick_);
+	//RN_DEBUG("Next Anim Tick- {}", nextAnimationFrameTick);
+
+	if (currentTick_ == nextAnimationFrameTick)
 	{
-		if (repeat_ && (currentFrame_ == frameVector_.size() - 1))
-		{
-			currentFrame_ = 0;
-		}
-		else
-		{
-			currentFrame_++;
-		}
-
-		sprite_.setTextureRect(frameVector_[currentFrame_].rect);
-
-		elapsedTicks_ = 0;
+		++currentAnimationFrame_;
+		sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);
 	}
+
+	++currentTick_;
 }
 
 void Animation::draw(sf::RenderTarget& target, sf::RenderStates states) const

@@ -57,6 +57,7 @@ public:
 	virtual void										handleInput(Player::TaggedInput input);
 
 	unsigned int										getCategory() const;
+	Type												getType() const;
 
 	float												getHealth() const;
 	void												setHealth(float value);
@@ -77,6 +78,7 @@ public:
 																		   const std::vector<int>& durations,
 																 		   const sf::Vector2i& rect);
 	void												setAnimationRepeat(bool flag);
+	void												setCurrentAnimationTick(const int& tick);
 
 private:
 	void												parseInput(unsigned int input);

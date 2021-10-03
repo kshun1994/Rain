@@ -18,7 +18,6 @@ Rainy days
 
 # TODO
 - [ ] Convert ActionState into composition-based design?
-	- 
 - [ ] Both forward and back walks have transition-into animations; include those somehow into ActionState::enter()
 - [ ] Have actions that directly lead into other actions
 - [ ] Have actions that change out boxes throughout their duration

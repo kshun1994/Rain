@@ -2,31 +2,47 @@
 #include "ActionState.h"
 #include "Character.h"
 
+// Once player input switches to 5 from walk, switch to a cancellable recovery state
+// Have actions as vectors of states?
+// Once 
+
 ActionState::ActionState()
 : animationDoesLoop_(false)
 , animationIsLooping_(false)
-, progress_(0)
+, loopBounds_(0, 0)
+, currentFrame_(0)
 , properties_()
 {
 }
 
 void ActionState::update(Character& character)
 {
-	// If there is a part of the action that loops, check if progress_ has reached that part and if so set the animation frames to just the looping part
-	if (animationDoesLoop_ && !animationIsLooping_ && (std::find(animationLoopFrames_.begin(), animationLoopFrames_.end(), progress_) != animationLoopFrames_.end()))
+	//// If there is a part of the action that loops, check if currentFrame_ has reached that part and if so set the animation frames to just the looping part
+	//if (animationDoesLoop_ && !animationIsLooping_ && (std::find(animationLoopFrames_.begin(), animationLoopFrames_.end(), currentFrame_) != animationLoopFrames_.end()))
+	//{
+	//	animationIsLooping_ = true;
+	//	// Use range constructor to slice original Frame ID vector
+	//	std::vector<int> newFrames(animationFrameIDs_.begin() + animationLoopFrames_.front(), 
+	//							   animationFrameIDs_.begin() + animationLoopFrames_.back());
+	//	std::vector<int> newDurations(animationFrameDurations_.begin() + animationLoopFrames_.front(), 
+	//								  animationFrameDurations_.begin() + animationLoopFrames_.back());
+	//	character.setAnimationFrames(newFrames, newDurations, animationSpriteDims_);
+	//	character.setAnimationRepeat(true);
+	//	RN_DEBUG("Animation loop set!");
+	//}
+
+	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == loopBounds_.second))
 	{
-		animationIsLooping_ = true;
-		// Use range constructor to slice original Frame ID vector
-		std::vector<int> newFrames(animationFrameIDs_.begin() + animationLoopFrames_.front(), 
-								   animationFrameIDs_.begin() + animationLoopFrames_.back());
-		std::vector<int> newDurations(animationFrameDurations_.begin() + animationLoopFrames_.front(), 
-									  animationFrameDurations_.begin() + animationLoopFrames_.back());
-		character.setAnimationFrames(newFrames, newDurations, animationSpriteDims_);
-		character.setAnimationRepeat(true);
-		RN_DEBUG("Animation loop set!");
+		// Assumes Animation updates after ActionState in Character::update()
+		character.setCurrentAnimationTick(loopBounds_.first);
+		currentFrame_ = loopBounds_.first - 1; // Since it's going to be incremented at the end of this anyway
 	}
 
-	++progress_;
+	++currentFrame_;
+	if (character.getType() == Character::Type::Enkidu)
+	{
+		RN_DEBUG("CurrentFrame - {}", currentFrame_);
+	}
 }
 
 void ActionState::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
@@ -34,6 +50,9 @@ void ActionState::setAnimationFrames(const std::vector<int>& frameIDs, const std
 	animationFrameIDs_ = frameIDs;
 	animationFrameDurations_ = durations;
 	animationSpriteDims_ = spriteDims;
+
+	// Initialize properties vector
+	properties_.resize(std::accumulate(durations.begin(), durations.end(), 0), ActionState::Property::None);
 }
 
 void ActionState::setAnimationLoop(const bool& flag)
@@ -50,6 +69,17 @@ void ActionState::setAnimationLoop(const std::vector<int>& loopFrames)
 	animationLoopFrames_ = loopFrames;
 }
 
+void ActionState::setLoopBounds(const int& start, const int& end)
+{
+	loopBounds_.first = start;
+	loopBounds_.second = end;
+}
+
+void ActionState::setLoopBounds(const std::pair<int, int>& bounds)
+{
+	loopBounds_ = bounds;
+}
+
 void ActionState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
 {
 	boxes_ = std::move(boxes);
@@ -58,6 +88,22 @@ void ActionState::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
 void ActionState::appendBox(std::shared_ptr<Box> box)
 {
 	boxes_.push_back(std::move(box));
+}
+
+void ActionState::addProperty(Property property, std::vector<int> frameInds)
+{
+	// Make sure input frame inds are within action duration
+	assert(*std::max_element(frameInds.begin(), frameInds.end()) <= properties_.size());
+
+	for (int ind : frameInds)
+	{
+		properties_[ind] |= property;
+	}
+}
+
+int ActionState::getCurrentProperty() const
+{
+	return properties_[currentFrame_];
 }
 
 void ActionState::setAnimation(Character& character)
@@ -76,33 +122,17 @@ int ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
 	{
 		if (it->second && (character.getCurrentActionStateID() != it->first))
 		{
-			// Iterate through all child nodes of Character and detach boxes; move back to ActionState
-			//for (SceneNode* ptr : character.getChildren())
-			//{
-			//	if (ptr->getCategory() == Category::Box)
-			//	{
-			//		boxes_.push_back(std::static_pointer_cast<Box>(character.detachChild(*ptr)));
-			//	}
-
-			//}
-
 			for (Box* box : boxPtrs_)
 			{
 				auto detachedBox = character.detachChild(*box);
 				boxes_.push_back(std::static_pointer_cast<Box>(detachedBox));
-
-				//if (box != nullptr)
-				//{
-				//	boxes_.push_back(static_cast_ptr<Box>(character.detachChild(*box)));
-				//}
 			}
-			boxPtrs_.clear();
 
-			//character.detachBoxes();
+			boxPtrs_.clear();
 
 			character.setCurrentActionStateID(it->first);
 
-			progress_ = 0;
+			currentFrame_ = 0;
 			animationIsLooping_ = false;
 
 			return it->first;
@@ -114,6 +144,7 @@ int ActionState::handleInput(Character& character, std::map<int, bool> stateMap)
 
 void ActionState::enter(Character& character)
 {
+	currentFrame_ = 0;
 	for (std::shared_ptr<Box>& box : boxes_)
 	{
 		boxPtrs_.push_back(box.get());

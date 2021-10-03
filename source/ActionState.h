@@ -60,13 +60,6 @@ public:
 		Airborne			= 1 << 3,
 	};
 
-public:
-	struct PropertyTiming
-	{
-		Property							property;
-		std::vector<std::pair<int, int>>	frames;
-	};
-
 public: 
 										ActionState();
 	virtual								~ActionState() {};
@@ -82,8 +75,14 @@ public:
 	virtual void						setAnimationLoop(const bool& flag);
 	virtual void						setAnimationLoop(const std::vector<int>& loopFrames);
 
+	virtual void						setLoopBounds(const int& start, const int& end);
+	virtual void						setLoopBounds(const std::pair<int, int>& bounds);
+
 	virtual void						setBoxes(std::vector<std::shared_ptr<Box>> boxes);
 	virtual void						appendBox(std::shared_ptr<Box> box);
+
+	virtual void						addProperty(Property property, std::vector<int> frameInds);
+	virtual int 						getCurrentProperty() const;
 
 protected:
 	virtual void						setAnimation(Character& character);
@@ -100,13 +99,14 @@ protected:
 	bool								animationDoesLoop_;
 	bool								animationIsLooping_;
 
+	std::pair<int, int>					loopBounds_;
+
 	std::vector<std::shared_ptr<Box>>	boxes_;
 	std::vector<Box*>					boxPtrs_;
 
-	unsigned int						properties_;
-	std::vector<PropertyTiming>			propertyTimings_;
+	std::vector<int>					properties_;
 
-	int									progress_;
+	int									currentFrame_;
 };
 
 class StandState : public ActionState

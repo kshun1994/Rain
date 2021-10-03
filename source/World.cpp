@@ -59,7 +59,7 @@ void World::buildScene()
 	p1Char_->setFacing(Entity::Facing::Right);
 	sceneLayers_[Characters]->attachChild(p1Char_);
 
-	p2Char_ = std::make_shared<Character>(Character::Enkidu, textures_);
+	p2Char_ = std::make_shared<Character>(Character::Yuzuriha, textures_);
 	p2Char_->setPosition(250, 0);
 	p2Char_->setFacing(Entity::Facing::Left);
 	sceneLayers_[Characters]->attachChild(p2Char_);
