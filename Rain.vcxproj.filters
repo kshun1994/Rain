@@ -85,12 +85,11 @@
     <ClCompile Include="source\InputTrigger.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="source\ActionState.cpp">
+    <ClCompile Include="source\Action.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="source\Box.cpp" />
     <ClCompile Include="source\Property.cpp" />
-    <ClCompile Include="source\Action.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Animation.h">
@@ -192,13 +191,10 @@
     <ClInclude Include="source\Input.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\Action.h">
-      <Filter>source</Filter>
-    </ClInclude>
     <ClInclude Include="source\Event.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="source\ActionState.h">
+    <ClInclude Include="source\Action.h">
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="source\Box.h" />

@@ -1,5 +1,7 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include "Log.h"
 #include "Constants.h"
 
@@ -21,6 +23,7 @@
 #include <functional>
 #include <sstream>
 #include <chrono>
+#include <math.h>
 
 #include <queue>
 #include <array>

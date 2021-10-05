@@ -230,12 +230,10 @@ void Animation::update()
 	//	//currentTick_ = 0;
 	//}
 	
-	int nextAnimationFrameTick = std::accumulate(durations_.begin(), durations_.begin() + currentAnimationFrame_ + 1, 0);
-
 	//RN_DEBUG("Current tick - {}", currentTick_);
 	//RN_DEBUG("Next Anim Tick- {}", nextAnimationFrameTick);
 
-	if (currentTick_ == nextAnimationFrameTick)
+	if (currentTick_ == std::accumulate(durations_.begin(), durations_.begin() + currentAnimationFrame_ + 1, 0))
 	{
 		++currentAnimationFrame_;
 		sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);

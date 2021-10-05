@@ -6,7 +6,7 @@
 #include "CommandQueue.h"
 #include "Input.h"
 #include "Player.h"
-#include "ActionState.h"
+#include "Action.h"
 #include "InputTrigger.h"
 #include "Box.h"
 
@@ -46,6 +46,12 @@ public:
 
 		std::vector<int>	bWalkIDs;
 		std::vector<int>	bWalkDurs;
+
+		std::vector<int>	jumpIDs;
+		std::vector<int>	jumpDurs;
+
+		std::vector<int>	standBIDs;
+		std::vector<int>	standBDurs;
 	};
 
 public:
@@ -71,8 +77,8 @@ public:
 	Posture												getPosture() const;
 	void												setPosture(Posture posture);
 
-	int													getCurrentActionStateID();
-	void												setCurrentActionStateID(int id);
+	int													getCurrentActionID();
+	void												setCurrentActionID(int id);
 
 	void												setAnimationFrames(const std::vector<int>& frameIDs,
 																		   const std::vector<int>& durations,
@@ -88,9 +94,9 @@ private:
 	Type												type_;
 	SpriteStruct										spriteStruct_;
 
-	ActionState*										actionState_;
-	std::vector<std::unique_ptr<ActionState>>			actionStates_;
-	int													actionStateID_;
+	Action*										action_;
+	std::vector<std::unique_ptr<Action>>			actions_;
+	int													actionID_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
 
@@ -102,13 +108,15 @@ private:
 	Posture												posture_;
 };
 
-#define NULL_ACTION						 0
+#define CONTINUE_ACTION					 0
 #define COMMON_ACTION_STAND				 1
 #define COMMON_ACTION_F_WALK			 2
 #define COMMON_ACTION_B_WALK			 3
 #define COMMON_ACTION_CROUCH			 4
 #define COMMON_ACTION_BLOCK_STAND		 5
 #define COMMON_ACTION_BLOCK_CROUCH		 6
-#define COMMON_ACTION_JUMP				 7
-#define COMMON_ACTION_QCF				 8
-#define COMMON_ACTION_BACK_CHARGE		 9
+#define COMMON_ACTION_F_JUMP			 7
+#define COMMON_ACTION_B_JUMP			 8
+#define COMMON_ACTION_N_JUMP			 9
+#define COMMON_ACTION_QCF				10
+#define COMMON_ACTION_BACK_CHARGE		11
