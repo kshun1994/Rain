@@ -24,6 +24,7 @@ Animation::Animation(const sf::Texture& texture)
 , frameSize_()
 , numFrames_(0)
 , currentAnimationFrame_(0)
+, nextAnimationFrame_(1)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
 , currentTick_(0)
@@ -38,6 +39,7 @@ Animation::Animation(const sf::Texture& texture,
 : sprite_(texture)
 , frameSize_()
 , currentAnimationFrame_(0)
+, nextAnimationFrame_(1)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
 , currentTick_(0)
@@ -70,6 +72,7 @@ Animation::Animation(const sf::Texture& texture,
 : sprite_(texture)
 , frameSize_()
 , currentAnimationFrame_(0)
+, nextAnimationFrame_(1)
 , duration_(sf::Time::Zero)
 , elapsedTime_(sf::Time::Zero)
 , currentTick_(0)
@@ -96,7 +99,8 @@ void Animation::setFrames(const std::vector<sf::IntRect>& frameRects, // sprite 
 						  const std::vector<int>& durations)		  // corresponding durations in frames
 {
 	// Clear any stuff from previous animation
-	currentAnimationFrame_ = 0;
+	currentAnimationFrame_ = 0;	
+	nextAnimationFrame_ = 1;
 	currentTick_ = 0;
 	//frameVector_.clear();
 	frameRects_ = frameRects;
@@ -120,6 +124,7 @@ void Animation::setFrames(const std::vector<int>& frameIDs,  // spritesheet indi
 {
 	// Clear any stuff from previous animation
 	currentAnimationFrame_ = 0;
+	nextAnimationFrame_ = 1;
 	currentTick_ = 0;
 	//frameVector_.clear();
 	frameRects_.clear();
@@ -238,15 +243,26 @@ void Animation::update()
 	//RN_DEBUG("Current tick - {}", currentTick_);
 	//RN_DEBUG("Next Anim Tick- {}", nextAnimationFrameTick);
 
-	if (currentTick_ == std::accumulate(durations_.begin(), durations_.begin() + currentAnimationFrame_ + 1, 0))
+	// Find next animation frame based on where currentTick_ falls within durations_
+	int total = 0;
+	for (int i = 0; i < durations_.size(); ++i)
 	{
-		++currentAnimationFrame_;
-		sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);
-
-		if (currentAnimationFrame_ == frameRects_.size() - 1)
+		total += durations_[i];
+		if ((currentTick_ < total) && (currentTick_ >= (total - durations_[i])))
 		{
-			currentAnimationFrame_ = 0;
+			nextAnimationFrame_ = i;
 		}
+	}
+
+	if (currentTick_ == std::accumulate(durations_.begin(), durations_.begin() + nextAnimationFrame_, 0))
+	{
+
+		sprite_.setTextureRect(frameRects_[nextAnimationFrame_]);
+
+		//if (currentAnimationFrame_ == frameRects_.size() - 1)
+		//{
+		//	currentAnimationFrame_ = 0;
+		//}
 	}
 
 	++currentTick_;

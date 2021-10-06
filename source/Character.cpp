@@ -53,7 +53,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.bWalkDurs.resize(EnkSprite.bWalkIDs.size(), 5);
 
 	std::vector<int> crouchToStandInds = {35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
-	EnkSprite.jumpIDs.resize(8); 
+	EnkSprite.jumpIDs.resize(9); 
 	std::iota(EnkSprite.jumpIDs.begin(), EnkSprite.jumpIDs.end(), 45);
 	// Jump animation has to include crouch-to-stand as recovery animation
 	//EnkSprite.jumpIDs.insert(EnkSprite.jumpIDs.end(), std::make_move_iterator(crouchToStandInds.begin()), std::make_move_iterator(crouchToStandInds.end()));
@@ -130,14 +130,14 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Create Enkidu standing state
 		std::unique_ptr<Action> standAction = std::make_unique<Action>();
 		standAction->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
-		standAction->setLoopBounds(0, std::accumulate(spriteStruct_.idleDurs.begin(), spriteStruct_.idleDurs.end(), 0) - 1);
+		standAction->setLoopBounds(0, std::accumulate(spriteStruct_.idleDurs.begin(), spriteStruct_.idleDurs.end(), 0));
 		standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 
 		// Crouching state
 		std::unique_ptr<Action> crouchAction = std::make_unique<Action>();
 		crouchAction->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
-		crouchAction->setLoopBounds(15, 94);
+		crouchAction->setLoopBounds(15, 95);
 		crouchAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 180.f, 220.f)));
 		crouchAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -150.f, 110.f, 100.f)));
 		crouchAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 200.f)));
@@ -145,7 +145,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Forward walk state
 		std::unique_ptr<Action> fWalkAction = std::make_unique<Action>();
 		fWalkAction->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
-		fWalkAction->setLoopBounds(0, std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0) - 1);
+		fWalkAction->setLoopBounds(0, std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0));
 		fWalkAction->setMovePerFrame(std::vector<sf::Vector2f>(std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0), sf::Vector2f(7.f, 0)));
 		//std::vector<sf::Vector2f> movePerFrame(std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0));
 		//float maxSpeed = 20.f;
@@ -160,7 +160,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		// Backward walk state
 		std::unique_ptr<Action> bWalkAction = std::make_unique<Action>();
 		bWalkAction->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
-		bWalkAction->setLoopBounds(10, std::accumulate(spriteStruct_.bWalkDurs.begin(), spriteStruct_.bWalkDurs.end(), 0) - 1);
+		bWalkAction->setLoopBounds(10, std::accumulate(spriteStruct_.bWalkDurs.begin(), spriteStruct_.bWalkDurs.end(), 0));
 		bWalkAction->setMovePerFrame(std::vector<sf::Vector2f>(std::accumulate(spriteStruct_.bWalkDurs.begin(), spriteStruct_.bWalkDurs.end(), 0), sf::Vector2f(-7.f, 0)));
 		std::shared_ptr<Box> hurtBox = std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f);
 		bWalkAction->appendBox(std::move(hurtBox));
@@ -172,11 +172,15 @@ Character::Character(Type type, const TextureHolder& textures)
 		fJumpAction->setAnimationFrames(spriteStruct_.jumpIDs, spriteStruct_.jumpDurs, spriteStruct_.spriteDims);
 		// 7 animation frames until falling loop animation
 		// Falling loop is 2 animation frames
-		fJumpAction->setLoopBounds(34, 43); // These are 1 less than default cause I set jump startup to 4 instead of 5
+		fJumpAction->setLoopBounds(34, 44); // These are 1 less than default cause I set jump startup to 4 instead of 5
 		fJumpAction->setJumpStartup(4);
-		fJumpAction->setJumpBallistics(30.f, 60.f);
+		float jumpInitialVelocity = 100.f;
+		float jumpLaunchAngle     = 89.f;
+		fJumpAction->setJumpBallistics(jumpInitialVelocity, jumpLaunchAngle);
 		fJumpAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		fJumpAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+
+		setGravity(2.5f);
 
 		// Jump has 1 animation frame of startup, 8 animation frames of travel, 10 animation frames of (cancellable) recovery
 

@@ -115,6 +115,7 @@ protected:
 	std::vector<Ballistics>				ballistics_;
 
 	std::pair<int, int>					loopBounds_;
+	int									nextLoopBound_;
 
 	std::vector<std::shared_ptr<Box>>	boxes_;
 	std::vector<Box*>					boxPtrs_;

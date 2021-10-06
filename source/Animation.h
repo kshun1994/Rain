@@ -54,6 +54,7 @@ private:
 	sf::Vector2i						frameSize_; // size of one frame rect
 	std::size_t							numFrames_;
 	std::size_t							currentAnimationFrame_;
+	std::size_t							nextAnimationFrame_;
 	std::vector<Frame>					frameVector_;
 	std::vector<sf::IntRect>			frameRects_;
 	std::vector<int>					durations_;

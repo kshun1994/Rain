@@ -102,7 +102,8 @@ void World::update()
 
 	// Move camera view
 	float CenterX = std::min(charArray_[0]->getPosition().x, charArray_[1]->getPosition().x) + abs((charArray_[0]->getPosition().x - charArray_[1]->getPosition().x) / 2);
-	worldView_.setCenter(CenterX, charArray_[0]->getPosition().y + Constants::VIEW_Y_OFFSET);
+	//worldView_.setCenter(CenterX, charArray_[0]->getPosition().y + Constants::VIEW_Y_OFFSET);
+	worldView_.setCenter(CenterX, Constants::VIEW_Y_OFFSET);
 }
 
 void World::adaptCharacterPosition()

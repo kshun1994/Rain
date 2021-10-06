@@ -20,7 +20,7 @@ Rainy days
 - [ ] Extending Action class
 	- [ ] Make it so boxes can change throughout Action duration
 	- [ ] Add recoveries that are cancellable into specific other Actions
-	- [ ] Fix the animation frame looping (or lack thereof) on JumpAction
+	- [X] Fix the animation frame looping (or lack thereof) on JumpAction
 - [ ] Convert Action into composition-based design?
 - [ ] Have actions that directly lead into other actions
 - [ ] Have actions that change out boxes throughout their duration

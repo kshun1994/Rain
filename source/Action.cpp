@@ -7,7 +7,7 @@ Action::Action()
 : animationDoesLoop_(false)
 , animationIsLooping_(false)
 , loopBounds_(0, 0)
-, currentFrame_(0)
+, currentFrame_(-1) // Initialized to -1 because update() begins by incrementing this by 1
 , properties_()
 , velocityPerFrame_()
 {
@@ -15,24 +15,25 @@ Action::Action()
 
 void Action::update(Character& character)
 {
+	++currentFrame_;
+
 	if (character.getType() == Character::Type::Enkidu)
 	{
 		//RN_DEBUG("CurrentFrame - {}", currentFrame_);
 	}
-
-	// Calculate current frame velocity and move the Entity that amount this frame
-	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
-	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
 
 	// Check to see if Action needs to be looped; this has to go at the very end before incrementing currentFrame_
 	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == loopBounds_.second))
 	{
 		// Assumes Animation updates after Action in Character::update()
 		character.setCurrentAnimationTick(loopBounds_.first);
-		currentFrame_ = loopBounds_.first - 1; // Since it's going to be incremented at the end of this anyway
+		currentFrame_ = loopBounds_.first; // Since it's going to be incremented at the end of this anyway
 	}
 
-	++currentFrame_;
+	// Calculate current frame velocity and move the Entity that amount this frame
+	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
+	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
+
 }
 
 void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
@@ -47,10 +48,12 @@ void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vec
 	velocityPerFrame_.resize(actionDuration, sf::Vector2f(0.f, 0.f));
 }
 
+// Set loop bounds for Action's animation. Arguments are loop start frame (inclusive) and end frame (exclusive).
 void Action::setLoopBounds(const int& start, const int& end)
 {
 	loopBounds_.first = start;
 	loopBounds_.second = end;
+	nextLoopBound_ = end;
 }
 
 void Action::setLoopBounds(const std::pair<int, int>& bounds)
@@ -174,35 +177,46 @@ AirborneAction::~AirborneAction()
 
 void AirborneAction::update(Character& character)
 {
+	++currentFrame_;
+
+	RN_DEBUG("currentFrame_ - {}", currentFrame_);
+
+	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == nextLoopBound_))
+	{
+		// Assumes Animation updates after Action in Character::update()
+		character.setCurrentAnimationTick(loopBounds_.first);
+		// Don't loop again until the same point in the next loop
+		nextLoopBound_ += (loopBounds_.second - loopBounds_.first + 1);
+	}
+
 	// AirborneActions are continuous and have no defined end (they end when the Entity hits the ground)
 	// Thus all currentFrame_ is used for is to advance animations until a looping portion and to calculate velocity
 	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
 	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
 
-	// Use a second variable for progressing through loop so acceleration due to gravity isn't reset by loop resets
-	if ((loopBounds_.first != loopBounds_.second) && (animationLoopProgress_ == loopBounds_.second))
-	{
-		// Find the animation frame corresponding to the loop's beginning
-		int total = 0;
-		int loopAnimationFrame = 0;
-		for (int i = 0; i < animationFrameDurations_.size(); ++i)
-		{
-			total += animationFrameDurations_[i];
-			if (total >= loopBounds_.first)
-			{
-				loopAnimationFrame = i;
-				break;
-			}
-		}
+	//// Use a second variable for progressing through loop so acceleration due to gravity isn't reset by loop resets
+	//if ((loopBounds_.first != loopBounds_.second) && (animationLoopProgress_ == loopBounds_.second))
+	//{
+	//	// Find the animation frame corresponding to the loop's beginning
+	//	int total = 0;
+	//	int loopAnimationFrame = 0;
+	//	for (int i = 0; i < animationFrameDurations_.size(); ++i)
+	//	{
+	//		total += animationFrameDurations_[i];
+	//		if (total >= loopBounds_.first)
+	//		{
+	//			loopAnimationFrame = i;
+	//			break;
+	//		}
+	//	}
 
-		// Assumes Animation updates after Action in Character::update()
-		character.setCurrentAnimationTick(loopBounds_.first);
-		character.setCurrentAnimationFrame(loopAnimationFrame - 1);
-		animationLoopProgress_ = loopBounds_.first - 1; // Since it's going to be incremented at the end of this anyway
-	}
+	//	// Assumes Animation updates after Action in Character::update()
+	//	character.setCurrentAnimationTick(loopBounds_.first);
+	//	character.setCurrentAnimationFrame(loopAnimationFrame - 1);
+	//	animationLoopProgress_ = loopBounds_.first - 1; // Since it's going to be incremented at the end of this anyway
+	//}
 
 	++animationLoopProgress_;
-	++currentFrame_;
 }
 
 int AirborneAction::handleInput(Character& character, std::map<int, bool> stateMap)
@@ -228,6 +242,7 @@ int AirborneAction::handleInput(Character& character, std::map<int, bool> stateM
 		character.setPosture(Character::Posture::Standing);
 
 		currentFrame_ = 0;
+		nextLoopBound_ = loopBounds_.second;
 		animationLoopProgress_ = 0;
 		animationIsLooping_ = false;
 
