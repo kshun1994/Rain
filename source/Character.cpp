@@ -23,6 +23,7 @@ Character::Character(Type type, const TextureHolder& textures)
 , meter_(0.f)
 , facing_(Facing::Right)
 , posture_(Posture::Standing)
+, gravity_(1.f)
 , spriteStruct_()
 , actions_(20)
 , actionID_(0)
@@ -55,7 +56,7 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.jumpIDs.resize(8); 
 	std::iota(EnkSprite.jumpIDs.begin(), EnkSprite.jumpIDs.end(), 45);
 	// Jump animation has to include crouch-to-stand as recovery animation
-	EnkSprite.jumpIDs.insert(EnkSprite.jumpIDs.end(), std::make_move_iterator(crouchToStandInds.begin()), std::make_move_iterator(crouchToStandInds.end()));
+	//EnkSprite.jumpIDs.insert(EnkSprite.jumpIDs.end(), std::make_move_iterator(crouchToStandInds.begin()), std::make_move_iterator(crouchToStandInds.end()));
 	EnkSprite.jumpDurs.resize(EnkSprite.jumpIDs.size(), 5);
 	EnkSprite.jumpDurs[0] = 4; // Jump startup is 4f why not
 
@@ -127,14 +128,14 @@ Character::Character(Type type, const TextureHolder& textures)
 		spriteStruct_ = EnkSprite;
 
 		// Create Enkidu standing state
-		std::unique_ptr<StandAction> standAction = std::make_unique<StandAction>();
+		std::unique_ptr<Action> standAction = std::make_unique<Action>();
 		standAction->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 		standAction->setLoopBounds(0, std::accumulate(spriteStruct_.idleDurs.begin(), spriteStruct_.idleDurs.end(), 0) - 1);
 		standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 
 		// Crouching state
-		std::unique_ptr<CrouchAction> crouchAction = std::make_unique<CrouchAction>();
+		std::unique_ptr<Action> crouchAction = std::make_unique<Action>();
 		crouchAction->setAnimationFrames(spriteStruct_.crouchIDs, spriteStruct_.crouchDurs, spriteStruct_.spriteDims);
 		crouchAction->setLoopBounds(15, 94);
 		crouchAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 180.f, 220.f)));
@@ -142,7 +143,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		crouchAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 200.f)));
 
 		// Forward walk state
-		std::unique_ptr<FWalkAction> fWalkAction = std::make_unique<FWalkAction>();
+		std::unique_ptr<Action> fWalkAction = std::make_unique<Action>();
 		fWalkAction->setAnimationFrames(spriteStruct_.fWalkIDs, spriteStruct_.fWalkDurs, spriteStruct_.spriteDims);
 		fWalkAction->setLoopBounds(0, std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0) - 1);
 		fWalkAction->setMovePerFrame(std::vector<sf::Vector2f>(std::accumulate(spriteStruct_.fWalkDurs.begin(), spriteStruct_.fWalkDurs.end(), 0), sf::Vector2f(7.f, 0)));
@@ -157,7 +158,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		fWalkAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 
 		// Backward walk state
-		std::unique_ptr<BWalkAction> bWalkAction = std::make_unique<BWalkAction>();
+		std::unique_ptr<Action> bWalkAction = std::make_unique<Action>();
 		bWalkAction->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
 		bWalkAction->setLoopBounds(10, std::accumulate(spriteStruct_.bWalkDurs.begin(), spriteStruct_.bWalkDurs.end(), 0) - 1);
 		bWalkAction->setMovePerFrame(std::vector<sf::Vector2f>(std::accumulate(spriteStruct_.bWalkDurs.begin(), spriteStruct_.bWalkDurs.end(), 0), sf::Vector2f(-7.f, 0)));
@@ -166,46 +167,16 @@ Character::Character(Type type, const TextureHolder& textures)
 		std::shared_ptr<Box> collideBox = std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f);
 		bWalkAction->appendBox(std::move(collideBox));
 
-		// Jump forward state
-		// TODO Make a Jump subclass for Action that just takes in a peak height, duration, and distance travelled and does all of this automatically
-		// Below equations have gravity in units of pixels per game tick ^ 2
-		// Time of flight T = (2 * ySpeedInitial) / gravity
-		// ySpeed at any time t = ySpeedInitial - (gravity * t)
-		// peakHeight = (ySpeedInitial ^ 2) / (2 * gravity)
-		// xDistTravel = (((xSpeedInitial ^ 2) + (ySpeedInitial ^ 2)) * sinf(2 * (tanf(ySpeedInitial / xSpeedInitial)))) / gravity
-		//
-		// Can calculate gravity or ySpeedInitial given the other and total duration
-		//     gravity = (2 * ySpeedInitial) / duration
-		//     ySpeedInitial = (gravity * duration) / 2
-		// Can calculate ySpeedInitial given peakHeight and gravity
-		//     ySpeedInitial = sqrt(2 * gravity * peakHeight)
-		// Can calculate gravity given ySpeedInitial and peakHeight
-		//     gravity = (ySpeedInitial ^ 2) / (2 * peakHeight)
-		// Can calculate xSpeed given gravity, ySpeedInitial, and range (total horizontal distance travelled)
-		//     xSpeed = (gravity * range) / (2 * ySpeedInitial)
-		//
-		// Once above has been calculated, the number of frames to display each jump animation frame can be calculated
-
+		// Forward jump state
 		std::unique_ptr<JumpAction> fJumpAction = std::make_unique<JumpAction>();
 		fJumpAction->setAnimationFrames(spriteStruct_.jumpIDs, spriteStruct_.jumpDurs, spriteStruct_.spriteDims);
-		int jumpStartup = 4;
-		int jumpDuration = 35;
-		std::vector<int> startupInds;
-		std::vector<int> activeInds;
-		for (int i = 0; i < std::accumulate(spriteStruct_.jumpDurs.begin(), spriteStruct_.jumpDurs.end(), 0); ++i)
-		{
-			if (i < jumpStartup)
-			{
-				startupInds.push_back(i);
-			}
-			if ((jumpStartup <= i) && (i < (jumpStartup + jumpDuration)))
-			{
-				activeInds.push_back(i);
-			}
-		}
-		fJumpAction->addProperty(Action::Property::Startup, startupInds);
-		fJumpAction->addProperty(Action::Property::Active, activeInds);
-		fJumpAction->setJumpArcViaInitialY(15.f, 500.f, 500.f, 35);
+		// 7 animation frames until falling loop animation
+		// Falling loop is 2 animation frames
+		fJumpAction->setLoopBounds(34, 43); // These are 1 less than default cause I set jump startup to 4 instead of 5
+		fJumpAction->setJumpStartup(4);
+		fJumpAction->setJumpBallistics(30.f, 60.f);
+		fJumpAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
+		fJumpAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 
 		// Jump has 1 animation frame of startup, 8 animation frames of travel, 10 animation frames of (cancellable) recovery
 
@@ -226,7 +197,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		spriteStruct_ = YuzuSprite;
 
 		// Create Yuzu standing state
-		std::unique_ptr<StandAction> standAction = std::make_unique<StandAction>();
+		std::unique_ptr<Action> standAction = std::make_unique<Action>();
 		standAction->setAnimationFrames(spriteStruct_.idleIDs, spriteStruct_.idleDurs, spriteStruct_.spriteDims);
 		standAction->setLoopBounds(0, std::accumulate(spriteStruct_.idleDurs.begin(), spriteStruct_.idleDurs.end(), 0) - 1);
 
@@ -451,6 +422,16 @@ void Character::setPosture(Posture posture)
 	posture_ = posture;
 }
 
+float Character::getGravity() const
+{
+	return gravity_;
+}
+
+void Character::setGravity(const float& gravity)
+{
+	gravity_ = gravity;
+}
+
 void Character::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& rect)
 {
 	sprite_.setFrames(frameIDs, durations, rect);
@@ -464,4 +445,9 @@ void Character::setAnimationRepeat(bool flag)
 void Character::setCurrentAnimationTick(const int& tick)
 {
 	sprite_.setCurrentTick(tick);
+}
+
+void Character::setCurrentAnimationFrame(const int& frame)
+{
+	sprite_.setCurrentAnimationFrame(frame);
 }

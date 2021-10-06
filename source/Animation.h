@@ -32,6 +32,7 @@ public:
 												  const sf::Vector2i& rect);
 
 	void								setCurrentTick(const int& tick);
+	void								setCurrentAnimationFrame(const int& frame);
 
 	void								setFrameSize(sf::Vector2i frameSize);
 	void								setNumFrames(std::size_t numFrames);

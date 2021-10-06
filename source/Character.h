@@ -77,6 +77,9 @@ public:
 	Posture												getPosture() const;
 	void												setPosture(Posture posture);
 
+	float												getGravity() const;
+	void												setGravity(const float& gravity);
+
 	int													getCurrentActionID();
 	void												setCurrentActionID(int id);
 
@@ -85,6 +88,7 @@ public:
 																 		   const sf::Vector2i& rect);
 	void												setAnimationRepeat(bool flag);
 	void												setCurrentAnimationTick(const int& tick);
+	void												setCurrentAnimationFrame(const int& frame);
 
 private:
 	void												parseInput(unsigned int input);
@@ -94,8 +98,8 @@ private:
 	Type												type_;
 	SpriteStruct										spriteStruct_;
 
-	Action*										action_;
-	std::vector<std::unique_ptr<Action>>			actions_;
+	Action*												action_;
+	std::vector<std::unique_ptr<Action>>				actions_;
 	int													actionID_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
@@ -106,6 +110,7 @@ private:
 	float												meter_;
 	Facing												facing_;
 	Posture												posture_;
+	float												gravity_;
 };
 
 #define CONTINUE_ACTION					 0
@@ -118,5 +123,6 @@ private:
 #define COMMON_ACTION_F_JUMP			 7
 #define COMMON_ACTION_B_JUMP			 8
 #define COMMON_ACTION_N_JUMP			 9
-#define COMMON_ACTION_QCF				10
-#define COMMON_ACTION_BACK_CHARGE		11
+#define COMMON_ACTION_LAND_RECOVER		10
+#define COMMON_ACTION_QCF				11
+#define COMMON_ACTION_BACK_CHARGE		12

@@ -164,6 +164,11 @@ void Animation::setCurrentTick(const int& tick)
 	}
 }
 
+void Animation::setCurrentAnimationFrame(const int& frame)
+{
+	currentAnimationFrame_ = frame;
+}
+
 
 const sf::Texture* Animation::getTexture() const
 {
@@ -237,6 +242,11 @@ void Animation::update()
 	{
 		++currentAnimationFrame_;
 		sprite_.setTextureRect(frameRects_[currentAnimationFrame_]);
+
+		if (currentAnimationFrame_ == frameRects_.size() - 1)
+		{
+			currentAnimationFrame_ = 0;
+		}
 	}
 
 	++currentTick_;

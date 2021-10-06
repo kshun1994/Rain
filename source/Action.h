@@ -51,6 +51,14 @@ Need some kind of updateProperties() private function that per-frame checks whic
 class Action
 {
 public:
+	struct Ballistics
+	{
+		float LaunchVelocity;
+		float LaunchAngle;
+		int	  FrameApplied;
+	};
+
+public:
 	enum Property
 	{
 		None				= 0,
@@ -72,8 +80,6 @@ public:
 	virtual void						setAnimationFrames(const std::vector<int>& frameIDs,
 														   const std::vector<int>& durations,
 														   const sf::Vector2i& spriteDims);
-	virtual void						setAnimationLoop(const bool& flag);
-	virtual void						setAnimationLoop(const std::vector<int>& loopFrames);
 
 	virtual void						setLoopBounds(const int& start, const int& end);
 	virtual void						setLoopBounds(const std::pair<int, int>& bounds);
@@ -87,9 +93,11 @@ public:
 	virtual void						setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame);
 
 										// For states like airborne (jumping) and hitstun
-	virtual void						applyBallisticVector(const float& gravity, const float& launchSpeed, const float& launchAngle);
+	virtual void						applyBallisticVector(const float& launchVelocity, const float& launchAngle);
 
 protected:
+	virtual sf::Vector2f				calculateVelocity(const float& gravity);
+
 	virtual void						setAnimation(Character& character);
 	virtual void						setAnimation(Character& character, const std::vector<int>& frameIDs,
 																		   const std::vector<int>& durations,
@@ -103,7 +111,8 @@ protected:
 	bool								animationDoesLoop_;
 	bool								animationIsLooping_;
 
-	std::vector<sf::Vector2f>			movePerFrame_;
+	std::vector<sf::Vector2f>			velocityPerFrame_;
+	std::vector<Ballistics>				ballistics_;
 
 	std::pair<int, int>					loopBounds_;
 
@@ -115,67 +124,35 @@ protected:
 	int									currentFrame_;
 };
 
-class StandAction : public Action
+class AirborneAction : public Action
 {
 public:
-	virtual								~StandAction() {};
-
-	virtual void						enter(Character& character);
-
-};
-
-class CrouchAction : public Action
-{
-public:
-	virtual								~CrouchAction() {};
-
-	virtual void						enter(Character& character);
-
-};
-
-class FWalkAction : public Action
-{
-public:
-	virtual								~FWalkAction() {};
+										~AirborneAction();
 
 	virtual void						update(Character& character);
+	virtual int							handleInput(Character& character, std::map<int, bool> stateMap);
 
 	virtual void						enter(Character& character);
 
-	void								setSpeed(float speed);
+protected:				
+	virtual sf::Vector2f				calculateVelocity(const float& gravity);
 
-private:
-	float								speed_ = 5.f;
+protected:
+	int									animationLoopProgress_;
+	int									startup_;
 };
 
-class BWalkAction : public Action
-{
-public:
-	virtual								~BWalkAction() {};
-
-	virtual void						update(Character& character);
-
-	virtual void						enter(Character& character);
-
-	void								setSpeed(float speed);
-
-private:
-	float								speed_ = 5.f;
-};
-
-class JumpAction : public Action
+class JumpAction : public AirborneAction
 {
 public:
 	virtual								~JumpAction() {};
 
-	virtual	int 						handleInput(Character& character, std::map<int, bool> stateMap);
+	virtual void						update(Character& character);
 
-	virtual void						setJumpArcViaInitialY(const float& ySpeedInitial,
-															  const float& peakHeight,
-															  const float& range,
-															  const int& jumpDuration);
-	virtual void						setJumpArcViaGravity(const float& gravity,
-															 const float& peakHeight,
-															 const float& range,
-															 const int& jumpDuration);
+	virtual void						setJumpStartup(const int& startup);
+	virtual void						setJumpBallistics(const float& launchVelocity, const float& launchAngle);
+
+protected:
+	float								launchVelocity_;
+	float								launchAngle_;
 };

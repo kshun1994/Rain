@@ -9,7 +9,7 @@ Action::Action()
 , loopBounds_(0, 0)
 , currentFrame_(0)
 , properties_()
-, movePerFrame_()
+, velocityPerFrame_()
 {
 }
 
@@ -20,8 +20,9 @@ void Action::update(Character& character)
 		//RN_DEBUG("CurrentFrame - {}", currentFrame_);
 	}
 
-	// Move the character a specified amount for the given frame
-	character.move(character.getFacingSign() * movePerFrame_[currentFrame_].x, -1 * movePerFrame_[currentFrame_].y);
+	// Calculate current frame velocity and move the Entity that amount this frame
+	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
+	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
 
 	// Check to see if Action needs to be looped; this has to go at the very end before incrementing currentFrame_
 	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == loopBounds_.second))
@@ -43,21 +44,7 @@ void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vec
 	// Initialize vectors
 	int actionDuration = std::accumulate(durations.begin(), durations.end(), 0);
 	properties_.resize(actionDuration, Action::Property::None);
-	movePerFrame_.resize(actionDuration, sf::Vector2f(0.f, 0.f));
-}
-
-void Action::setAnimationLoop(const bool& flag)
-{
-	// In case of no arguments to function set entire animation as loop range
-	animationDoesLoop_ = flag;
-	animationLoopFrames_.resize(animationFrameIDs_.size());
-	std::iota(animationLoopFrames_.begin(), animationLoopFrames_.end(), 0);
-}
-
-void Action::setAnimationLoop(const std::vector<int>& loopFrames)
-{
-	animationDoesLoop_ = true;
-	animationLoopFrames_ = loopFrames;
+	velocityPerFrame_.resize(actionDuration, sf::Vector2f(0.f, 0.f));
 }
 
 void Action::setLoopBounds(const int& start, const int& end)
@@ -99,18 +86,35 @@ int Action::getCurrentProperty() const
 
 void Action::setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame)
 {
-	movePerFrame_ = movePerFrame;
+	velocityPerFrame_ = movePerFrame;
 }
 
-void Action::applyBallisticVector(const float& gravity, const float& launchSpeed, const float& launchAngle)
+void Action::applyBallisticVector(const float& launchVelocity, const float& launchAngle)
 {
 	// Airborne states need to track y-height every frame and leave state as soon as y = 0
 
-	// Add to movePerFrame_ elements based on ballistic trajectory calculation per unit time (i.e. per frame)
-	for (sf::Vector2f velocity : movePerFrame_)
-	{
+	Ballistics ballistics;
+	ballistics.LaunchVelocity = launchVelocity;
+	ballistics.LaunchAngle = launchAngle;
+	ballistics.FrameApplied = currentFrame_;
 
+	// ballistics_ is a vector so multiple vectors can act on the same Entity at once
+	ballistics_.push_back(ballistics);
+}
+
+sf::Vector2f Action::calculateVelocity(const float& gravity)
+{
+	// Get base action velocity for this frame
+	sf::Vector2f velocity = velocityPerFrame_[currentFrame_];
+
+	// Iterate through ballistics
+	for (Ballistics ballisticVector : ballistics_)
+	{
+		velocity.x += ballisticVector.LaunchVelocity * cos(ballisticVector.LaunchAngle * (M_PI / 180.f));
+		velocity.y += ballisticVector.LaunchVelocity * sin(ballisticVector.LaunchAngle * (M_PI / 180.f)) - (gravity * double(currentFrame_ - ballisticVector.FrameApplied));
 	}
+
+	return velocity;
 }
 
 void Action::setAnimation(Character& character)
@@ -164,181 +168,117 @@ void Action::enter(Character& character)
 	setAnimation(character);
 }
 
-void StandAction::enter(Character& character)
+AirborneAction::~AirborneAction()
 {
-	Action::enter(character);
-	RN_DEBUG("Entered StandAction.");
 }
 
-void CrouchAction::enter(Character& character)
+void AirborneAction::update(Character& character)
 {
-	Action::enter(character);
-	RN_DEBUG("Entered CrouchAction.");
-}
+	// AirborneActions are continuous and have no defined end (they end when the Entity hits the ground)
+	// Thus all currentFrame_ is used for is to advance animations until a looping portion and to calculate velocity
+	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
+	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
 
-void FWalkAction::update(Character& character)
-{
-	Action::update(character);
-	
-}
-
-void FWalkAction::enter(Character& character)
-{
-	Action::enter(character);
-	RN_DEBUG("Entered FWalkAction.");
-}
-
-void FWalkAction::setSpeed(float speed)
-{
-	speed_ = speed;
-}
-
-void BWalkAction::update(Character& character)
-{
-	Action::update(character);
-}
-
-void BWalkAction::enter(Character& character)
-{
-	Action::enter(character);
-	RN_DEBUG("Entered BWalkAction.");
-}
-
-void BWalkAction::setSpeed(float speed)
-{
-	speed_ = speed;
-}
-
-int JumpAction::handleInput(Character& character, std::map<int, bool> stateMap)
-{
-	if (currentFrame_ == std::accumulate(animationFrameDurations_.begin(), animationFrameDurations_.end(), 0))
+	// Use a second variable for progressing through loop so acceleration due to gravity isn't reset by loop resets
+	if ((loopBounds_.first != loopBounds_.second) && (animationLoopProgress_ == loopBounds_.second))
 	{
-		for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
+		// Find the animation frame corresponding to the loop's beginning
+		int total = 0;
+		int loopAnimationFrame = 0;
+		for (int i = 0; i < animationFrameDurations_.size(); ++i)
 		{
-			if (it->second && (character.getCurrentActionID() != it->first))
+			total += animationFrameDurations_[i];
+			if (total >= loopBounds_.first)
 			{
-				for (Box* box : boxPtrs_)
-				{
-					auto detachedBox = character.detachChild(*box);
-					boxes_.push_back(std::static_pointer_cast<Box>(detachedBox));
-				}
-
-				boxPtrs_.clear();
-
-				character.setCurrentActionID(it->first);
-
-				currentFrame_ = 0;
-				animationIsLooping_ = false;
-
-				return it->first;
+				loopAnimationFrame = i;
+				break;
 			}
 		}
+
+		// Assumes Animation updates after Action in Character::update()
+		character.setCurrentAnimationTick(loopBounds_.first);
+		character.setCurrentAnimationFrame(loopAnimationFrame - 1);
+		animationLoopProgress_ = loopBounds_.first - 1; // Since it's going to be incremented at the end of this anyway
+	}
+
+	++animationLoopProgress_;
+	++currentFrame_;
+}
+
+int AirborneAction::handleInput(Character& character, std::map<int, bool> stateMap)
+{
+	// Check if character has landed every frame
+	//RN_DEBUG("Current position: ({}, {})", character.getPosition().x, character.getPosition().y);
+	RN_DEBUG("Current frame: {}", currentFrame_);
+	if ((currentFrame_ > startup_) && (character.getPosition().y >= 0.f))
+	{
+		// Make sure character doesn't end up buried in the ground
+		character.setPosition(sf::Vector2f(character.getPosition().x, 0.f));
+
+		for (Box* box : boxPtrs_)
+		{
+			auto detachedBox = character.detachChild(*box);
+			boxes_.push_back(std::static_pointer_cast<Box>(detachedBox));
+		}
+
+		boxPtrs_.clear();
+		ballistics_.clear();
+
+		character.setCurrentActionID(COMMON_ACTION_STAND);
+		character.setPosture(Character::Posture::Standing);
+
+		currentFrame_ = 0;
+		animationLoopProgress_ = 0;
+		animationIsLooping_ = false;
+
+		return COMMON_ACTION_STAND;
 	}
 
 	return CONTINUE_ACTION;
 }
 
-void JumpAction::setJumpArcViaInitialY(const float& ySpeedInitial,
-									   const float& peakHeight, 
-									   const float& range, 
-									   const int& jumpDuration)
+void AirborneAction::enter(Character& character)
 {
-	// Calculate xSpeed
-	float xSpeed = range / jumpDuration;
+	Action::enter(character);
 
-	// Calculate gravity for jump arc
-	//float gravity = pow(ySpeedInitial, 2) / (2.f * double(peakHeight));
-	float gravity = (2 * ySpeedInitial) / jumpDuration;
-	//float gravity = ((4 * double(ySpeedInitial) * double(jumpDuration)) - (8 * double(peakHeight))) / pow(double(jumpDuration), 2);
-	//float gravity = ((pow(xSpeed, 2) + pow(ySpeedInitial, 2)) * pow(sinf(tanf(ySpeedInitial / xSpeed)), 2)) / (2 * double(peakHeight));
-
-	// Check to make sure jump active range is the same as input duration of travel
-	int activeFrames = 0;
-	for (int property : properties_)
-	{
-		if (property & Action::Property::Active)
-		{
-			++activeFrames;
-		}
-	}
-	assert(activeFrames == jumpDuration);
-
-	for (int i = 0; i < movePerFrame_.size(); ++i)
-	{
-		if (properties_[i] & Action::Property::Active)
-		{
-			movePerFrame_[i].x = xSpeed;
-			movePerFrame_[i].y = ySpeedInitial - (i * gravity);
-		}
-	}
-
-	RN_DEBUG("");
+	character.setPosture(Character::Posture::Airborne);
 }
 
-// TODO 
-// Characters have specific gravity numbers (can be modified by proration)
-// Character airborne state just checks position.y every update and once it's 0 leave airborne
-// Have some kind of applyMoveVector() function to be used throughout game?
-
-// Can calculate gravity or ySpeedInitial given the other and total duration
-//     gravity = (2 * ySpeedInitial) / duration
-//     ySpeedInitial = (gravity * duration) / 2
-// Can calculate ySpeedInitial given peakHeight and gravity
-//     ySpeedInitial = sqrt(2 * gravity * peakHeight)
-// Can calculate gravity given ySpeedInitial and peakHeight
-//     gravity = (ySpeedInitial ^ 2) / (2 * peakHeight)
-// Can calculate xSpeed given gravity, ySpeedInitial, and range (total horizontal distance travelled)
-//     xSpeed = (gravity * range) / (2 * ySpeedInitial)
-//
-// Once above has been calculated, the number of frames to display each jump animation frame can be calculated
-
-void JumpAction::setJumpArcViaGravity(const float& gravity, 
-									  const float& peakHeight, 
-									  const float& range, 
-									  const int& jumpDuration)
+sf::Vector2f AirborneAction::calculateVelocity(const float& gravity)
 {
-	// Calculate ySpeedInital for jump arc
-	float ySpeedInitial = sqrt(2 * gravity * peakHeight);
+	// Get base action velocity for this frame
+	sf::Vector2f velocity(0.f, 0.f);
 
-	// Calculate xSpeed
-	float xSpeed = (gravity * range) / (2 * ySpeedInitial);
-
-	// Check to make sure jump active range is the same as input jumpDuration of travel
-	int activeFrames = 0;
-	for (int property : properties_)
+	// Iterate through ballistics and add component velocities
+	for (Ballistics ballisticVector : ballistics_)
 	{
-		if (property & Action::Property::Active)
-		{
-			++activeFrames;
-		}
+		velocity.x += ballisticVector.LaunchVelocity * cos(ballisticVector.LaunchAngle * (M_PI / 180.f));
+		velocity.y += ballisticVector.LaunchVelocity * sin(ballisticVector.LaunchAngle * (M_PI / 180.f)) - (gravity * (double(currentFrame_) - double(ballisticVector.FrameApplied)));
 	}
-	assert(activeFrames == jumpDuration);
 
-	for (int i = 0; i < jumpDuration; ++i)
-	{
-		movePerFrame_[i].x = xSpeed;
-		movePerFrame_[i].y = ySpeedInitial - (i * gravity);
-	}
+	return velocity;
 }
 
-//void JumpAction::setAnimationFrames(const std::vector<int>& frameIDs, const sf::Vector2i& spriteDims, const int& jumpStartup, const int& jumpDuration)
-//{
-//	int remainingDuration = jumpDuration;
-//
-//	// Check to make sure jump active range is the same as input jumpDuration of travel
-//	// This means properties have to be set BEFORE animation is set
-//	int activeFrames = 0;
-//	for (int property : properties_)
-//	{
-//		if (property & Action::Property::Active)
-//		{
-//			++activeFrames;
-//		}
-//	}
-//	assert(activeFrames == jumpDuration);
-//
-//	// Want to split the 
-//}
+void JumpAction::update(Character& character)
+{
+	if (currentFrame_ == startup_)
+	{
+		this->applyBallisticVector(launchVelocity_, launchAngle_);
+	}
+
+	AirborneAction::update(character);
+}
+
+void JumpAction::setJumpStartup(const int& startup)
+{
+	startup_ = startup;
+}
+
+void JumpAction::setJumpBallistics(const float& launchVelocity, const float& launchAngle)
+{
+	launchVelocity_ = launchVelocity;
+	launchAngle_ = launchAngle;
+}
 
 /*
 
