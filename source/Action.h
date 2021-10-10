@@ -51,6 +51,9 @@ Need some kind of updateProperties() private function that per-frame checks whic
 class Action
 {
 public:
+	typedef std::vector<std::shared_ptr<Box>> Boxes;
+
+public:
 	struct Ballistics
 	{
 		float LaunchVelocity;
@@ -66,6 +69,7 @@ public:
 		Active				= 1 << 1,
 		Recovery			= 1 << 2,
 		Airborne			= 1 << 3,
+		Cancellable			= 1 << 4,
 	};
 
 public: 
@@ -84,8 +88,8 @@ public:
 	virtual void						setLoopBounds(const int& start, const int& end);
 	virtual void						setLoopBounds(const std::pair<int, int>& bounds);
 
-	virtual void						setBoxes(std::vector<std::shared_ptr<Box>> boxes);
-	virtual void						appendBox(std::shared_ptr<Box> box);
+	virtual void						updateBoxes(Character& character);
+	virtual void						setBoxes(const int& frame, Boxes boxes);
 
 	virtual void						addProperty(Property property, std::vector<int> frameInds);
 	virtual int 						getCurrentProperty() const;
@@ -117,8 +121,9 @@ protected:
 	std::pair<int, int>					loopBounds_;
 	int									nextLoopBound_;
 
-	std::vector<std::shared_ptr<Box>>	boxes_;
+	std::vector<Boxes>					boxes_;
 	std::vector<Box*>					boxPtrs_;
+	int									currentBoxesInd_;
 
 	std::vector<int>					properties_;
 
@@ -128,6 +133,7 @@ protected:
 class AirborneAction : public Action
 {
 public:
+										AirborneAction();
 										~AirborneAction();
 
 	virtual void						update(Character& character);
@@ -135,11 +141,12 @@ public:
 
 	virtual void						enter(Character& character);
 
+	virtual void						setBoxes(const int& frame, Boxes boxes);
+
 protected:				
 	virtual sf::Vector2f				calculateVelocity(const float& gravity);
 
 protected:
-	int									animationLoopProgress_;
 	int									startup_;
 };
 

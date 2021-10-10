@@ -14,7 +14,14 @@ Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height
 void Box::updateCurrent()
 {
 	// Flip offset relative to parent if parent flips facing
-	xOffset_ = dynamic_cast<Entity*>(parent_)->getFacing() == Entity::Facing::Right ? abs(xOffset_) : -1 * abs(xOffset_);
+	xOffsetCorrected_ = dynamic_cast<Entity*>(parent_)->getFacing() == Entity::Facing::Right ? xOffset_ : -1 * xOffset_;
+	//if (xOffset_ >= 0)
+	//{
+	//}
+	//else
+	//{
+	//	xOffset_ = dynamic_cast<Entity*>(parent_)->getFacing() == Entity::Facing::Right ? -1 * abs(xOffset_) : abs(xOffset_);
+	//}
 }
 
 unsigned int Box::getCategory() const
@@ -71,15 +78,16 @@ void Box::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 	#ifdef RN_DEBUG
 
 		sf::Color fillColor = BoxDrawColors[(type_)];
-		fillColor.a = 32;
+		//fillColor.a = 32;
+		fillColor.a = 0;
 
 		sf::RectangleShape drawBox;
 		drawBox.setSize(sf::Vector2f(width_, height_));
 		drawBox.setOrigin(width_ / 2, height_);
 		drawBox.setFillColor(fillColor);
 		drawBox.setOutlineColor(BoxDrawColors[type_]);
-		drawBox.setOutlineThickness(1.f);
-		drawBox.setPosition(this->getWorldPosition().x + xOffset_, this->getWorldPosition().y + yOffset_);
+		drawBox.setOutlineThickness(2.f);
+		drawBox.setPosition(this->getWorldPosition().x + xOffsetCorrected_, this->getWorldPosition().y + yOffset_);
 
 		target.draw(drawBox);
 
@@ -88,7 +96,7 @@ void Box::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 
 sf::FloatRect Box::getRect() const
 {
-	return sf::FloatRect(this->getWorldPosition().x + xOffset_ - (width_ / 2), 
+	return sf::FloatRect(this->getWorldPosition().x + xOffsetCorrected_ - (width_ / 2), 
 						 this->getWorldPosition().y + yOffset_ - height_, 
 						 width_, height_);
 }

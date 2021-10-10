@@ -7,9 +7,11 @@ Action::Action()
 : animationDoesLoop_(false)
 , animationIsLooping_(false)
 , loopBounds_(0, 0)
+, nextLoopBound_()
 , currentFrame_(-1) // Initialized to -1 because update() begins by incrementing this by 1
 , properties_()
 , velocityPerFrame_()
+, currentBoxesInd_()
 {
 }
 
@@ -34,6 +36,7 @@ void Action::update(Character& character)
 	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
 	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
 
+	updateBoxes(character);
 }
 
 void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vector<int>& durations, const sf::Vector2i& spriteDims)
@@ -46,6 +49,7 @@ void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vec
 	int actionDuration = std::accumulate(durations.begin(), durations.end(), 0);
 	properties_.resize(actionDuration, Action::Property::None);
 	velocityPerFrame_.resize(actionDuration, sf::Vector2f(0.f, 0.f));
+	boxes_.resize(actionDuration);
 }
 
 // Set loop bounds for Action's animation. Arguments are loop start frame (inclusive) and end frame (exclusive).
@@ -61,14 +65,41 @@ void Action::setLoopBounds(const std::pair<int, int>& bounds)
 	loopBounds_ = bounds;
 }
 
-void Action::setBoxes(std::vector<std::shared_ptr<Box>> boxes)
+void Action::updateBoxes(Character& character)
 {
-	boxes_ = std::move(boxes);
+	if (currentFrame_ >= boxes_.size())
+	{
+		return;
+	}
+
+	// If the current frame's element in boxes_ is not empty, then switch those in
+	if (!boxes_[currentFrame_].empty())
+	{
+		// Detach old boxes
+		for (Box* boxPtr : boxPtrs_)
+		{
+			std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
+			boxes_[currentBoxesInd_].push_back(detachedBox);
+		}
+
+		boxPtrs_.clear();
+
+		// Attach new boxes
+		for (std::shared_ptr<Box>& box : boxes_[currentFrame_])
+		{
+			boxPtrs_.push_back(box.get());
+			character.attachChild(std::move(box));
+		}
+
+		boxes_[currentFrame_].clear();
+
+		currentBoxesInd_ = currentFrame_;
+	}
 }
 
-void Action::appendBox(std::shared_ptr<Box> box)
+void Action::setBoxes(const int& frame, Boxes boxes)
 {
-	boxes_.push_back(std::move(box));
+	boxes_[frame] = std::move(boxes);
 }
 
 void Action::addProperty(Property property, std::vector<int> frameInds)
@@ -132,24 +163,29 @@ void Action::setAnimation(Character& character, const std::vector<int>& frameIDs
 
 int Action::handleInput(Character& character, std::map<int, bool> stateMap)
 {
-	for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
+	if (properties_[currentFrame_] & Action::Property::Cancellable)
 	{
-		if (it->second && (character.getCurrentActionID() != it->first))
+		for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
 		{
-			for (Box* box : boxPtrs_)
+			if (it->second && (character.getCurrentActionID() != it->first))
 			{
-				auto detachedBox = character.detachChild(*box);
-				boxes_.push_back(std::static_pointer_cast<Box>(detachedBox));
+				// Detach old boxes
+				for (Box* boxPtr : boxPtrs_)
+				{
+					std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
+					boxes_[currentBoxesInd_].push_back(detachedBox);
+				}
+
+				boxPtrs_.clear();
+
+				character.setCurrentActionID(it->first);
+
+				currentFrame_ = 0;
+				currentBoxesInd_ = 0;
+				animationIsLooping_ = false;
+
+				return it->first;
 			}
-
-			boxPtrs_.clear();
-
-			character.setCurrentActionID(it->first);
-
-			currentFrame_ = 0;
-			animationIsLooping_ = false;
-
-			return it->first;
 		}
 	}
 
@@ -161,14 +197,19 @@ void Action::enter(Character& character)
 	currentFrame_ = 0;
 	character.setCurrentAnimationTick(0);
 
-	for (std::shared_ptr<Box>& box : boxes_)
+	for (std::shared_ptr<Box>& box : boxes_[currentFrame_])
 	{
 		boxPtrs_.push_back(box.get());
 		character.attachChild(std::move(box));
 	}
-	boxes_.clear();
+	boxes_[currentFrame_].clear();
 
 	setAnimation(character);
+}
+
+AirborneAction::AirborneAction()
+: startup_(0)
+{
 }
 
 AirborneAction::~AirborneAction()
@@ -178,8 +219,6 @@ AirborneAction::~AirborneAction()
 void AirborneAction::update(Character& character)
 {
 	++currentFrame_;
-
-	RN_DEBUG("currentFrame_ - {}", currentFrame_);
 
 	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == nextLoopBound_))
 	{
@@ -194,45 +233,22 @@ void AirborneAction::update(Character& character)
 	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
 	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
 
-	//// Use a second variable for progressing through loop so acceleration due to gravity isn't reset by loop resets
-	//if ((loopBounds_.first != loopBounds_.second) && (animationLoopProgress_ == loopBounds_.second))
-	//{
-	//	// Find the animation frame corresponding to the loop's beginning
-	//	int total = 0;
-	//	int loopAnimationFrame = 0;
-	//	for (int i = 0; i < animationFrameDurations_.size(); ++i)
-	//	{
-	//		total += animationFrameDurations_[i];
-	//		if (total >= loopBounds_.first)
-	//		{
-	//			loopAnimationFrame = i;
-	//			break;
-	//		}
-	//	}
-
-	//	// Assumes Animation updates after Action in Character::update()
-	//	character.setCurrentAnimationTick(loopBounds_.first);
-	//	character.setCurrentAnimationFrame(loopAnimationFrame - 1);
-	//	animationLoopProgress_ = loopBounds_.first - 1; // Since it's going to be incremented at the end of this anyway
-	//}
-
-	++animationLoopProgress_;
+	updateBoxes(character);
 }
 
 int AirborneAction::handleInput(Character& character, std::map<int, bool> stateMap)
 {
 	// Check if character has landed every frame
-	//RN_DEBUG("Current position: ({}, {})", character.getPosition().x, character.getPosition().y);
-	RN_DEBUG("Current frame: {}", currentFrame_);
 	if ((currentFrame_ > startup_) && (character.getPosition().y >= 0.f))
 	{
 		// Make sure character doesn't end up buried in the ground
 		character.setPosition(sf::Vector2f(character.getPosition().x, 0.f));
 
-		for (Box* box : boxPtrs_)
+		// Detach old boxes
+		for (Box* boxPtr : boxPtrs_)
 		{
-			auto detachedBox = character.detachChild(*box);
-			boxes_.push_back(std::static_pointer_cast<Box>(detachedBox));
+			std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
+			boxes_[currentBoxesInd_].push_back(detachedBox);
 		}
 
 		boxPtrs_.clear();
@@ -242,8 +258,8 @@ int AirborneAction::handleInput(Character& character, std::map<int, bool> stateM
 		character.setPosture(Character::Posture::Standing);
 
 		currentFrame_ = 0;
+		currentBoxesInd_ = 0;
 		nextLoopBound_ = loopBounds_.second;
-		animationLoopProgress_ = 0;
 		animationIsLooping_ = false;
 
 		return COMMON_ACTION_STAND;
@@ -257,6 +273,16 @@ void AirborneAction::enter(Character& character)
 	Action::enter(character);
 
 	character.setPosture(Character::Posture::Airborne);
+}
+
+void AirborneAction::setBoxes(const int& frame, Boxes boxes)
+{
+	if (frame >= boxes_.size())
+	{
+		boxes_.resize(frame + 1);
+	}
+
+	boxes_[frame] = std::move(boxes);
 }
 
 sf::Vector2f AirborneAction::calculateVelocity(const float& gravity)

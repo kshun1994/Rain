@@ -51,6 +51,7 @@ private:
 
 protected:
 	float					xOffset_;
+	float					xOffsetCorrected_;
 	float					yOffset_;
 	float					width_;
 	float					height_;
