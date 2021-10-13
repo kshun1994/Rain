@@ -43,6 +43,10 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.crouchDurs[0] = 2;
 	EnkSprite.crouchDurs[1] = 2;
 	EnkSprite.crouchDurs[2] = 2;
+	for (auto i = 19; i < EnkSprite.crouchDurs.size(); ++i)
+	{
+		EnkSprite.crouchDurs[i] = 4;
+	}
 
 	EnkSprite.crouchToStandIDs.resize(10);
 	std::iota(EnkSprite.crouchToStandIDs.begin(), EnkSprite.crouchToStandIDs.end(), 44);
@@ -150,7 +154,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		standAction->setBoxes(0, standBoxes);
 		standAction->addProperty(Action::Property::Cancellable, boost::irange(0, sum_vector(spriteStruct_.standDurs)));
 		standAction->setCancelType(Action::CancelType::Idle);
-		standAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.standDurs));
+		standAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.standDurs));
 
 		// Crouching state
 		std::unique_ptr<HeldAction> crouchAction = std::make_unique<HeldAction>();
@@ -161,18 +165,13 @@ Character::Character(Type type, const TextureHolder& textures)
 		crouchBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -150.f, 110.f, 100.f)));
 		crouchBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 200.f)));
 		crouchAction->setBoxes(0, crouchBoxes);
-		crouchAction->addProperty(Action::Property::Recovery, boost::irange(sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs)));
-		crouchAction->setCancelType(Action::CancelType::Basic);
-		crouchAction->setCancel(Action::CancelType::Basic, sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs));
-
-		// "Recovery" from crouch to stand (also used after jumps)
-		std::unique_ptr<Action> crouchToStand = std::make_unique<Action>();
-		crouchToStand->setAnimationFrames(spriteStruct_.crouchToStandIDs, spriteStruct_.crouchToStandDurs, spriteStruct_.spriteDims);
 		Action::Boxes crouchToStandBoxes;
 		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
-		crouchToStand->setBoxes(0, crouchToStandBoxes);
-		crouchToStand->setCancel(~Action::CancelType::Idle, 0, sum_vector(spriteStruct_.crouchToStandDurs));
+		crouchAction->setBoxes(sum_vector(spriteStruct_.crouchDurs, 19)+1, crouchToStandBoxes);
+		crouchAction->addProperty(Action::Property::Recovery, boost::irange(sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs)));
+		crouchAction->setCancelType(Action::CancelType::Basic);
+		crouchAction->setCancel(Action::CancelType::Basic | Action::CancelType::Self, sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs));
 
 		// Forward walk state
 		std::unique_ptr<HeldAction> fWalkAction = std::make_unique<HeldAction>();

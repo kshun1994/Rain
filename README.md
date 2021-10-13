@@ -17,16 +17,11 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
-- [ ] Extending Action class
-	- [X] Make it so boxes can change throughout Action duration
-	- [ ] Add recoveries that are cancellable into specific other Actions
-	- [X] Fix the animation frame looping (or lack thereof) on JumpAction
+- [ ] Add cancellable recovery to jumps
+	- Enkidu uses his crouch-to-stand animation after landing
 - [ ] Make it so Action inputs can be specified as "on press" versus "input for frame" 
 	- i.e. whether or not holding an input will do something on the first frame or if it's triggered by the actual button press
 - [ ] Add a more sophisticated Action priority system instead of the iteration order thing currently done in Action::handleInput()
-- [ ] Convert Action into composition-based design?
-- [ ] Have actions that directly lead into other actions
-- [ ] Have actions that change out boxes throughout their duration
 - [ ] Have some way of specifying draw priority (i.e. be able to determine what entities are on top of the others on any given display frame)
 - [ ] Add camera zoom-in/-out based on between-Character distance and shift camera view to stay within stage bounds
 - [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in Action)
@@ -42,6 +37,10 @@ Rainy days
 - [ ] Pause screen stuff
 	- [ ] Frame stepping
 ---------------------------------------------------------------------------------------------------------------------------------------------
+- [X] Extending Action class
+	- [X] Make it so boxes can change throughout Action duration
+	- [X] Add recoveries that are cancellable into specific other Actions
+	- [X] Fix the animation frame looping (or lack thereof) on JumpAction
 - [X] Make it so inputting Actions during other options doesn't just queue it up indefinitely
 	- E.g. currently hitting 5B during a jump will have Enk immediately do 5B upon landing no matter how long the jump is
 - [X] Add jumping

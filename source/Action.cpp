@@ -5,7 +5,6 @@
 
 Action::Action()
 : animationDoesLoop_(false)
-, animationIsLooping_(false)
 , loopBounds_(0, 0)
 , nextLoopBound_()
 , currentFrame_(-1) // Initialized to -1 because update() begins by incrementing this by 1
@@ -177,34 +176,6 @@ void Action::setCancel(const int& cancelType, const int& startFrameInclusive, co
 	}
 }
 
-//void Action::cleanCancels()
-//{
-//	// Iterate through cancels and if any share the same frame range, consolidate them
-//	std::vector<Cancel> tempCancels = cancels_;
-//
-//	for (int i = 0; i < cancels_.size(); ++i)
-//	{
-//		for (int j = i + 1; j < cancels_.size(); ++j)
-//		{
-//			if (cancels_[i].second == cancels_[j].second)
-//			{
-//				// Adding the CancelTypes from the first element to the second makes it so these are iteratively 
-//				// "passed up" the chain in the case of more than two with the same frame range
-//				cancels_[j].first |= cancels_[i].first;
-//
-//				cancels_.erase(std::next(cancels_.begin(), i));
-//
-//				break;
-//			}
-//		}
-//
-//		// If no matches, add this cancel to tempCancels
-//		tempCancels.push_back(cancels_[i]);
-//	}
-//
-//	cancels_ = tempCancels;
-//}
-
 void Action::setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame)
 {
 	velocityPerFrame_ = movePerFrame;
@@ -264,8 +235,27 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 		for (auto it = actions.rbegin(); it != actions.rend(); ++it)
 		{
 			// Make sure destination state isn't the current state and that it matches the possible cancels
-			// Probably want to modify this in some way eventually to allow self-chains (2A2A2A etc.)
-			if (it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
+			//if (it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
+			if (it->second && (it->first.get() == this) && (cancels_[currentFrame_] & Action::CancelType::Self)) // If destination state is same as current state and current frame is self-cancellable
+			{
+				// Detach old boxes
+				for (Box* boxPtr : boxPtrs_)
+				{
+					std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
+					boxes_[currentBoxesInd_].push_back(detachedBox);
+				}
+
+				boxPtrs_.clear();
+
+				currentFrame_ = 0;
+				currentBoxesInd_ = 0;
+
+				this->enter(character);
+
+				return nullptr;
+			}
+
+			if	(it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
 			{
 				// Detach old boxes
 				for (Box* boxPtr : boxPtrs_)
@@ -287,7 +277,6 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 
 				currentFrame_ = 0;
 				currentBoxesInd_ = 0;
-				animationIsLooping_ = false;
 
 				return it->first.get();
 			}
@@ -327,20 +316,20 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 
 				currentFrame_ = 0;
 				currentBoxesInd_ = 0;
-				animationIsLooping_ = false;
 
 				return it->first.get();
 			}
 		}
 	}
 
-	for (Character::ActionPair& actionPair : actions)
-	{
-		if (actionPair.first.get() == character.getCurrentAction())
-		{
-			actionPair.second = false;
-		}
-	}
+	//for (Character::ActionPair& actionPair : actions)
+	//{
+	//	if (actionPair.first.get() == character.getCurrentAction())
+	//	{
+	//		actionPair.second = false;
+	//		break;
+	//	}
+	//}
 	
 	return nullptr;
 }
@@ -379,6 +368,7 @@ Action* HeldAction::handleInput(Character& character, std::vector<Character::Act
 					if (properties_[i] & Action::Property::Recovery)
 					{
 						currentFrame_ = i;
+						character.setCurrentAnimationTick(currentFrame_);
 						break;
 					}
 				}
@@ -452,7 +442,6 @@ Action* AirborneAction::handleInput(Character& character, std::vector<Character:
 		currentFrame_ = 0;
 		currentBoxesInd_ = 0;
 		nextLoopBound_ = loopBounds_.second;
-		animationIsLooping_ = false;
 
 		return actions[COMMON_ACTION_STAND].first.get();
 	}

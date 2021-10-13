@@ -75,16 +75,17 @@ public:
 
 	enum CancelType
 	{
+		Self				= 1 << 0,
+		Idle				= 1 << 1,
+		Basic				= 1 << 2,
+		Normal				= 1 << 3,
+		CommandNormal		= 1 << 4,
+		Special				= 1 << 5,
+		EX					= 1 << 6,
+		Super				= 1 << 7,
+		Block				= 1 << 8,
+		Unique				= 1 << 9, // For if you want to be able to specify that a specific move can be cancelled into; e.g. cancelType_ |= (Action::CancelType::Unique + moveID_);
 		All					=    ~ 0, // Bitwise NOT 0 sets all bits to 1; thus any bitwise AND will return true
-		Idle				= 1 << 0,
-		Basic				= 1 << 1,
-		Normal				= 1 << 2,
-		CommandNormal		= 1 << 3,
-		Special				= 1 << 4,
-		EX					= 1 << 5,
-		Super				= 1 << 6,
-		Block				= 1 << 7,
-		Unique				= 1 << 8, // For if you want to be able to specify that a specific move can be cancelled into; e.g. cancelType_ |= (Action::CancelType::Unique + moveID_);
 	};
 	// Have a setMoveID() function that internally sets moveID_ as CancelType::Unique + ID 
 	// handleInput() will automatically also include potential destination Action's getID() in addition to whether it's a normal/special/etc.
