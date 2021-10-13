@@ -10,8 +10,11 @@ Action::Action()
 , nextLoopBound_()
 , currentFrame_(-1) // Initialized to -1 because update() begins by incrementing this by 1
 , properties_()
+, cancelType_(0)
+, cancels_(0)
 , velocityPerFrame_()
 , currentBoxesInd_()
+, destinationAction_(nullptr)
 {
 }
 
@@ -46,10 +49,11 @@ void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vec
 	animationSpriteDims_ = spriteDims;
 
 	// Initialize vectors
-	int actionDuration = std::accumulate(durations.begin(), durations.end(), 0);
+	int actionDuration = sum_vector(durations);
 	properties_.resize(actionDuration, Action::Property::None);
 	velocityPerFrame_.resize(actionDuration, sf::Vector2f(0.f, 0.f));
 	boxes_.resize(actionDuration);
+	cancels_.resize(actionDuration);
 }
 
 // Set loop bounds for Action's animation. Arguments are loop start frame (inclusive) and end frame (exclusive).
@@ -113,14 +117,102 @@ void Action::addProperty(Property property, std::vector<int> frameInds)
 	}
 }
 
+void Action::addProperty(Property property, boost::integer_range<int> frameInds)
+{
+	// Make sure input frame inds are within action duration
+	assert(*std::max_element(frameInds.begin(), frameInds.end()) <= properties_.size());
+
+	for (int ind : frameInds)
+	{
+		properties_[ind] |= property;
+	}
+}
+
 int Action::getCurrentProperty() const
 {
 	return properties_[currentFrame_];
 }
 
+void Action::setMoveID(const int& moveID)
+{
+	moveID_ = moveID;
+}
+
+int Action::getMoveID() const
+{
+	return moveID_;
+}
+
+void Action::setCancelType(const int& cancelType)
+{
+	cancelType_ |= cancelType;
+}
+
+int Action::getCancelType() const
+{
+	return cancelType_;
+}
+
+void Action::setCancel(const int& cancelType, const std::vector<int>& frames)
+{
+	for (int frame : frames)
+	{
+		cancels_[frame] |= cancelType;
+	}
+}
+
+void Action::setCancel(const int& cancelType, const boost::integer_range<int>& frames)
+{
+	for (auto frame : frames)
+	{
+		cancels_[frame] |= cancelType;
+	}
+}
+
+void Action::setCancel(const int& cancelType, const int& startFrameInclusive, const int& endFrameExclusive)
+{
+	for (auto frame : boost::irange(startFrameInclusive, endFrameExclusive))
+	{
+		cancels_[frame] |= cancelType;
+	}
+}
+
+//void Action::cleanCancels()
+//{
+//	// Iterate through cancels and if any share the same frame range, consolidate them
+//	std::vector<Cancel> tempCancels = cancels_;
+//
+//	for (int i = 0; i < cancels_.size(); ++i)
+//	{
+//		for (int j = i + 1; j < cancels_.size(); ++j)
+//		{
+//			if (cancels_[i].second == cancels_[j].second)
+//			{
+//				// Adding the CancelTypes from the first element to the second makes it so these are iteratively 
+//				// "passed up" the chain in the case of more than two with the same frame range
+//				cancels_[j].first |= cancels_[i].first;
+//
+//				cancels_.erase(std::next(cancels_.begin(), i));
+//
+//				break;
+//			}
+//		}
+//
+//		// If no matches, add this cancel to tempCancels
+//		tempCancels.push_back(cancels_[i]);
+//	}
+//
+//	cancels_ = tempCancels;
+//}
+
 void Action::setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame)
 {
 	velocityPerFrame_ = movePerFrame;
+}
+
+void Action::setDestinationAction(Action* action)
+{
+	destinationAction_ = action;
 }
 
 void Action::applyBallisticVector(const float& launchVelocity, const float& launchAngle)
@@ -161,13 +253,19 @@ void Action::setAnimation(Character& character, const std::vector<int>& frameIDs
 	character.setAnimationFrames(frameIDs, durations, spriteDims);
 }
 
-int Action::handleInput(Character& character, std::map<int, bool> stateMap)
+Action* Action::handleInput(Character& character, std::vector<Character::ActionPair>& actions)
 {
-	if (properties_[currentFrame_] & Action::Property::Cancellable)
+	// Check to see if current frame is cancellable
+	if (cancels_[currentFrame_] != 0)
 	{
-		for (auto it = stateMap.rbegin(); it != stateMap.rend(); ++it)
+		// Iterate through possible destination states
+		// Currently the only way priority is determined is by the order of the states in this step
+		//   Since it currently iterates backward (via .rbegin()/.rend()), states with greater ID values have greater priority
+		for (auto it = actions.rbegin(); it != actions.rend(); ++it)
 		{
-			if (it->second && (character.getCurrentActionID() != it->first))
+			// Make sure destination state isn't the current state and that it matches the possible cancels
+			// Probably want to modify this in some way eventually to allow self-chains (2A2A2A etc.)
+			if (it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
 			{
 				// Detach old boxes
 				for (Box* boxPtr : boxPtrs_)
@@ -178,18 +276,73 @@ int Action::handleInput(Character& character, std::map<int, bool> stateMap)
 
 				boxPtrs_.clear();
 
-				character.setCurrentActionID(it->first);
+				for (Character::ActionPair& actionPair : actions)
+				{
+					if (actionPair.first.get() == character.getCurrentAction())
+					{
+						actionPair.second = false;
+					}
+				}
+				it->second = false;
 
 				currentFrame_ = 0;
 				currentBoxesInd_ = 0;
 				animationIsLooping_ = false;
 
-				return it->first;
+				return it->first.get();
 			}
 		}
 	}
 
-	return CONTINUE_ACTION;
+	// Check to see if current frame is the LAST frame of the Action's duration and that the current frame isn't the END BOUND of a potential loop
+	if ((currentFrame_ == sum_vector(animationFrameDurations_) - 1) && (currentFrame_ != loopBounds_.second - 1))
+	{
+		// Iterate through possible destination states
+		// Currently the only way priority is determined is by the order of the states in this step
+		//   Since it currently iterates backward (via .rbegin()/.rend()), states with greater ID values have greater priority
+		for (auto it = actions.rbegin(); it != actions.rend(); ++it)
+		{
+			// Make sure destination state isn't the current state
+			// Probably want to modify this in some way eventually to allow self-chains (2A2A2A etc.)
+			if (it->second && ((character.getCurrentAction() != it->first.get())))
+			{
+				// Detach old boxes
+				for (Box* boxPtr : boxPtrs_)
+				{
+					std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
+					boxes_[currentBoxesInd_].push_back(detachedBox);
+				}
+
+				boxPtrs_.clear();
+
+				//character.setCurrentActionID(it->first);
+				for (Character::ActionPair& actionPair : actions)
+				{
+					if (actionPair.first.get() == character.getCurrentAction())
+					{
+						actionPair.second = false;
+					}
+				}
+				it->second = false;
+
+				currentFrame_ = 0;
+				currentBoxesInd_ = 0;
+				animationIsLooping_ = false;
+
+				return it->first.get();
+			}
+		}
+	}
+
+	for (Character::ActionPair& actionPair : actions)
+	{
+		if (actionPair.first.get() == character.getCurrentAction())
+		{
+			actionPair.second = false;
+		}
+	}
+	
+	return nullptr;
 }
 
 void Action::enter(Character& character)
@@ -205,6 +358,37 @@ void Action::enter(Character& character)
 	boxes_[currentFrame_].clear();
 
 	setAnimation(character);
+}
+
+HeldAction::~HeldAction()
+{
+}
+
+Action* HeldAction::handleInput(Character& character, std::vector<Character::ActionPair>& actions)
+{
+	if (!(properties_[currentFrame_] & Action::Property::Recovery))
+	{
+		// Check to see if the current action is still being inputted for or not
+		for (Character::ActionPair& actionPair : actions)
+		{
+			if (actionPair.first.get() == this && !actionPair.second)
+			{
+				// Find recovery frames, if any			
+				for (int i = 0; i < properties_.size(); ++i)
+				{
+					if (properties_[i] & Action::Property::Recovery)
+					{
+						currentFrame_ = i;
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	Action* action = Action::handleInput(character, actions);
+	return action;
 }
 
 AirborneAction::AirborneAction()
@@ -236,7 +420,7 @@ void AirborneAction::update(Character& character)
 	updateBoxes(character);
 }
 
-int AirborneAction::handleInput(Character& character, std::map<int, bool> stateMap)
+Action* AirborneAction::handleInput(Character& character, std::vector<Character::ActionPair>& actions)
 {
 	// Check if character has landed every frame
 	if ((currentFrame_ > startup_) && (character.getPosition().y >= 0.f))
@@ -254,7 +438,15 @@ int AirborneAction::handleInput(Character& character, std::map<int, bool> stateM
 		boxPtrs_.clear();
 		ballistics_.clear();
 
-		character.setCurrentActionID(COMMON_ACTION_STAND);
+		for (Character::ActionPair& actionPair : actions)
+		{
+			if (actionPair.first.get() == this)
+			{
+				actionPair.second = false;
+			}
+		}
+
+		//character.setCurrentActionID(COMMON_ACTION_STAND);
 		character.setPosture(Character::Posture::Standing);
 
 		currentFrame_ = 0;
@@ -262,10 +454,10 @@ int AirborneAction::handleInput(Character& character, std::map<int, bool> stateM
 		nextLoopBound_ = loopBounds_.second;
 		animationIsLooping_ = false;
 
-		return COMMON_ACTION_STAND;
+		return actions[COMMON_ACTION_STAND].first.get();
 	}
 
-	return CONTINUE_ACTION;
+	return nullptr;
 }
 
 void AirborneAction::enter(Character& character)

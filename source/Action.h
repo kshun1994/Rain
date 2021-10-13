@@ -52,6 +52,7 @@ class Action
 {
 public:
 	typedef std::vector<std::shared_ptr<Box>> Boxes;
+	typedef std::pair<int, std::vector<int>> Cancel; // A CancelType (can be multiple) and accompanying vector of cancel-window frames
 
 public:
 	struct Ballistics
@@ -72,12 +73,28 @@ public:
 		Cancellable			= 1 << 4,
 	};
 
+	enum CancelType
+	{
+		All					=    ~ 0, // Bitwise NOT 0 sets all bits to 1; thus any bitwise AND will return true
+		Idle				= 1 << 0,
+		Basic				= 1 << 1,
+		Normal				= 1 << 2,
+		CommandNormal		= 1 << 3,
+		Special				= 1 << 4,
+		EX					= 1 << 5,
+		Super				= 1 << 6,
+		Block				= 1 << 7,
+		Unique				= 1 << 8, // For if you want to be able to specify that a specific move can be cancelled into; e.g. cancelType_ |= (Action::CancelType::Unique + moveID_);
+	};
+	// Have a setMoveID() function that internally sets moveID_ as CancelType::Unique + ID 
+	// handleInput() will automatically also include potential destination Action's getID() in addition to whether it's a normal/special/etc.
+
 public: 
 										Action();
 	virtual								~Action() {};
 
 	virtual void						update(Character& character);
-	virtual int							handleInput(Character& character, std::map<int, bool> stateMap);
+	virtual Action*						handleInput(Character& character, std::vector<std::pair<std::unique_ptr<Action>, bool>>& actions);
 
 	virtual void						enter(Character& character);
 
@@ -92,9 +109,21 @@ public:
 	virtual void						setBoxes(const int& frame, Boxes boxes);
 
 	virtual void						addProperty(Property property, std::vector<int> frameInds);
+	virtual void						addProperty(Property property, boost::integer_range<int> frameInds);
 	virtual int 						getCurrentProperty() const;
 
+	virtual void						setMoveID(const int& moveID);
+	virtual int							getMoveID() const;
+
+	virtual void						setCancelType(const int& cancelType);
+	virtual int							getCancelType() const;
+	virtual void						setCancel(const int& cancelType, const std::vector<int>& frames); 
+	virtual void						setCancel(const int& cancelType, const boost::integer_range<int>& frames); 
+	virtual void						setCancel(const int& cancelType, const int& startFrameInclusive, const int& endFrameExclusive);
+
 	virtual void						setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame);
+
+	virtual void						setDestinationAction(Action* action);
 
 										// For states like airborne (jumping) and hitstun
 	virtual void						applyBallisticVector(const float& launchVelocity, const float& launchAngle);
@@ -108,6 +137,8 @@ protected:
 															               const sf::Vector2i& spriteDims);
 
 protected:
+	int									currentFrame_;
+
 	std::vector<int>					animationFrameIDs_;
 	std::vector<int>					animationLoopFrames_;
 	std::vector<int>					animationFrameDurations_;
@@ -127,9 +158,22 @@ protected:
 
 	std::vector<int>					properties_;
 
-	int									currentFrame_;
+	int									moveID_;
+	int									cancelType_;
+	std::vector<int>					cancels_;
+
+	Action*								destinationAction_;
 };
 
+// For Actions that have a recovery/whatever else that only happens after the player STOPS doing the relevant input
+class HeldAction : public Action
+{
+public:
+										~HeldAction();
+	virtual Action*						handleInput(Character& character, std::vector<std::pair<std::unique_ptr<Action>, bool>>& actions);
+};
+
+// Different from Action in that duration is essentially indefinite until Entity hits the ground
 class AirborneAction : public Action
 {
 public:
@@ -137,7 +181,7 @@ public:
 										~AirborneAction();
 
 	virtual void						update(Character& character);
-	virtual int							handleInput(Character& character, std::map<int, bool> stateMap);
+	virtual Action*						handleInput(Character& character, std::vector<std::pair<std::unique_ptr<Action>, bool>>& actions);
 
 	virtual void						enter(Character& character);
 

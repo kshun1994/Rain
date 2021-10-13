@@ -75,16 +75,6 @@ void World::draw()
 
 void World::update()
 {
-	// Entity updates (states, action initiation/continuation, controllable entities read in player inputs)
-	sceneGraph_.update();
-
-	// Resolve collision interactions (hitbox/hurtbox overlaps etc.)
-	handleCollision();
-	
-	// "Adapt" functions (facing etc.)
-	adaptCharacterPosition();
-	adaptCharacterFacing();
-
 	// Read in accumulated player input for current update, translate to numpad notation, and add to input buffer
 	TaggedInput p1RawInput_ = p1_.getInput();
 	TaggedInput p1NumpadInput_ = translateToNumpadInput(p1_.getInput());
@@ -99,6 +89,16 @@ void World::update()
 
 	// If actionable, initiate action based on input buffer readout
 	charArray_[0]->handleInput(p1NumpadInput_);
+
+	// Entity updates (states, action initiation/continuation, controllable entities read in player inputs)
+	sceneGraph_.update();
+
+	// Resolve collision interactions (hitbox/hurtbox overlaps etc.)
+	handleCollision();
+	
+	// "Adapt" functions (facing etc.)
+	adaptCharacterPosition();
+	adaptCharacterFacing();
 
 	// Move camera view
 	float CenterX = std::min(charArray_[0]->getPosition().x, charArray_[1]->getPosition().x) + abs((charArray_[0]->getPosition().x - charArray_[1]->getPosition().x) / 2);

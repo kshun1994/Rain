@@ -15,6 +15,9 @@
 class Character : public Entity
 {
 public:
+	typedef std::pair<std::unique_ptr<Action>, bool> ActionPair;
+
+public:
 	enum Type
 	{
 		Yuzuriha,
@@ -35,11 +38,14 @@ public:
 		float				originX;
 		float				originY;
 
-		std::vector<int>	idleIDs;
-		std::vector<int>	idleDurs;
+		std::vector<int>	standIDs;
+		std::vector<int>	standDurs;
 
 		std::vector<int>	crouchIDs;
 		std::vector<int>	crouchDurs;
+
+		std::vector<int>	crouchToStandIDs;
+		std::vector<int>	crouchToStandDurs;
 
 		std::vector<int>	fWalkIDs;
 		std::vector<int>	fWalkDurs;
@@ -82,6 +88,7 @@ public:
 
 	int													getCurrentActionID();
 	void												setCurrentActionID(int id);
+	Action*												getCurrentAction() const;
 
 	void												setAnimationFrames(const std::vector<int>& frameIDs,
 																		   const std::vector<int>& durations,
@@ -92,14 +99,14 @@ public:
 
 private:
 	void												parseInput(unsigned int input);
-	void												clearStateMap();
+	void												clearActions();
 
 private:
 	Type												type_;
 	SpriteStruct										spriteStruct_;
 
 	Action*												action_;
-	std::vector<std::unique_ptr<Action>>				actions_;
+	std::vector<ActionPair>								actions_;
 	int													actionID_;
 
 	std::vector<std::unique_ptr<InputTrigger>>			inputTriggers_;
