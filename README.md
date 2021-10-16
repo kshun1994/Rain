@@ -17,6 +17,8 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Hitbox/hurtbox interactions
+	- have onHit() and onBlock() functions for boxes to be called when intersections are detected within World
 - [ ] Make it so camera view movement is always smooth
 	- Currently if one character moves forward a lot in the space of one frame the camera will also move a lot in one frame, which is really jarring
 	- Need to figure out the math to make it into a smooth glide to "catch up" to the actual midpoint between characters
@@ -28,7 +30,7 @@ Rainy days
 - [ ] Add camera zoom-in/-out based on between-Character distance and shift camera view to stay within stage bounds
 - [ ] Fix the horrible mess that is the whole unique_ptr/shared_ptr conversions happening with SceneNode objects (like in Box detachment in Action)
 - [ ] Create an in-game logger to display things in World
-	- Create an Observer that monitors World entities for things to print to log
+	- Observer that monitors World entities for things to print to log
 - [ ] Fix charge input trigger so the charge has to be continuous
 - [ ] Expand settings state to allow joystick button binding
 	- Analog stick threshold/axis binding
