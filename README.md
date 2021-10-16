@@ -17,8 +17,10 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
-- [ ] Add cancellable recovery to jumps
-	- Enkidu uses his crouch-to-stand animation after landing
+- [ ] Make it so camera view movement is always smooth
+	- Currently if one character moves forward a lot in the space of one frame the camera will also move a lot in one frame, which is really jarring
+	- Need to figure out the math to make it into a smooth glide to "catch up" to the actual midpoint between characters
+	- Probably some function where camera view movement velocity is proportional to distance from destination
 - [ ] Make it so Action inputs can be specified as "on press" versus "input for frame" 
 	- i.e. whether or not holding an input will do something on the first frame or if it's triggered by the actual button press
 - [ ] Add a more sophisticated Action priority system instead of the iteration order thing currently done in Action::handleInput()
@@ -37,6 +39,8 @@ Rainy days
 - [ ] Pause screen stuff
 	- [ ] Frame stepping
 ---------------------------------------------------------------------------------------------------------------------------------------------
+- [X] Add cancellable recovery to jumps
+	- Enkidu uses his crouch-to-stand animation after landing
 - [X] Extending Action class
 	- [X] Make it so boxes can change throughout Action duration
 	- [X] Add recoveries that are cancellable into specific other Actions

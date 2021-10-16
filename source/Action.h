@@ -75,6 +75,7 @@ public:
 
 	enum CancelType
 	{
+		NoCancel			=	   0,
 		Self				= 1 << 0,
 		Idle				= 1 << 1,
 		Basic				= 1 << 2,
@@ -124,7 +125,7 @@ public:
 
 	virtual void						setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame);
 
-	virtual void						setDestinationAction(Action* action);
+	virtual void						setDestinationActionID(const int& id);
 
 										// For states like airborne (jumping) and hitstun
 	virtual void						applyBallisticVector(const float& launchVelocity, const float& launchAngle);
@@ -163,7 +164,7 @@ protected:
 	int									cancelType_;
 	std::vector<int>					cancels_;
 
-	Action*								destinationAction_;
+	int									destinationActionID_;
 };
 
 // For Actions that have a recovery/whatever else that only happens after the player STOPS doing the relevant input

@@ -48,9 +48,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		EnkSprite.crouchDurs[i] = 4;
 	}
 
-	EnkSprite.crouchToStandIDs.resize(10);
-	std::iota(EnkSprite.crouchToStandIDs.begin(), EnkSprite.crouchToStandIDs.end(), 44);
-	EnkSprite.crouchToStandDurs.resize(EnkSprite.crouchToStandIDs.size(), 5);
+	// For appending to stuff like jump animations
+	std::vector<int> crouchToStandIDs;
+	crouchToStandIDs.resize(10);
+	std::iota(crouchToStandIDs.begin(), crouchToStandIDs.end(), 44);
+	std::vector<int> crouchToStandDurs(10, 4);
 
 	EnkSprite.fWalkIDs.resize(9);
 	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 54);
@@ -67,6 +69,13 @@ Character::Character(Type type, const TextureHolder& textures)
 	//EnkSprite.jumpIDs.insert(EnkSprite.jumpIDs.end(), std::make_move_iterator(crouchToStandInds.begin()), std::make_move_iterator(crouchToStandInds.end()));
 	EnkSprite.jumpDurs.resize(EnkSprite.jumpIDs.size(), 5);
 	EnkSprite.jumpDurs[0] = 4; // Jump startup is 4f why not
+	// Append crouch-to-stand as recovery
+	//EnkSprite.jumpIDs.insert(EnkSprite.jumpIDs.end(), crouchToStandIDs.begin(), crouchToStandIDs.end());
+	//EnkSprite.jumpDurs.insert(EnkSprite.jumpDurs.end(), crouchToStandDurs.begin(), crouchToStandDurs.end());
+
+	EnkSprite.jumpRecoveryIDs.resize(10);
+	std::iota(EnkSprite.jumpRecoveryIDs.begin(), EnkSprite.jumpRecoveryIDs.end(), 35);
+	EnkSprite.jumpRecoveryDurs.resize(EnkSprite.jumpRecoveryIDs.size(), 4);
 
 	EnkSprite.standBIDs.resize(8);
 	std::iota(EnkSprite.standBIDs.begin(), EnkSprite.standBIDs.end(), 74);
@@ -152,7 +161,6 @@ Character::Character(Type type, const TextureHolder& textures)
 		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 		standAction->setBoxes(0, standBoxes);
-		standAction->addProperty(Action::Property::Cancellable, boost::irange(0, sum_vector(spriteStruct_.standDurs)));
 		standAction->setCancelType(Action::CancelType::Idle);
 		standAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.standDurs));
 
@@ -168,7 +176,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		Action::Boxes crouchToStandBoxes;
 		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
-		crouchAction->setBoxes(sum_vector(spriteStruct_.crouchDurs, 19)+1, crouchToStandBoxes);
+		crouchAction->setBoxes(sum_vector(spriteStruct_.crouchDurs, 20), crouchToStandBoxes);
 		crouchAction->addProperty(Action::Property::Recovery, boost::irange(sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs)));
 		crouchAction->setCancelType(Action::CancelType::Basic);
 		crouchAction->setCancel(Action::CancelType::Basic | Action::CancelType::Self, sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs));
@@ -189,29 +197,36 @@ Character::Character(Type type, const TextureHolder& textures)
 		fWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		fWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 		fWalkAction->setBoxes(0, fWalkBoxes);
-		fWalkAction->addProperty(Action::Property::Cancellable, boost::irange(0, sum_vector(spriteStruct_.fWalkDurs)));
 		fWalkAction->setCancelType(Action::CancelType::Basic);
-		fWalkAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.fWalkDurs));
+		fWalkAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.fWalkDurs));
 
 		// Backward walk state
 		std::unique_ptr<HeldAction> bWalkAction = std::make_unique<HeldAction>();
 		bWalkAction->setAnimationFrames(spriteStruct_.bWalkIDs, spriteStruct_.bWalkDurs, spriteStruct_.spriteDims);
-		bWalkAction->setLoopBounds(10, sum_vector(spriteStruct_.bWalkDurs));
+		bWalkAction->setLoopBounds(sum_vector(spriteStruct_.bWalkDurs, 2), sum_vector(spriteStruct_.bWalkDurs));
 		bWalkAction->setMovePerFrame(std::vector<sf::Vector2f>(sum_vector(spriteStruct_.bWalkDurs), sf::Vector2f(-5.f, 0)));
 		Action::Boxes bWalkBoxes;
 		bWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
 		bWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
 		bWalkAction->setBoxes(0, bWalkBoxes);
-		bWalkAction->addProperty(Action::Property::Cancellable, boost::irange(0, sum_vector(spriteStruct_.bWalkDurs)));
 		bWalkAction->setCancelType(Action::CancelType::Basic);
-		bWalkAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.bWalkDurs));
+		bWalkAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.bWalkDurs));
+
+		// Jump recovery
+		std::unique_ptr<Action> jumpRecoveryAction = std::make_unique<Action>();
+		jumpRecoveryAction->setAnimationFrames(spriteStruct_.jumpRecoveryIDs, spriteStruct_.jumpRecoveryDurs, spriteStruct_.spriteDims);
+		Action::Boxes jumpRecoveryBoxes;
+		jumpRecoveryBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
+		jumpRecoveryBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		jumpRecoveryAction->setBoxes(0, jumpRecoveryBoxes);
+		jumpRecoveryAction->setCancel(Action::CancelType::All & ~Action::CancelType::Idle, 4, sum_vector(spriteStruct_.jumpRecoveryDurs)); // 4f landing recovery
 
 		// Forward jump state
 		std::unique_ptr<JumpAction> fJumpAction = std::make_unique<JumpAction>();
 		fJumpAction->setAnimationFrames(spriteStruct_.jumpIDs, spriteStruct_.jumpDurs, spriteStruct_.spriteDims);
 		// 7 animation frames until falling loop animation
 		// Falling loop is 2 animation frames
-		fJumpAction->setLoopBounds(34, 44); // These are 1 less than default cause I set jump startup to 4 instead of 5
+		fJumpAction->setLoopBounds(sum_vector(spriteStruct_.jumpDurs, 7), sum_vector(spriteStruct_.jumpDurs, 9));
 		fJumpAction->setJumpStartup(4);
 		float jumpInitialVelocity = 35.f;
 		float jumpLaunchAngle     = 65.f;
@@ -225,14 +240,12 @@ Character::Character(Type type, const TextureHolder& textures)
 		fJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, -120.f, 100.f, 220.f)));
 		fJumpAction->setBoxes(4, fJumpBoxes);
 		fJumpAction->setCancelType(Action::CancelType::Basic);
-		fJumpAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
+		fJumpAction->setDestinationActionID(COMMON_ACTION_JUMP_RECOVERY);
 
 		// Back jump state
 		std::unique_ptr<JumpAction> bJumpAction = std::make_unique<JumpAction>();
 		bJumpAction->setAnimationFrames(spriteStruct_.jumpIDs, spriteStruct_.jumpDurs, spriteStruct_.spriteDims);
-		// 7 animation frames until falling loop animation
-		// Falling loop is 2 animation frames
-		bJumpAction->setLoopBounds(34, 44); // These are 1 less than default cause I set jump startup to 4 instead of 5
+		bJumpAction->setLoopBounds(sum_vector(spriteStruct_.jumpDurs, 7), sum_vector(spriteStruct_.jumpDurs, 9));
 		bJumpAction->setJumpStartup(4);
 		jumpLaunchAngle     = 115.f;
 		bJumpAction->setJumpBallistics(jumpInitialVelocity, jumpLaunchAngle);
@@ -246,13 +259,12 @@ Character::Character(Type type, const TextureHolder& textures)
 		bJumpAction->setBoxes(4, bJumpBoxes);
 		bJumpAction->setCancelType(Action::CancelType::Basic);
 		bJumpAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
+		bJumpAction->setDestinationActionID(COMMON_ACTION_JUMP_RECOVERY);
 
 		// Neutral jump state
 		std::unique_ptr<JumpAction> nJumpAction = std::make_unique<JumpAction>();
 		nJumpAction->setAnimationFrames(spriteStruct_.jumpIDs, spriteStruct_.jumpDurs, spriteStruct_.spriteDims);
-		// 7 animation frames until falling loop animation
-		// Falling loop is 2 animation frames
-		nJumpAction->setLoopBounds(34, 44); // These are 1 less than default cause I set jump startup to 4 instead of 5
+		nJumpAction->setLoopBounds(sum_vector(spriteStruct_.jumpDurs, 7), sum_vector(spriteStruct_.jumpDurs, 9));
 		nJumpAction->setJumpStartup(4);
 		jumpLaunchAngle     = 90.f;
 		nJumpAction->setJumpBallistics(jumpInitialVelocity, jumpLaunchAngle);
@@ -265,14 +277,12 @@ Character::Character(Type type, const TextureHolder& textures)
 		nJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, -120.f, 100.f, 220.f)));
 		nJumpAction->setBoxes(4, nJumpBoxes);
 		nJumpAction->setCancelType(Action::CancelType::Basic);
-		nJumpAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
+		nJumpAction->setDestinationActionID(COMMON_ACTION_JUMP_RECOVERY);
 
 		// Super jump state for testing
 		std::unique_ptr<JumpAction> sJumpAction = std::make_unique<JumpAction>();
 		sJumpAction->setAnimationFrames(spriteStruct_.jumpIDs, spriteStruct_.jumpDurs, spriteStruct_.spriteDims);
-		// 7 animation frames until falling loop animation
-		// Falling loop is 2 animation frames
-		sJumpAction->setLoopBounds(34, 44); // These are 1 less than default cause I set jump startup to 4 instead of 5
+		sJumpAction->setLoopBounds(sum_vector(spriteStruct_.jumpDurs, 7), sum_vector(spriteStruct_.jumpDurs, 9));
 		sJumpAction->setJumpStartup(4);
 		jumpLaunchAngle = 60.f;
 		sJumpAction->setJumpBallistics(jumpInitialVelocity * 1.25, 45);
@@ -286,6 +296,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		sJumpAction->setBoxes(4, sJumpBoxes);
 		sJumpAction->setCancelType(Action::CancelType::Basic);
 		sJumpAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
+		sJumpAction->setDestinationActionID(COMMON_ACTION_JUMP_RECOVERY);
 
 		setGravity(2.00f);
 
@@ -352,15 +363,16 @@ Character::Character(Type type, const TextureHolder& textures)
 		moveVec[sum_vector(spriteStruct_.standBDurs, 7)].x =  -5.f;
 		standBAction->setMovePerFrame(moveVec);
 
-		actions_[COMMON_ACTION_STAND].first		= std::move(standAction);
-		actions_[COMMON_ACTION_CROUCH].first	= std::move(crouchAction);
-		actions_[COMMON_ACTION_F_WALK].first	= std::move(fWalkAction);
-		actions_[COMMON_ACTION_B_WALK].first	= std::move(bWalkAction);
-		actions_[COMMON_ACTION_F_JUMP].first	= std::move(fJumpAction);
-		actions_[COMMON_ACTION_B_JUMP].first	= std::move(bJumpAction);
-		actions_[COMMON_ACTION_N_JUMP].first	= std::move(nJumpAction);
-		actions_[COMMON_ACTION_TEST].first		= std::move(sJumpAction);
-		actions_[COMMON_ACTION_5B].first	    = std::move(standBAction);
+		actions_[COMMON_ACTION_STAND].first				= std::move(standAction);
+		actions_[COMMON_ACTION_CROUCH].first			= std::move(crouchAction);
+		actions_[COMMON_ACTION_F_WALK].first			= std::move(fWalkAction);
+		actions_[COMMON_ACTION_B_WALK].first			= std::move(bWalkAction);
+		actions_[COMMON_ACTION_F_JUMP].first			= std::move(fJumpAction);
+		actions_[COMMON_ACTION_B_JUMP].first			= std::move(bJumpAction);
+		actions_[COMMON_ACTION_N_JUMP].first			= std::move(nJumpAction);
+		actions_[COMMON_ACTION_JUMP_RECOVERY].first		= std::move(jumpRecoveryAction);
+		actions_[COMMON_ACTION_TEST].first				= std::move(sJumpAction);
+		actions_[COMMON_ACTION_5B].first				= std::move(standBAction);
 
 		//stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
 		//stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_CROUCH, false));

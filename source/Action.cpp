@@ -13,7 +13,7 @@ Action::Action()
 , cancels_(0)
 , velocityPerFrame_()
 , currentBoxesInd_()
-, destinationAction_(nullptr)
+, destinationActionID_(0)
 {
 }
 
@@ -181,9 +181,9 @@ void Action::setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame)
 	velocityPerFrame_ = movePerFrame;
 }
 
-void Action::setDestinationAction(Action* action)
+void Action::setDestinationActionID(const int& id)
 {
-	destinationAction_ = action;
+	destinationActionID_ = id;
 }
 
 void Action::applyBallisticVector(const float& launchVelocity, const float& launchAngle)
@@ -227,16 +227,15 @@ void Action::setAnimation(Character& character, const std::vector<int>& frameIDs
 Action* Action::handleInput(Character& character, std::vector<Character::ActionPair>& actions)
 {
 	// Check to see if current frame is cancellable
-	if (cancels_[currentFrame_] != 0)
+	if (cancels_[currentFrame_] != Action::CancelType::NoCancel)
 	{
 		// Iterate through possible destination states
 		// Currently the only way priority is determined is by the order of the states in this step
 		//   Since it currently iterates backward (via .rbegin()/.rend()), states with greater ID values have greater priority
 		for (auto it = actions.rbegin(); it != actions.rend(); ++it)
 		{
-			// Make sure destination state isn't the current state and that it matches the possible cancels
-			//if (it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
-			if (it->second && (it->first.get() == this) && (cancels_[currentFrame_] & Action::CancelType::Self)) // If destination state is same as current state and current frame is self-cancellable
+			// If destination state is same as current state and current frame is self-cancellable
+			if (it->second && (it->first.get() == this) && (cancels_[currentFrame_] & Action::CancelType::Self)) 
 			{
 				// Detach old boxes
 				for (Box* boxPtr : boxPtrs_)
@@ -255,6 +254,7 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 				return nullptr;
 			}
 
+			// If destination state isn't current state and it matches the possible cancel paths for the current state
 			if	(it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
 			{
 				// Detach old boxes
@@ -283,7 +283,7 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 		}
 	}
 
-	// Check to see if current frame is the LAST frame of the Action's duration and that the current frame isn't the END BOUND of a potential loop
+	// If current frame is the LAST frame of the Action's duration and that the current frame isn't the END BOUND of a potential loop
 	if ((currentFrame_ == sum_vector(animationFrameDurations_) - 1) && (currentFrame_ != loopBounds_.second - 1))
 	{
 		// Iterate through possible destination states
@@ -292,7 +292,6 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 		for (auto it = actions.rbegin(); it != actions.rend(); ++it)
 		{
 			// Make sure destination state isn't the current state
-			// Probably want to modify this in some way eventually to allow self-chains (2A2A2A etc.)
 			if (it->second && ((character.getCurrentAction() != it->first.get())))
 			{
 				// Detach old boxes
@@ -360,9 +359,9 @@ Action* HeldAction::handleInput(Character& character, std::vector<Character::Act
 		// Check to see if the current action is still being inputted for or not
 		for (Character::ActionPair& actionPair : actions)
 		{
-			if (actionPair.first.get() == this && !actionPair.second)
+			if ((actionPair.first.get() == this) && !actionPair.second)
 			{
-				// Find recovery frames, if any			
+				// Find first recovery, if any (this assumes there's only one set of recovery frames and that set is continuous)		
 				for (int i = 0; i < properties_.size(); ++i)
 				{
 					if (properties_[i] & Action::Property::Recovery)
@@ -394,7 +393,7 @@ void AirborneAction::update(Character& character)
 {
 	++currentFrame_;
 
-	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == nextLoopBound_))
+	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == nextLoopBound_) && !(properties_[currentFrame_] & Action::Property::Recovery))
 	{
 		// Assumes Animation updates after Action in Character::update()
 		character.setCurrentAnimationTick(loopBounds_.first);
@@ -412,38 +411,87 @@ void AirborneAction::update(Character& character)
 
 Action* AirborneAction::handleInput(Character& character, std::vector<Character::ActionPair>& actions)
 {
+	//if (!(properties_[currentFrame_] & Action::Property::Recovery))
+	//{
+	//	// Check to see if the current action is still being inputted for or not
+	//	for (Character::ActionPair& actionPair : actions)
+	//	{
+	//		if (actionPair.first.get() == this && !actionPair.second)
+	//		{
+	//			// Find recovery frames, if any			
+	//			for (int i = 0; i < properties_.size(); ++i)
+	//			{
+	//				if (properties_[i] & Action::Property::Recovery)
+	//				{
+	//					currentFrame_ = i;
+	//					character.setCurrentAnimationTick(currentFrame_);
+	//					break;
+	//				}
+	//			}
+	//			break;
+	//		}
+	//	}
+	//}
+
+	//Action* action = Action::handleInput(character, actions);
+	//return action;
+
+	if (properties_[currentFrame_] & Action::Property::Recovery)
+	{
+		//Action* action = Action::handleInput(character, actions);
+		return nullptr;
+	}
+
 	// Check if character has landed every frame
 	if ((currentFrame_ > startup_) && (character.getPosition().y >= 0.f))
 	{
 		// Make sure character doesn't end up buried in the ground
 		character.setPosition(sf::Vector2f(character.getPosition().x, 0.f));
 
-		// Detach old boxes
-		for (Box* boxPtr : boxPtrs_)
-		{
-			std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
-			boxes_[currentBoxesInd_].push_back(detachedBox);
-		}
+		//// Check to see if this Action has recovery after landing
+		//bool hasRecovery = false;
+		//for (int i = 0; i < properties_.size(); ++i)
+		//{
+		//	if (properties_[i] & Action::Property::Recovery)
+		//	{
+		//		hasRecovery = true;
+		//		currentFrame_ = i;
+		//		character.setCurrentAnimationTick(currentFrame_);
+		//		nextLoopBound_ = 0;
+		//		ballistics_.clear();
+		//		break;
+		//	}
+		//}
 
-		boxPtrs_.clear();
-		ballistics_.clear();
-
-		for (Character::ActionPair& actionPair : actions)
-		{
-			if (actionPair.first.get() == this)
+		//if (!hasRecovery)
+		//{
+			// Detach old boxes
+			for (Box* boxPtr : boxPtrs_)
 			{
-				actionPair.second = false;
+				std::shared_ptr<Box> detachedBox = std::static_pointer_cast<Box>(character.detachChild(*boxPtr));
+				boxes_[currentBoxesInd_].push_back(detachedBox);
 			}
-		}
 
-		//character.setCurrentActionID(COMMON_ACTION_STAND);
-		character.setPosture(Character::Posture::Standing);
+			boxPtrs_.clear();
+			ballistics_.clear();
 
-		currentFrame_ = 0;
-		currentBoxesInd_ = 0;
-		nextLoopBound_ = loopBounds_.second;
+			for (Character::ActionPair& actionPair : actions)
+			{
+				if (actionPair.first.get() == this)
+				{
+					actionPair.second = false;
+				}
+			}
 
-		return actions[COMMON_ACTION_STAND].first.get();
+			//character.setCurrentActionID(COMMON_ACTION_STAND);
+			character.setPosture(Character::Posture::Standing);
+
+			currentFrame_ = 0;
+			currentBoxesInd_ = 0;
+			nextLoopBound_ = loopBounds_.second;
+
+			return actions[destinationActionID_].first.get();
+		//}
 	}
 
 	return nullptr;

@@ -44,9 +44,6 @@ public:
 		std::vector<int>	crouchIDs;
 		std::vector<int>	crouchDurs;
 
-		std::vector<int>	crouchToStandIDs;
-		std::vector<int>	crouchToStandDurs;
-
 		std::vector<int>	fWalkIDs;
 		std::vector<int>	fWalkDurs;
 
@@ -55,6 +52,9 @@ public:
 
 		std::vector<int>	jumpIDs;
 		std::vector<int>	jumpDurs;
+
+		std::vector<int>	jumpRecoveryIDs;
+		std::vector<int>	jumpRecoveryDurs;
 
 		std::vector<int>	standBIDs;
 		std::vector<int>	standBDurs;
@@ -130,7 +130,7 @@ private:
 #define COMMON_ACTION_F_JUMP			 6
 #define COMMON_ACTION_B_JUMP			 7
 #define COMMON_ACTION_N_JUMP			 8
-#define COMMON_ACTION_LAND_RECOVER		 9
+#define COMMON_ACTION_JUMP_RECOVERY		 9
 #define COMMON_ACTION_QCF				10
 #define COMMON_ACTION_BACK_CHARGE		11
 #define COMMON_ACTION_5B				12
