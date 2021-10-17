@@ -17,8 +17,10 @@ Rainy days
 - Allow for coding basic movement (walk, dashes, jump) as special/unique moves so you can cancel into/out of them (like Kaori dash from EFZ)
 
 # TODO
+- [ ] Scripting language addition for Character load-ins
 - [ ] Hitbox/hurtbox interactions
-	- have onHit() and onBlock() functions for boxes to be called when intersections are detected within World
+	- Have onHit() and onBlock() functions for Boxes to be called when intersections are detected within World
+	- Change cancel properties of parent Action depending on type of interaction (hit/block)
 - [ ] Make it so camera view movement is always smooth
 	- Currently if one character moves forward a lot in the space of one frame the camera will also move a lot in one frame, which is really jarring
 	- Need to figure out the math to make it into a smooth glide to "catch up" to the actual midpoint between characters
