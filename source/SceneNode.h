@@ -33,8 +33,11 @@ public:
 	virtual unsigned int			getCategory() const;
 	void							onCommand(const Command& command);
 
+
 	virtual sf::Vector2f			getCollideDims() const;
 	virtual sf::Vector2f			getCollideOffset() const;
+
+	virtual unsigned int			getType() const;
 
 	virtual bool					checkIntersect(SceneNode& lhs, SceneNode& rhs);
 	virtual void					checkNodeCollide(SceneNode& node, std::set<std::pair<SceneNode*, SceneNode*>>& collidePairs);
@@ -47,6 +50,12 @@ private:
 	virtual void					draw(sf::RenderTarget& target, sf::RenderStates states) const;
 	virtual void					drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
 	void							drawChildren(sf::RenderTarget& target, sf::RenderStates states) const;
+
+	float							xOffset_;
+	float							xOffsetCorrected_;
+	float							yOffset_;
+	float							width_;
+	float							height_;
 
 protected:
 	std::vector<Ptr>				children_;

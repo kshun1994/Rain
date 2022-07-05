@@ -83,13 +83,18 @@ void SceneNode::onCommand(const Command& command)
 sf::Vector2f SceneNode::getCollideDims() const
 {
 	// SceneNodes have no dimensions by default
-	return sf::Vector2f(0.f, 0.f);
+	return sf::Vector2f(width_, height_);
 }
 
 sf::Vector2f SceneNode::getCollideOffset() const
 {
 	// SceneNodes have no offset by default
-	return sf::Vector2f(0.f, 0.f);
+	return sf::Vector2f(xOffsetCorrected_, yOffset_);
+}
+
+unsigned int SceneNode::getType() const
+{
+	return 0;
 }
 
 bool SceneNode::checkIntersect(SceneNode& lhs, SceneNode& rhs)

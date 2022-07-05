@@ -204,7 +204,7 @@ void World::handleCollision()
 
 	for (std::pair<SceneNode*, SceneNode*> pair : intersectPairs)
 	{
-		if (matchesTypes(pair, Box::Type::Collide, Box::Type::Collide)) // If two collision boxes overlap
+		if (matchesTypes(pair, Box::Type::Push, Box::Type::Push)) // If two collision boxes overlap
 		{
 			// Get bounds of relevant Boxes
 			sf::FloatRect box1 = dynamic_cast<Box*>(pair.first)->getRect();
@@ -223,9 +223,10 @@ void World::handleCollision()
 				dynamic_cast<Box*>(pair.second)->moveParent(-1 * (distance / 2), 0.f);
 			}
 		}
-		else if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
+
+		if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
 		{
-			RN_DEBUG("Hitbox intersection!");
+			RN_DEBUG("Hitbox intersection! Hitbox {} intersects hurtbox {}.", dynamic_cast<Box*>(pair.first)->getName(), dynamic_cast<Box*>(pair.second)->getName());
 		}
 	}
 }

@@ -69,7 +69,7 @@ public:
 	virtual void										handleInput(Player::TaggedInput input);
 
 	unsigned int										getCategory() const;
-	Type												getType() const;
+	Type												getCharacterType() const;
 
 	float												getHealth() const;
 	void												setHealth(float value);

@@ -3,8 +3,21 @@
 #include "Entity.h"
 
 Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height)
-: type_(type)
+: name_("Default")
+, type_(type)
 , xOffset_(xOffset)
+, xOffsetCorrected_(xOffset)
+, yOffset_(yOffset)
+, width_(width)
+, height_(height)
+{
+}
+
+Box::Box(std::string name, Type type, float xOffset, float yOffset, float width, float height)
+: name_(name)
+, type_(type)
+, xOffset_(xOffset)
+, xOffsetCorrected_(xOffset)
 , yOffset_(yOffset)
 , width_(width)
 , height_(height)
@@ -22,6 +35,16 @@ void Box::updateCurrent()
 	//{
 	//	xOffset_ = dynamic_cast<Entity*>(parent_)->getFacing() == Entity::Facing::Right ? -1 * abs(xOffset_) : abs(xOffset_);
 	//}
+}
+
+void Box::setName(std::string name)
+{
+	name_ = name;
+}
+
+std::string Box::getName()
+{
+	return name_;
 }
 
 unsigned int Box::getCategory() const
@@ -60,7 +83,8 @@ void Box::setCollideOffset(const sf::Vector2f& offset)
 
 sf::Vector2f Box::getCollideOffset() const
 {
-	return sf::Vector2f(width_, height_);
+	return sf::Vector2f(xOffsetCorrected_, yOffset_);
+	RN_DEBUG("Function called!");
 }
 
 void Box::setType(const unsigned int& type)

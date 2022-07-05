@@ -9,7 +9,7 @@ public:
 	enum Type
 	{
 		None		= 0,
-		Collide		= 1, // >> 0, // 1
+		Push		= 1, // >> 0, // 1
 		Hit			= 2, // >> 1, // 2
 		Hurt		= 3, // >> 2, // 4
 	};
@@ -24,10 +24,14 @@ protected:
 
 public:
 							Box() = default;
-							Box(Type type_, float xOffset, float yOffset, float width, float height);
+							Box(Type type, float xOffset, float yOffset, float width, float height);
+							Box(std::string name, Type type, float xOffset, float yOffset, float width, float height);
 	virtual					~Box() {};
 
 	virtual void			updateCurrent();
+
+	virtual void			setName(std::string name);
+	virtual std::string		getName();
 
 	virtual unsigned int	getCategory() const;
 
@@ -57,4 +61,6 @@ protected:
 	float					height_;
 
 	unsigned int			type_;
+
+	std::string				name_;
 };

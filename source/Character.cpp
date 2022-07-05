@@ -159,7 +159,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		standAction->setLoopBounds(0, sum_vector(spriteStruct_.standDurs));
 		Action::Boxes standBoxes;
 		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		standAction->setBoxes(0, standBoxes);
 		standAction->setCancelType(Action::CancelType::Idle);
 		standAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.standDurs));
@@ -171,11 +171,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		Action::Boxes crouchBoxes;
 		crouchBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 180.f, 220.f)));
 		crouchBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -150.f, 110.f, 100.f)));
-		crouchBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 200.f)));
+		crouchBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 200.f)));
 		crouchAction->setBoxes(0, crouchBoxes);
 		Action::Boxes crouchToStandBoxes;
 		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		crouchToStandBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		crouchAction->setBoxes(sum_vector(spriteStruct_.crouchDurs, 20), crouchToStandBoxes);
 		crouchAction->addProperty(Action::Property::Recovery, boost::irange(sum_vector(spriteStruct_.crouchDurs, 19), sum_vector(spriteStruct_.crouchDurs)));
 		crouchAction->setCancelType(Action::CancelType::Basic);
@@ -195,7 +195,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		//fWalkAction->setMovePerFrame(movePerFrame);
 		Action::Boxes fWalkBoxes;
 		fWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		fWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		fWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		fWalkAction->setBoxes(0, fWalkBoxes);
 		fWalkAction->setCancelType(Action::CancelType::Basic);
 		fWalkAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.fWalkDurs));
@@ -207,7 +207,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		bWalkAction->setMovePerFrame(std::vector<sf::Vector2f>(sum_vector(spriteStruct_.bWalkDurs), sf::Vector2f(-5.f, 0)));
 		Action::Boxes bWalkBoxes;
 		bWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		bWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		bWalkBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		bWalkAction->setBoxes(0, bWalkBoxes);
 		bWalkAction->setCancelType(Action::CancelType::Basic);
 		bWalkAction->setCancel(Action::CancelType::All & ~Action::CancelType::Self, 0, sum_vector(spriteStruct_.bWalkDurs));
@@ -217,7 +217,7 @@ Character::Character(Type type, const TextureHolder& textures)
 		jumpRecoveryAction->setAnimationFrames(spriteStruct_.jumpRecoveryIDs, spriteStruct_.jumpRecoveryDurs, spriteStruct_.spriteDims);
 		Action::Boxes jumpRecoveryBoxes;
 		jumpRecoveryBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		jumpRecoveryBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		jumpRecoveryBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		jumpRecoveryAction->setBoxes(0, jumpRecoveryBoxes);
 		jumpRecoveryAction->setCancel(Action::CancelType::All & ~Action::CancelType::Idle, 4, sum_vector(spriteStruct_.jumpRecoveryDurs)); // 4f landing recovery
 
@@ -233,11 +233,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		fJumpAction->setJumpBallistics(jumpInitialVelocity, jumpLaunchAngle);
 		Action::Boxes fJumpStartupBoxes;
 		fJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		fJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		fJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		fJumpAction->setBoxes(0, fJumpStartupBoxes);
 		Action::Boxes fJumpBoxes;
 		fJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -100.f, 140.f, 280.f)));
-		fJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, -120.f, 100.f, 220.f)));
+		fJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, -120.f, 100.f, 220.f)));
 		fJumpAction->setBoxes(4, fJumpBoxes);
 		fJumpAction->setCancelType(Action::CancelType::Basic);
 		fJumpAction->setDestinationActionID(COMMON_ACTION_JUMP_RECOVERY);
@@ -251,11 +251,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		bJumpAction->setJumpBallistics(jumpInitialVelocity, jumpLaunchAngle);
 		Action::Boxes bJumpStartupBoxes;
 		bJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		bJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		bJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		bJumpAction->setBoxes(0, bJumpStartupBoxes);
 		Action::Boxes bJumpBoxes;
 		bJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -100.f, 140.f, 280.f)));
-		bJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, -120.f, 100.f, 220.f)));
+		bJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, -120.f, 100.f, 220.f)));
 		bJumpAction->setBoxes(4, bJumpBoxes);
 		bJumpAction->setCancelType(Action::CancelType::Basic);
 		bJumpAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
@@ -270,11 +270,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		nJumpAction->setJumpBallistics(jumpInitialVelocity, jumpLaunchAngle);
 		Action::Boxes nJumpStartupBoxes;
 		nJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		nJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		nJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		nJumpAction->setBoxes(0, nJumpStartupBoxes);
 		Action::Boxes nJumpBoxes;
 		nJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -100.f, 140.f, 280.f)));
-		nJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, -120.f, 100.f, 220.f)));
+		nJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, -120.f, 100.f, 220.f)));
 		nJumpAction->setBoxes(4, nJumpBoxes);
 		nJumpAction->setCancelType(Action::CancelType::Basic);
 		nJumpAction->setDestinationActionID(COMMON_ACTION_JUMP_RECOVERY);
@@ -288,11 +288,11 @@ Character::Character(Type type, const TextureHolder& textures)
 		sJumpAction->setJumpBallistics(jumpInitialVelocity * 1.25, 45);
 		Action::Boxes sJumpStartupBoxes;
 		sJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 140.f, 330.f)));
-		sJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		sJumpStartupBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		sJumpAction->setBoxes(0, sJumpStartupBoxes);
 		Action::Boxes sJumpBoxes;
 		sJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, -100.f, 140.f, 280.f)));
-		sJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, -120.f, 100.f, 220.f)));
+		sJumpBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, -120.f, 100.f, 220.f)));
 		sJumpAction->setBoxes(4, sJumpBoxes);
 		sJumpAction->setCancelType(Action::CancelType::Basic);
 		sJumpAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
@@ -306,53 +306,55 @@ Character::Character(Type type, const TextureHolder& textures)
 		standBAction->setCancelType(Action::CancelType::Normal);
 		//standBAction->setCancel(Action::CancelType::All, 0, sum_vector(spriteStruct_.jumpDurs));
 		Action::Boxes startup1;
-		startup1.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,      0.f,    0.f,  140.f,  330.f)));
-		startup1.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,   0.f,    0.f,  100.f,  310.f)));
+		startup1.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,     0.f,    0.f,  140.f,  330.f)));
+		startup1.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	    0.f,    0.f,  100.f,  310.f)));
 		standBAction->setBoxes(0, startup1);
 		Action::Boxes startup2;
 		startup2.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,    -17.f,    0.f,  155.f,  330.f)));
 		startup2.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,     29.f,  -67.f,   99.f,  212.f)));
 		startup2.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,    -79.f, -161.f,   82.f,  189.f)));
-		startup2.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,   0.f,    0.f,  100.f,  310.f)));
+		startup2.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	     0.f,    0.f,  100.f,  310.f)));
 		standBAction->setBoxes(3, startup2);
 		Action::Boxes startup3;
 		startup3.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,   -30.f,    0.f,  180.f,  330.f)));
 		startup3.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,    37.f,  -51.f,  134.f,  167.f)));
 		startup3.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,    54.f, -183.f,  162.f,  123.f)));
 		startup3.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,   -96.f, -212.f,  103.f,  153.f)));
-		startup3.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,  0.f,    0.f,  100.f,  310.f)));
+		startup3.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	    0.f,    0.f,  100.f,  310.f)));
 		standBAction->setBoxes(5, startup3);
 		Action::Boxes active;
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	  -30.f,    0.f,  180.f,  330.f)));
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	   45.f,  -46.f,  119.f,  259.f)));
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	  111.f,  -98.f,   89.f,  143.f)));
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	  -84.f, -187.f,  127.f,  202.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  132.f, -121.f,  173.f,  115.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	   98.f, -216.f,  108.f,   75.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  127.f, -261.f,   88.f,   51.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  187.f, -167.f,  210.f,   92.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  202.f, -240.f,  119.f,   51.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  221.f, -251.f,  141.f,   70.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  228.f, -121.f,   78.f,   62.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	  280.f, -149.f,   63.f,  152.f)));
-		active.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,    0.f,	0.f,  100.f,  310.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit1", Box::Type::Hit,	  132.f, -121.f,  173.f,  115.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit2", Box::Type::Hit,	   98.f, -216.f,  108.f,   75.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit3", Box::Type::Hit,	  127.f, -261.f,   88.f,   51.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit4", Box::Type::Hit,	  187.f, -167.f,  210.f,   92.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit5", Box::Type::Hit,	  202.f, -240.f,  119.f,   51.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit6", Box::Type::Hit,	  221.f, -251.f,  141.f,   70.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit7", Box::Type::Hit,	  228.f, -121.f,   78.f,   62.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit8", Box::Type::Hit,	  280.f, -149.f,   63.f,  152.f)));
+		active.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	    0.f,	0.f,  100.f,  310.f)));
+		//active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	    0.f,	0.f,  100.f,  310.f)));
+		//active.push_back(std::move(std::make_shared<Box>("Enk5BActive1TestHit", Box::Type::Hit, 100.f, -100.f, 400.f, 300.f)));
 		standBAction->setBoxes(8, active);
 		Action::Boxes recover1;
 		recover1.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	   -30.f,    0.f,  180.f,  330.f)));
 		recover1.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	    45.f,  -46.f,  119.f,  259.f)));
 		recover1.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	   111.f,  -98.f,   89.f,  143.f)));
 		recover1.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	   -84.f, -187.f,  127.f,  202.f)));
-		recover1.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,   0.f,	 0.f,  100.f,  310.f)));
+		recover1.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	     0.f,	 0.f,  100.f,  310.f)));
 		standBAction->setBoxes(11, recover1);
 		Action::Boxes recover2;
 		recover2.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,    -25.f,    0.f,  140.f,  330.f)));
 		recover2.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,     18.f,  -64.f,  109.f,  199.f)));
 		recover2.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,    -56.f, -199.f,  118.f,  176.f)));
-		recover2.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,   0.f,    0.f,  100.f,  310.f)));
+		recover2.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	     0.f,    0.f,  100.f,  310.f)));
 		standBAction->setBoxes(21, recover2);
 		Action::Boxes recover3;
 		recover3.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,      0.f,    0.f,  140.f,  330.f)));
-		recover3.push_back(std::move(std::make_shared<Box>(Box::Type::Collide,   0.f,    0.f,  100.f,  310.f)));
+		recover3.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	     0.f,    0.f,  100.f,  310.f)));
 		standBAction->setBoxes(25, recover3);
 		std::vector<sf::Vector2f> moveVec(sum_vector(spriteStruct_.standBDurs));
 		// Stuff like this looks unnatural if you don't limit movement to the moments animation frames change
@@ -393,12 +395,12 @@ Character::Character(Type type, const TextureHolder& textures)
 		standAction->setAnimationFrames(spriteStruct_.standIDs, spriteStruct_.standDurs, spriteStruct_.spriteDims);
 		standAction->setLoopBounds(0, sum_vector(spriteStruct_.standDurs));
 		Action::Boxes standBoxes;
-		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 110.f, 315.f)));
-		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		standBoxes.push_back(std::move(std::make_shared<Box>("YuzuIdleHurt1", Box::Type::Hurt, 0.f, 0.f, 110.f, 315.f)));
+		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		standAction->setBoxes(0, standBoxes);
 
 		//standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 110.f, 315.f)));
-		//standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Collide, 0.f, 0.f, 100.f, 310.f)));
+		//standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Push,	 0.f, 0.f, 100.f, 310.f)));
 
 		actions_[COMMON_ACTION_STAND].first = std::move(standAction);
 		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
@@ -462,7 +464,7 @@ unsigned int Character::getCategory() const
 	return Category::Character;
 }
 
-Character::Type Character::getType() const
+Character::Type Character::getCharacterType() const
 {
 	return type_;
 }
