@@ -14,6 +14,24 @@ public:
 		Hurt		= 3, // >> 2, // 4
 	};
 
+	enum Impact
+	{
+		NoImpact    = 0,
+		Light       = 1,
+		Heavy       = 2,
+	};
+
+	struct HitValues
+	{
+		Impact	impact;
+
+		float					  damage;
+		int						  stunDuration;
+		float					  ballisticLaunchVelocity;
+		float					  ballisticLaunchAngle;
+		std::vector<sf::Vector2f> ballisticDerivatives;
+	};
+
 protected:
 	std::vector<sf::Color> BoxDrawColors = {
 		sf::Color::Black,
@@ -24,8 +42,8 @@ protected:
 
 public:
 							Box() = default;
-							Box(Type type, float xOffset, float yOffset, float width, float height);
-							Box(std::string name, Type type, float xOffset, float yOffset, float width, float height);
+							Box(			      Type type,						 float xOffset, float yOffset, float width, float height);
+							Box(std::string name, Type type,						 float xOffset, float yOffset, float width, float height);
 	virtual					~Box() {};
 
 	virtual void			updateCurrent();
@@ -46,9 +64,16 @@ public:
 	virtual void			setType(const unsigned int& type);
 	virtual unsigned int	getType() const;
 
+	virtual void			setOnHit(const HitValues& onHit);
+	virtual HitValues		getOnHit();
+
+	virtual void			setOnBlock(const HitValues& onBlock);
+	virtual HitValues		getOnBlock();
+
 	virtual sf::FloatRect	getRect() const;
 
 	virtual void			moveParent(const float& x, const float& y);
+	virtual void			hitParent(const HitValues& hitValues);
 
 private:
 	virtual void			drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -61,6 +86,9 @@ protected:
 	float					height_;
 
 	unsigned int			type_;
+
+	HitValues				onHit_;
+	HitValues				onBlock_;
 
 	std::string				name_;
 };

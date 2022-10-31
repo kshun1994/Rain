@@ -58,6 +58,12 @@ public:
 
 		std::vector<int>	standBIDs;
 		std::vector<int>	standBDurs;
+
+		std::vector<int>	standLightHitstunIDs;
+		std::vector<int>	standLightHitstunDurs;
+
+		std::vector<int>	standHeavyHitstunIDs;
+		std::vector<int>	standHeavyHitstunDurs;
 	};
 
 public:
@@ -89,6 +95,17 @@ public:
 	int													getCurrentActionID();
 	void												setCurrentActionID(int id);
 	Action*												getCurrentAction() const;
+
+	void												setStunDuration(const int& actionID, const int& duration);
+	void												setStunDuration(const int& actionID, const std::vector<int>& durations);
+
+	void												overwriteActionBallistics(const int& actionID,
+																				  const float& launchVelocity, 
+																				  const float& launchAngle, 
+																				  const std::vector<sf::Vector2f>& ballisticDerivatives);
+
+	void												setActionMovement(const int& actionID, const sf::Vector2f& movePerFrame);
+	void												setActionMovement(const int& actionID, const std::vector<sf::Vector2f>& movePerFrame);
 
 	void												setAnimationFrames(const std::vector<int>& frameIDs,
 																		   const std::vector<int>& durations,
@@ -134,4 +151,6 @@ private:
 #define COMMON_ACTION_QCF				10
 #define COMMON_ACTION_BACK_CHARGE		11
 #define COMMON_ACTION_5B				12
-#define COMMON_ACTION_TEST				13
+#define COMMON_ACTION_STAND_HITSTUN_L   13
+#define COMMON_ACTION_STAND_HITSTUN_H   14
+#define COMMON_ACTION_TEST				15

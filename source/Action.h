@@ -104,6 +104,10 @@ public:
 														   const std::vector<int>& durations,
 														   const sf::Vector2i& spriteDims);
 
+	virtual int							getAnimationFrameCount();
+	virtual int							getActionDuration();
+	virtual void						setDurations(const std::vector<int>& durations);
+
 	virtual void						setLoopBounds(const int& start, const int& end);
 	virtual void						setLoopBounds(const std::pair<int, int>& bounds);
 
@@ -124,11 +128,13 @@ public:
 	virtual void						setCancel(const int& cancelType, const int& startFrameInclusive, const int& endFrameExclusive);
 
 	virtual void						setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame);
+	virtual void						setMoveOnFrame(const int frame, const sf::Vector2f& moveMagnitude);
 
 	virtual void						setDestinationActionID(const int& id);
 
 										// For states like airborne (jumping) and hitstun
 	virtual void						applyBallisticVector(const float& launchVelocity, const float& launchAngle);
+	virtual void						overwriteBallisticVector(const float& launchVelocity, const float& launchAngle, const std::vector<sf::Vector2f>& ballisticDerivatives);
 
 protected:
 	virtual sf::Vector2f				calculateVelocity(const float& gravity);

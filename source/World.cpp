@@ -31,8 +31,8 @@ World::~World()
 
 void World::loadTextures()
 {
-	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/Enkidu.png");
-	textures_.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/Yuzuriha_idle.png");
+	textures_.load(Textures::ID::Enkidu,		"media/texture/enkidu/enkidu.png");
+	textures_.load(Textures::ID::Yuzuriha,		"media/texture/yuzuriha/yuzuriha.png");
 	textures_.load(Textures::ID::StageMomiji,	"media/texture/_stage/MomijiShrineScaledx3.png");
 }
 
@@ -85,10 +85,13 @@ void World::update()
 		debugPrevInput_ = p1NumpadInput_.second & 15;
 	}
 
+	TaggedInput p2NumpadInput_ = translateToNumpadInput({ 1, 0 });
+
 	// Check if player characters are actionable
 
 	// If actionable, initiate action based on input buffer readout
 	charArray_[0]->handleInput(p1NumpadInput_);
+	charArray_[1]->handleInput(p2NumpadInput_);
 
 	// Entity updates (states, action initiation/continuation, controllable entities read in player inputs)
 	sceneGraph_.update();
@@ -227,6 +230,7 @@ void World::handleCollision()
 		if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
 		{
 			RN_DEBUG("Hitbox intersection! Hitbox {} intersects hurtbox {}.", dynamic_cast<Box*>(pair.first)->getName(), dynamic_cast<Box*>(pair.second)->getName());
+			dynamic_cast<Box*>(pair.second)->hitParent(dynamic_cast<Box*>(pair.first)->getOnHit());
 		}
 	}
 }

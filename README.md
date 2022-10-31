@@ -21,6 +21,33 @@ Rainy days
 - [ ] Hitbox/hurtbox interactions
 	- Have onHit() and onBlock() functions for Boxes to be called when intersections are detected within World
 	- Change cancel properties of parent Action depending on type of interaction (hit/block)
+- [ ] Fix ballistic vector implementation
+	- Have it as a method in Entity instead of Action probably
+- [ ] Hitstun animations
+	- [ ] Make it so only one active frame of a "hit" can apply on an opponent
+		- I.e. if a hit's first active frame applies hitstun, the second and following active frames doesn't
+		- This is not the reason for the below hitstun loop
+	- [X] NEED TO FIX: hitstun animation loops if hitstun value is too long
+		- If hitstun duration is 20f or more, animation loops
+		- If significantly longer, it only displays the first animation frame
+	- [X] NEED TO FIX: crash if hitstun is too long
+		- Vector subscript out of range
+		- Happens from like 40f hitstun and more
+	- standLight/standMedium/standHeavy/crouchLight/crouchMedium/crouchHeavy/aerial
+	- UNI makes no distinction between high/low hitstun animations
+	- For Yuzu:
+		- Medium standing hitstun uses animation frames ID 475-8
+		- Light standing hitstun uses the last two anim frames of medium hitstun (ID 477-8)
+		- Heavy standing hitstun uses animation frames ID 467-70
+		- Standing hitstun from aerial buttons uses some portion of the heavy standing hitstun animation frames
+			- jA ID 469-70
+			- jB/jC ID 467-70
+	- How:
+		- Need way for World to get a hit impact type after confirming hit/hurtbox intersection
+		- Then access hurt Character and force into hitstun state
+		- Hitstun state needs to be modified so the first animation frame lasts for a number of frames specified by the attack minus whatever the total of the remaining frames is
+		- Add hitstun/blockstun as a class that inherits from Action?
+		- Hitstun state needs to not be cleared from Character's stateMap_ until the specified duration is over
 - [ ] Make it so camera view movement is always smooth
 	- Currently if one character moves forward a lot in the space of one frame the camera will also move a lot in one frame, which is really jarring
 	- Need to figure out the math to make it into a smooth glide to "catch up" to the actual midpoint between characters

@@ -5,6 +5,7 @@
 
 Action::Action()
 : animationDoesLoop_(false)
+, animationIsLooping_(false)
 , loopBounds_(0, 0)
 , nextLoopBound_()
 , currentFrame_(-1) // Initialized to -1 because update() begins by incrementing this by 1
@@ -13,12 +14,17 @@ Action::Action()
 , cancels_(0)
 , velocityPerFrame_()
 , currentBoxesInd_()
+, moveID_(0)
 , destinationActionID_(0)
 {
 }
 
 void Action::update(Character& character)
 {
+	if (character.getType() == Character::Type::Yuzuriha && moveID_ == 14)
+	{
+		RN_DEBUG("Whatever");
+	}
 	++currentFrame_;
 
 	if (character.getType() == Character::Type::Enkidu)
@@ -26,7 +32,7 @@ void Action::update(Character& character)
 		//RN_DEBUG("CurrentFrame - {}", currentFrame_);
 	}
 
-	// Check to see if Action needs to be looped; this has to go at the very end before incrementing currentFrame_
+	// Check to see if Action needs to be looped
 	if ((loopBounds_.first != loopBounds_.second) && (currentFrame_ == loopBounds_.second))
 	{
 		// Assumes Animation updates after Action in Character::update()
@@ -37,6 +43,11 @@ void Action::update(Character& character)
 	// Calculate current frame velocity and move the Entity that amount this frame
 	sf::Vector2f currentVelocity = calculateVelocity(character.getGravity());
 	character.move(character.getFacingSign() * currentVelocity.x, -1 * currentVelocity.y);
+	// Unearth character if they're underground
+	if (character.getPosition().y >= 0.f)
+	{
+		character.setPosition(sf::Vector2f(character.getPosition().x, 0.f));
+	}
 
 	updateBoxes(character);
 }
@@ -53,6 +64,32 @@ void Action::setAnimationFrames(const std::vector<int>& frameIDs, const std::vec
 	velocityPerFrame_.resize(actionDuration, sf::Vector2f(0.f, 0.f));
 	boxes_.resize(actionDuration);
 	cancels_.resize(actionDuration);
+}
+
+int Action::getAnimationFrameCount()
+{
+	return animationFrameIDs_.size();
+}
+
+int Action::getActionDuration()
+{
+	return sum_vector(animationFrameDurations_);
+}
+
+void Action::setDurations(const std::vector<int>& durations)
+{
+	assert(!animationFrameIDs_.empty(), "Please allocate animation frame IDs to action first.");
+	assert(animationFrameIDs_.size()==durations.size(), "Input durations vector is not the same size as the action's specified frame ID vector");
+	
+	animationFrameDurations_ = durations;
+
+	// Can just fill new elements with zeros
+	velocityPerFrame_.resize(sum_vector(durations));
+
+	// Resize whatever vectors and fill new elements with last element (this is probably a terrible way to do this)
+	boxes_.resize(sum_vector(durations),      boxes_.back());
+	properties_.resize(sum_vector(durations), properties_.back());
+	cancels_.resize(sum_vector(durations),	  cancels_.back());
 }
 
 // Set loop bounds for Action's animation. Arguments are loop start frame (inclusive) and end frame (exclusive).
@@ -181,6 +218,11 @@ void Action::setMovePerFrame(const std::vector<sf::Vector2f>& movePerFrame)
 	velocityPerFrame_ = movePerFrame;
 }
 
+void Action::setMoveOnFrame(const int frame, const sf::Vector2f& moveMagnitude)
+{
+	velocityPerFrame_[frame] = moveMagnitude;
+}
+
 void Action::setDestinationActionID(const int& id)
 {
 	destinationActionID_ = id;
@@ -199,16 +241,51 @@ void Action::applyBallisticVector(const float& launchVelocity, const float& laun
 	ballistics_.push_back(ballistics);
 }
 
+void Action::overwriteBallisticVector(const float& launchVelocity, const float& launchAngle, const std::vector<sf::Vector2f>& ballisticDerivatives)
+{
+	ballistics_.clear();
+
+	Ballistics ballistics;
+	ballistics.LaunchVelocity = launchVelocity;
+	ballistics.LaunchAngle = launchAngle;
+	ballistics.FrameApplied = currentFrame_;
+
+	ballistics_.push_back(ballistics);
+
+	// Add derivatives (acceleration/deceleration) to base velocities
+	velocityPerFrame_ = ballisticDerivatives;
+
+	// Prevent velocity sign flips
+	for (sf::Vector2f& perFrameVelocity : velocityPerFrame_)
+	{
+		// X-axis
+		if (abs(perFrameVelocity.x) > abs(launchVelocity * cos(launchAngle * (M_PI / 180.f))))
+		{
+			perFrameVelocity.x = -1.f * double(launchVelocity) * cos(launchAngle * (M_PI / 180.f));
+		}
+
+		// Y-axis
+		if (abs(perFrameVelocity.y) > abs(double(launchVelocity) * sin(launchAngle * (M_PI / 180.f))))
+		{
+			perFrameVelocity.y = -1.f * double(launchVelocity) * sin(launchAngle * (M_PI / 180.f));
+		}
+	}
+
+}
+
 sf::Vector2f Action::calculateVelocity(const float& gravity)
 {
 	// Get base action velocity for this frame
 	sf::Vector2f velocity = velocityPerFrame_[currentFrame_];
 
+	// Apply gravity every frame
+	velocity.y -= gravity;
+
 	// Iterate through ballistics
 	for (Ballistics ballisticVector : ballistics_)
 	{
 		velocity.x += ballisticVector.LaunchVelocity * cos(ballisticVector.LaunchAngle * (M_PI / 180.f));
-		velocity.y += ballisticVector.LaunchVelocity * sin(ballisticVector.LaunchAngle * (M_PI / 180.f)) - (gravity * double(currentFrame_ - ballisticVector.FrameApplied));
+		velocity.y += ballisticVector.LaunchVelocity * sin(ballisticVector.LaunchAngle * (M_PI / 180.f));
 	}
 
 	return velocity;
@@ -255,7 +332,9 @@ Action* Action::handleInput(Character& character, std::vector<Character::ActionP
 			}
 
 			// If destination state isn't current state and it matches the possible cancel paths for the current state
-			if	(it->second && (character.getCurrentAction() != it->first.get()) && (it->first->getCancelType() & cancels_[currentFrame_]))
+			if	((it->second) && 
+				 (character.getCurrentAction() != it->first.get()) && 
+				 (it->first->getCancelType() & cancels_[currentFrame_]))
 			{
 				// Detach old boxes
 				for (Box* boxPtr : boxPtrs_)

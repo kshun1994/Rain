@@ -1,6 +1,7 @@
 #include "rnpch.h"
 #include "Box.h"
 #include "Entity.h"
+#include "Character.h"
 
 Box::Box(Box::Type type, float xOffset, float yOffset, float width, float height)
 : name_("Default")
@@ -97,6 +98,26 @@ unsigned int Box::getType() const
 	return type_;
 }
 
+void Box::setOnHit(const HitValues& onHit)
+{
+	onHit_ = onHit;
+}
+
+Box::HitValues Box::getOnHit()
+{
+	return onHit_;
+}
+
+void Box::setOnBlock(const HitValues& onBlock)
+{
+	onBlock_ = onBlock;
+}
+
+Box::HitValues Box::getOnBlock()
+{
+	return onBlock_;
+}
+
 void Box::drawCurrent(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	#ifdef RN_DEBUG
@@ -128,4 +149,24 @@ sf::FloatRect Box::getRect() const
 void Box::moveParent(const float& x, const float& y)
 {
 	parent_->move(x, y);
+}
+
+void Box::hitParent(const HitValues& hitValues)
+{
+	int actionID;
+
+	switch (hitValues.impact)
+	{
+		case Box::Impact::Light:
+			actionID = COMMON_ACTION_STAND_HITSTUN_L;
+			break;
+
+		case Box::Impact::Heavy:
+			actionID = COMMON_ACTION_STAND_HITSTUN_H;
+			break;
+	}
+
+	dynamic_cast<Character*>(parent_)->setStunDuration(actionID, hitValues.stunDuration);
+	dynamic_cast<Character*>(parent_)->overwriteActionBallistics(actionID, hitValues.ballisticLaunchVelocity, hitValues.ballisticLaunchAngle, hitValues.ballisticDerivatives);
+	dynamic_cast<Character*>(parent_)->setCurrentActionID(actionID);
 }

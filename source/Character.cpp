@@ -38,7 +38,8 @@ Character::Character(Type type, const TextureHolder& textures)
 	EnkSprite.standDurs.resize(16, 5);
 		
 	EnkSprite.crouchIDs.resize(29); // First 3 frames are stand-to-crouch, last 10 frames are crouch-to-stand
-	std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 16);
+	//std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 16);
+	std::iota(EnkSprite.crouchIDs.begin(), EnkSprite.crouchIDs.end(), 20);
 	EnkSprite.crouchDurs.resize(EnkSprite.crouchIDs.size(), 5);
 	EnkSprite.crouchDurs[0] = 2;
 	EnkSprite.crouchDurs[1] = 2;
@@ -48,23 +49,27 @@ Character::Character(Type type, const TextureHolder& textures)
 		EnkSprite.crouchDurs[i] = 4;
 	}
 
-	// For appending to stuff like jump animations
-	std::vector<int> crouchToStandIDs;
-	crouchToStandIDs.resize(10);
-	std::iota(crouchToStandIDs.begin(), crouchToStandIDs.end(), 44);
-	std::vector<int> crouchToStandDurs(10, 4);
+	//// For appending to stuff like jump animations
+	//std::vector<int> crouchToStandIDs;
+	//crouchToStandIDs.resize(10);
+	////std::iota(crouchToStandIDs.begin(), crouchToStandIDs.end(), 44);
+	//std::iota(crouchToStandIDs.begin(), crouchToStandIDs.end(), 40);
+	//std::vector<int> crouchToStandDurs(10, 4);
 
 	EnkSprite.fWalkIDs.resize(9);
-	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 54);
+	//std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 54);
+	std::iota(EnkSprite.fWalkIDs.begin(), EnkSprite.fWalkIDs.end(), 60);
 	EnkSprite.fWalkDurs.resize(EnkSprite.fWalkIDs.size(), 6);
 
 	EnkSprite.bWalkIDs.resize(11);
-	std::iota(EnkSprite.bWalkIDs.begin(), EnkSprite.bWalkIDs.end(), 63);
+	//std::iota(EnkSprite.bWalkIDs.begin(), EnkSprite.bWalkIDs.end(), 63);
+	std::iota(EnkSprite.bWalkIDs.begin(), EnkSprite.bWalkIDs.end(), 70);
 	EnkSprite.bWalkDurs.resize(EnkSprite.bWalkIDs.size(), 7);
 
 	std::vector<int> crouchToStandInds = {35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 	EnkSprite.jumpIDs.resize(9); 
-	std::iota(EnkSprite.jumpIDs.begin(), EnkSprite.jumpIDs.end(), 45);
+	//std::iota(EnkSprite.jumpIDs.begin(), EnkSprite.jumpIDs.end(), 45);
+	std::iota(EnkSprite.jumpIDs.begin(), EnkSprite.jumpIDs.end(), 50);
 	// Jump animation has to include crouch-to-stand as recovery animation
 	//EnkSprite.jumpIDs.insert(EnkSprite.jumpIDs.end(), std::make_move_iterator(crouchToStandInds.begin()), std::make_move_iterator(crouchToStandInds.end()));
 	EnkSprite.jumpDurs.resize(EnkSprite.jumpIDs.size(), 5);
@@ -74,11 +79,13 @@ Character::Character(Type type, const TextureHolder& textures)
 	//EnkSprite.jumpDurs.insert(EnkSprite.jumpDurs.end(), crouchToStandDurs.begin(), crouchToStandDurs.end());
 
 	EnkSprite.jumpRecoveryIDs.resize(10);
-	std::iota(EnkSprite.jumpRecoveryIDs.begin(), EnkSprite.jumpRecoveryIDs.end(), 35);
+	//std::iota(EnkSprite.jumpRecoveryIDs.begin(), EnkSprite.jumpRecoveryIDs.end(), 35);
+	std::iota(EnkSprite.jumpRecoveryIDs.begin(), EnkSprite.jumpRecoveryIDs.end(), 39);
 	EnkSprite.jumpRecoveryDurs.resize(EnkSprite.jumpRecoveryIDs.size(), 4);
 
 	EnkSprite.standBIDs.resize(8);
-	std::iota(EnkSprite.standBIDs.begin(), EnkSprite.standBIDs.end(), 74);
+	//std::iota(EnkSprite.standBIDs.begin(), EnkSprite.standBIDs.end(), 74);
+	std::iota(EnkSprite.standBIDs.begin(), EnkSprite.standBIDs.end(), 85);
 	// Enk 5B SAR: 9/3/20
 	// 3 animation frames for startup
 	// 1 animation frame for active
@@ -94,11 +101,20 @@ Character::Character(Type type, const TextureHolder& textures)
 	YuzuSprite.spriteDims = sf::Vector2(864, 640);
 	YuzuSprite.originX = 432;
 	YuzuSprite.originY = 44;
+	// Standing idle (includes dumb wind effects)
 	for (int i = 0; i != 36; i++)
 	{
 		YuzuSprite.standIDs.push_back(i);
 		YuzuSprite.standDurs.push_back(5);
 	}
+	// Standing light hitstun
+	YuzuSprite.standLightHitstunIDs.resize(4);
+	std::iota(YuzuSprite.standLightHitstunIDs.begin(), YuzuSprite.standLightHitstunIDs.end(), 40);
+	YuzuSprite.standLightHitstunDurs.resize(YuzuSprite.standLightHitstunIDs.size(), 5);
+	// Standing heavy hitstun
+	YuzuSprite.standHeavyHitstunIDs.resize(4);
+	std::iota(YuzuSprite.standHeavyHitstunIDs.begin(), YuzuSprite.standHeavyHitstunIDs.end(), 45);
+	YuzuSprite.standHeavyHitstunDurs.resize(YuzuSprite.standHeavyHitstunIDs.size(), 5);
 
 	if (type_ == Type::Enkidu)
 	{
@@ -327,15 +343,36 @@ Character::Character(Type type, const TextureHolder& textures)
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	   45.f,  -46.f,  119.f,  259.f)));
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	  111.f,  -98.f,   89.f,  143.f)));
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Hurt,	  -84.f, -187.f,  127.f,  202.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit1", Box::Type::Hit,	  132.f, -121.f,  173.f,  115.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit2", Box::Type::Hit,	   98.f, -216.f,  108.f,   75.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit3", Box::Type::Hit,	  127.f, -261.f,   88.f,   51.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit4", Box::Type::Hit,	  187.f, -167.f,  210.f,   92.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit5", Box::Type::Hit,	  202.f, -240.f,  119.f,   51.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit6", Box::Type::Hit,	  221.f, -251.f,  141.f,   70.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit7", Box::Type::Hit,	  228.f, -121.f,   78.f,   62.f)));
-		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit8", Box::Type::Hit,	  280.f, -149.f,   63.f,  152.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit1", Box::Type::Hit, 132.f, -121.f, 173.f, 115.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit2", Box::Type::Hit,  98.f, -216.f, 108.f,  75.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit3", Box::Type::Hit, 127.f, -261.f,  88.f,  51.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit4", Box::Type::Hit, 187.f, -167.f, 210.f,  92.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit5", Box::Type::Hit, 202.f, -240.f, 119.f,  51.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit6", Box::Type::Hit, 221.f, -251.f, 141.f,  70.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit7", Box::Type::Hit, 228.f, -121.f,  78.f,  62.f)));
+		active.push_back(std::move(std::make_shared<Box>("Enk5BActive1Hit8", Box::Type::Hit, 280.f, -149.f,  63.f, 152.f)));
 		active.push_back(std::move(std::make_shared<Box>(Box::Type::Push,	    0.f,	0.f,  100.f,  310.f)));
+
+		Box::HitValues onHit5B;
+		onHit5B.damage					 = 6e19;
+		onHit5B.impact					 = Box::Impact::Heavy;
+		onHit5B.stunDuration			 = 40;
+		onHit5B.ballisticLaunchVelocity	 = 5.f;
+		onHit5B.ballisticLaunchAngle	 = 180.f;
+		onHit5B.ballisticDerivatives     = std::vector<sf::Vector2f>(onHit5B.stunDuration);
+		float horizontalDeceleration     = 0.2f;
+		for (int i = 0; i < onHit5B.ballisticDerivatives.size(); i++)
+		{
+			onHit5B.ballisticDerivatives[i].x = (i ^ 2) * horizontalDeceleration;
+		}
+
+		for (std::shared_ptr<Box> box : active)
+		{
+			if (box->getType() == Box::Type::Hit)
+			{
+				box->setOnHit(onHit5B);
+			}
+		}
 		//active.push_back(std::move(std::make_shared<Box>(Box::Type::Hit,	    0.f,	0.f,  100.f,  310.f)));
 		//active.push_back(std::move(std::make_shared<Box>("Enk5BActive1TestHit", Box::Type::Hit, 100.f, -100.f, 400.f, 300.f)));
 		standBAction->setBoxes(8, active);
@@ -399,15 +436,35 @@ Character::Character(Type type, const TextureHolder& textures)
 		standBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
 		standAction->setBoxes(0, standBoxes);
 
+		// Standing light hitstun
+		std::unique_ptr<Action> standLightHitstunAction = std::make_unique<Action>();
+		standLightHitstunAction->setAnimationFrames(spriteStruct_.standLightHitstunIDs, spriteStruct_.standLightHitstunDurs, spriteStruct_.spriteDims);
+		Action::Boxes standLightHitstunBoxes;
+		standLightHitstunBoxes.push_back(std::move(std::make_shared<Box>("YuzuStandLightHitstunHurt1", Box::Type::Hurt, 0.f, 0.f, 110.f, 315.f)));
+		standLightHitstunBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
+		standLightHitstunAction->setBoxes(0, standLightHitstunBoxes);
+
+		// Standing heavy hitstun
+		std::unique_ptr<Action> standHeavyHitstunAction = std::make_unique<Action>();
+		standHeavyHitstunAction->setAnimationFrames(spriteStruct_.standHeavyHitstunIDs, spriteStruct_.standHeavyHitstunDurs, spriteStruct_.spriteDims);
+		//standHeavyHitstunAction->setLoopBounds(0, sum_vector(spriteStruct_.standHeavyHitstunDurs));
+		Action::Boxes standHeavyHitstunBoxes;
+		standHeavyHitstunBoxes.push_back(std::move(std::make_shared<Box>("YuzuStandHeavyHitstunHurt1", Box::Type::Hurt, 0.f, 0.f, 110.f, 315.f)));
+		standHeavyHitstunBoxes.push_back(std::move(std::make_shared<Box>(Box::Type::Push, 0.f, 0.f, 100.f, 310.f)));
+		standHeavyHitstunAction->setBoxes(0, standHeavyHitstunBoxes);
+		standHeavyHitstunAction->setMoveID(COMMON_ACTION_STAND_HITSTUN_H);
+
 		//standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Hurt, 0.f, 0.f, 110.f, 315.f)));
 		//standAction->appendBox(std::move(std::make_shared<Box>(Box::Type::Push,	 0.f, 0.f, 100.f, 310.f)));
 
-		actions_[COMMON_ACTION_STAND].first = std::move(standAction);
-		stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
+		actions_[COMMON_ACTION_STAND].first			  = std::move(standAction);
+		actions_[COMMON_ACTION_STAND_HITSTUN_L].first = std::move(standLightHitstunAction);
+		actions_[COMMON_ACTION_STAND_HITSTUN_H].first = std::move(standHeavyHitstunAction);
+		//stateMap_.insert(std::pair<int, bool>(COMMON_ACTION_STAND,  false));
 	}
 
-	action_ = actions_[COMMON_ACTION_STAND].first.get(); // Start standing
-	action_->enter(*this);
+	//action_ = actions_[COMMON_ACTION_STAND].first.get(); // Start standing
+	//action_->enter(*this);
 	setCurrentActionID(COMMON_ACTION_STAND);
 
 	sprite_.setFrames(spriteStruct_.standIDs, spriteStruct_.standDurs, spriteStruct_.spriteDims);
@@ -536,7 +593,7 @@ void Character::parseInput(unsigned int input)
 		actions_[COMMON_ACTION_5B].second = true;
 	}
 
-	// Check for stand .stand)
+	// Check for stand
 	if ((input & 15) == 5)
 	{
 		actions_[COMMON_ACTION_STAND].second = true;
@@ -591,11 +648,53 @@ int Character::getCurrentActionID()
 void Character::setCurrentActionID(int id)
 {
 	actionID_ = id;
+
+	action_ = actions_[actionID_].first.get();
+	action_->enter(*this);
 }
 
 Action* Character::getCurrentAction() const
 {
 	return action_;
+}
+
+void Character::setStunDuration(const int& actionID, const int& duration)
+{
+	// Get number of animation frames to set
+	int nAniFrame = actions_[actionID].first->getAnimationFrameCount();
+
+	int recoveryFrameDuration = 4;
+
+	assert(duration >= (recoveryFrameDuration * nAniFrame + 1), "Stun duration is less than minimum.");
+
+	//// For now: half of total duration goes to first animation frame, then 1/3 each of the remaining amount to second through fourth
+	//float remainingDur = duration;
+	//for (int i = 0; i < nAniFrame; i++)
+	//{
+	//	if (i < (nAniFrame - 1))
+	//	{
+	//		durations[i] = ceil(remainingDur / 2);
+	//		remainingDur -= ceil(remainingDur / 2);
+	//	}
+	//	else
+	//	{
+	//		durations[i] = remainingDur;
+	//	}
+	//}
+
+	// Initialize vector size and fill all values with 'recoveryFrameDuration'
+	std::vector<int> durations(nAniFrame, recoveryFrameDuration);
+
+	durations[0] += duration - sum_vector(durations);
+
+	assert(sum_vector(durations) == duration, 'Sum of duration does not equal total specified stun duration.');
+
+	actions_[actionID].first->setDurations(durations);
+}
+
+void Character::overwriteActionBallistics(const int& actionID, const float& launchVelocity, const float& launchAngle, const std::vector<sf::Vector2f>& ballisticDerivatives)
+{
+	actions_[actionID].first->overwriteBallisticVector(launchVelocity, launchAngle, ballisticDerivatives);
 }
 
 float Character::getHealth() const
