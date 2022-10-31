@@ -23,6 +23,11 @@ Rainy days
 	- Change cancel properties of parent Action depending on type of interaction (hit/block)
 - [ ] Fix ballistic vector implementation
 	- Have it as a method in Entity instead of Action probably
+- [ ] Hitstop
+	- Game logic must pause during hitstop
+	- But not input parsing (i.e. hitstop shouldn't allow buffering of input during the pause)
+	- Sinusoidal movement during hitstop (magnitude tied to duration?)
+	- Low prio: allow for asymmetrical hitstop
 - [ ] Hitstun animations
 	- [ ] Make it so only one active frame of a "hit" can apply on an opponent
 		- I.e. if a hit's first active frame applies hitstun, the second and following active frames doesn't
@@ -42,12 +47,6 @@ Rainy days
 		- Standing hitstun from aerial buttons uses some portion of the heavy standing hitstun animation frames
 			- jA ID 469-70
 			- jB/jC ID 467-70
-	- How:
-		- Need way for World to get a hit impact type after confirming hit/hurtbox intersection
-		- Then access hurt Character and force into hitstun state
-		- Hitstun state needs to be modified so the first animation frame lasts for a number of frames specified by the attack minus whatever the total of the remaining frames is
-		- Add hitstun/blockstun as a class that inherits from Action?
-		- Hitstun state needs to not be cleared from Character's stateMap_ until the specified duration is over
 - [ ] Make it so camera view movement is always smooth
 	- Currently if one character moves forward a lot in the space of one frame the camera will also move a lot in one frame, which is really jarring
 	- Need to figure out the math to make it into a smooth glide to "catch up" to the actual midpoint between characters

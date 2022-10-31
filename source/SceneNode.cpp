@@ -45,6 +45,22 @@ std::vector<SceneNode*> SceneNode::getChildren()
 	return ptrs;
 }
 
+void SceneNode::rotateChildToEnd(SceneNode* child)
+{
+	for (int i = 0; i < children_.size(); i++)
+	{
+		if (children_[i].get() == child)
+		{
+			std::rotate(children_.begin() + i, children_.begin() + i + 1, children_.end());
+		}
+	}
+}
+
+SceneNode* SceneNode::getParent()
+{
+	return parent_;
+}
+
 sf::Transform SceneNode::getWorldTransform() const
 {
 	sf::Transform transform = sf::Transform::Identity; // identity transform does nothing; base to multiply all parent transforms onto

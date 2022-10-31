@@ -230,6 +230,7 @@ void World::handleCollision()
 		if (matchesTypes(pair, Box::Type::Hit, Box::Type::Hurt)) // If a hitbox overlaps a hurtbox
 		{
 			RN_DEBUG("Hitbox intersection! Hitbox {} intersects hurtbox {}.", dynamic_cast<Box*>(pair.first)->getName(), dynamic_cast<Box*>(pair.second)->getName());
+			sceneLayers_[Characters]->rotateChildToEnd(pair.first->getParent());
 			dynamic_cast<Box*>(pair.second)->hitParent(dynamic_cast<Box*>(pair.first)->getOnHit());
 		}
 	}

@@ -24,6 +24,9 @@ public:
 	Ptr								detachChild(const SceneNode& node);
 	void							detachChildren();
 	std::vector<SceneNode*>			getChildren();
+	void							rotateChildToEnd(SceneNode* child);
+
+	SceneNode*						getParent();
 
 	void							update();
 
